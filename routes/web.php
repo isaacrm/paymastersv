@@ -32,4 +32,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/tipo_documentos', function () {
+        return Inertia::render('Configuracion/TipoDocumentos');
+    })->name('tipo_documentos');
 });
