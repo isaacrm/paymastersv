@@ -75,7 +75,7 @@ class TipoDocumentosController extends Controller
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
-            'nombre' => 'required|max:30',
+            'nombre' => 'required|max:75',
             'longitud' => 'required|integer|between:0,35',
         ]);
     }
