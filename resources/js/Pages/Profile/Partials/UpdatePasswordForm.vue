@@ -1,12 +1,37 @@
+<template>
+    <q-card class="my-card">
+        <q-card-section class="ml-6">
+            <div class="text-h6">Actualizar contraseña</div>
+            <div class="text-subtitle">Asegúrese de que su cuenta esté usando una contraseña larga y aleatoria para
+                mantenerse seguro.</div>
+        </q-card-section>
+        <q-card-section>
+            <q-form @submit.native.prevent="updatePassword" class="q-gutter-md">
+                <q-input filled id="current_password" type="password" v-model="form.current_password"
+                    label="Contraseña actual" :error-message="form.errors.current_password"
+                    :error="form.errors.hasOwnProperty('current_password')" />
+                <q-input filled id="password" type="password" v-model="form.password" label="Contraseña"
+                    :error-message="form.errors.password" :error="form.errors.hasOwnProperty('password')" />
+                <q-input filled id="password_confirmation" type="password" v-model="form.password_confirmation"
+                    label="Confirmar contraseña" :error-message="form.errors.password_confirmation"
+                    :error="form.errors.hasOwnProperty('password_confirmation')" />
+                <div class="flex items-center justify-end mt-4">
+                    <div v-if="form.recentlySuccessful" class="q-mb-md text-body text-green-7 font-medium">
+                        Guardado
+                    </div>
+                    <q-btn color="primary" class="ml-4" :class="{ 'opacity-25': form.processing }"
+                        :disable="form.processing" type="submit">
+                        Guardar
+                    </q-btn>
+                </div>
+            </q-form>
+        </q-card-section>
+    </q-card>
+</template>
+
 <script setup>
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import ActionMessage from '@/Components/ActionMessage.vue';
-import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -36,65 +61,3 @@ const updatePassword = () => {
     });
 };
 </script>
-
-<template>
-    <FormSection @submitted="updatePassword">
-        <template #title>
-            Update Password
-        </template>
-
-        <template #description>
-            Ensure your account is using a long, random password to stay secure.
-        </template>
-
-        <template #form>
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="current_password" value="Current Password" />
-                <TextInput
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                />
-                <InputError :message="form.errors.current_password" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password" value="New Password" />
-                <TextInput
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-                <InputError :message="form.errors.password" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-                <InputError :message="form.errors.password_confirmation" class="mt-2" />
-            </div>
-        </template>
-
-        <template #actions>
-            <ActionMessage :on="form.recentlySuccessful" class="mr-3">
-                Saved.
-            </ActionMessage>
-
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
-            </PrimaryButton>
-        </template>
-    </FormSection>
-</template>
