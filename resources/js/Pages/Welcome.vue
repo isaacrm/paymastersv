@@ -1,45 +1,136 @@
 <template>
     <Head title="Welcome" />
-    <q-layout view="lHh lpr lFf" container style="height: 100vh" class="shadow-2 rounded-borders">
-        <q-header reveal elevated>
-            <q-toolbar>
-                <q-toolbar-title>Paymaster SV</q-toolbar-title>
-                <div v-if="canLogin">
-                    <q-btn flat dense v-if="$page.props.auth.user" :href="route('dashboard')"
-                        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Dashboard</q-btn>
+    <q-layout view="lHh Lpr lFf" style="background:linear-gradient( 135deg, #4d5f98ff 10%, #9f3669ff 100%)">
+        <q-header class="bg-transparent text-white">
+            <q-toolbar class="q-pa-md">
+                <q-toolbar-title>
+                    Paymaster SV
+                </q-toolbar-title>
+                <q-space />
 
-                    <q-btn flat dense v-else :href="route('login')"
-                        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Log
-                        in</q-btn>
+                <div v-if="canLogin" class="q-gutter-sm row items-center no-wrap">
+                    <q-btn square dense flat color="text-grey-7" label="Dashboard" v-if="$page.props.auth.user"
+                        :href="route('dashboard')"><q-tooltip>Dashboard</q-tooltip></q-btn>
 
-                    <q-btn flat dense v-if="canRegister" :href="route('register')"
-                        class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">Register</q-btn>
+                    <q-btn square dense flat color="text-grey-7" label="Iniciar Sesión" v-else
+                        :href="route('login')"><q-tooltip>Iniciar
+                            Sesión</q-tooltip></q-btn>
+
+                    <q-btn square dense flat color="text-grey-7" label="Registrarse" v-if="canRegister"
+                        :href="route('register')"><q-tooltip>Registrarse</q-tooltip></q-btn>
                 </div>
             </q-toolbar>
         </q-header>
+
         <q-page-container>
-            <div>
-                <h1 class="text-center">
-                    Banner
-                </h1>
-            </div>
+            <section style="min-height: 25vh;" class="flex text-white flex-center layout_bg">
+                <div style="position: relative">
+                    <div class="text-h4 text-center">
+                        Le damos la bienvenida
+                    </div>
+                    <div class="text-subtitle2 q-pt-sm text-center">
+                        Estas son las características que ofrece nuestra solución
+                    </div>
+                </div>
+            </section>
+            <section class="q-pb-lg">
+                <div class="row q-col-gutter-sm q-px-sm">
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                        <q-card class="text-white" style="background:linear-gradient(to right, #ed6ea0 0%, #ec8c69 100%)">
+                            <q-card-section>
+                                <div class="text-h6 text-center">
+                                    Titulo 1
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h2 text-weight-bolder text-center">
+                                    <q-icon name="home_work"></q-icon>
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h6 text-weight-bolder text-center">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet non nisl in malesuada.
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                        <q-card class="text-white" style="background:linear-gradient(-225deg, #5D9FFF 0%, #6BBBFF 100%)">
+                            <q-card-section>
+                                <div class="text-h6 text-center">
+                                    Titulo 2
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h2 text-weight-bolder text-center">
+                                    <q-icon name="home"></q-icon>
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h6 text-weight-bolder text-center">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet non nisl in malesuada.
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                        <q-card class="text-white" style="background:linear-gradient(to right, #2B86C5 0%, #2B86C5 100%)">
+                            <q-card-section>
+                                <div class="text-h6 text-center">
+                                    Titulo 3
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h2 text-weight-bolder text-center">
+                                    <q-icon name="apartment"></q-icon>
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h6 text-weight-bolder text-center">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet non nisl in malesuada.
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                        <q-card class="text-white"
+                            style="background:linear-gradient(87deg, rgb(17, 205, 239), rgb(17, 113, 239)) !important">
+                            <q-card-section>
+                                <div class="text-h6 text-center">
+                                    Titulo 4
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h2 text-weight-bolder text-center">
+                                    <q-icon name="business_center"></q-icon>
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="text-h6 text-weight-bolder text-center">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet non nisl in malesuada.
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                </div>
+            </section>
         </q-page-container>
 
-        <q-footer reveal elevated class="text-center q-pa-lg letter-spacing-100">
-            <div>
-                Copyright © 2023 PAYMASTER SV
+        <section class="flex row flex-center q-py-sm  text-center">
+            <div class="text-weight-bold text-subtitle2 text-white ">
+                <div>
+                    Copyright © {{ year }} Paymaster SV
+                </div>
+                <div>
+                    Desarrollado por: Grupo 06 - BAD115 - UES
+                </div>
             </div>
-            <div>
-                Desarrollado por: Grupo 06 - BAD115 - UES
-            </div>
-        </q-footer>
-
+        </section>
     </q-layout>
 </template>
 
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { Head } from '@inertiajs/vue3'
 
 defineProps({
     canLogin: Boolean,
@@ -48,6 +139,6 @@ defineProps({
     phpVersion: String,
 });
 
-const backgroundImgUrl = ref('')
-backgroundImgUrl.value = 'https://example.com/my-background-image.jpg'
+const year = (new Date()).getFullYear()
+
 </script>
