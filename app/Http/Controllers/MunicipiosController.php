@@ -44,4 +44,19 @@ class MunicipiosController extends Controller
         $municipios->departamento_id = $request->departamento_id;
         $municipios->save();
     }
+    // La operación de Update CR[U]D
+    public function ActualizarMunicipios(Request $request)
+    {
+        //$this->validacion($request);
+        $municipios = Municipio::find($request->id);
+        $municipios->nombre = $request->nombre;
+        $municipios->departamento_id = $request->departamento_id;
+        $municipios->save();
+    }
+    // La operación de Delete CR[U]D
+    public function EliminarMunicipios(Request $request)
+    {
+        $municipios = Municipio::find($request->id);
+        $municipios->delete();
+    }
 }
