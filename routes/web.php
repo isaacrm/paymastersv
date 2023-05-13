@@ -33,5 +33,8 @@ Route::middleware([
     Route::get('/tipo_documentos', function () {
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
-});
 
+    Route::get('/departamentos', function () {
+        return Inertia::render('Direccion/Departamentos');
+    })->name('departamentos');
+});
