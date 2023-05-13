@@ -38,7 +38,7 @@ class MunicipiosController extends Controller
     // La operación de Create [C]RUD
     public function AgregarMunicipios(Request $request)
     {
-        //$this->validacion($request);
+        $this->validacion($request);
         $municipios = new Municipio();
         $municipios->nombre = $request->nombre;
         $municipios->departamento_id = $request->departamento_id;
@@ -47,7 +47,7 @@ class MunicipiosController extends Controller
     // La operación de Update CR[U]D
     public function ActualizarMunicipios(Request $request)
     {
-        //$this->validacion($request);
+        $this->validacion($request);
         $municipios = Municipio::find($request->id);
         $municipios->nombre = $request->nombre;
         $municipios->departamento_id = $request->departamento_id;
@@ -58,5 +58,13 @@ class MunicipiosController extends Controller
     {
         $municipios = Municipio::find($request->id);
         $municipios->delete();
+    }
+    // La operación de validación
+    private function validacion(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|max:75',
+            'departamento_id' => 'required',
+        ]);
     }
 }

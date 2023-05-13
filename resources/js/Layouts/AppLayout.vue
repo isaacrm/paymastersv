@@ -59,11 +59,13 @@
 
                     <q-separator class="q-mt-md q-mb-xs" />
 
+                    <q-separator class="q-my-md" />
+
                     <q-item-label header class="text-weight-bold text-uppercase">
-                        More from Youtube
+                        Direccion
                     </q-item-label>
 
-                    <q-item v-for="link in links3" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-for="link in direccion" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -71,6 +73,7 @@
                             <q-item-label>{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
+                    <q-separator class="q-mt-md q-mb-xs" />
 
                     <q-separator class="q-my-md" />
 
@@ -86,6 +89,7 @@
                             <q-item-label>{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
+
 
                     <q-separator class="q-mt-md q-mb-lg" />
 
@@ -157,8 +161,10 @@ const links2 = [
     { icon: 'watch_later', text: 'Watch later' },
     { icon: 'thumb_up_alt', text: 'Liked videos' }
 ]
-const links3 = [
-    { icon: fabYoutube, text: 'YouTube Premium' },
+
+const direccion = [
+    { icon: 'person_pin_circle', text: 'Municipios', path: '/municipios' },
+    { icon: 'local_library', text: 'Departamentos', path: '/departamentos' },
     { icon: 'local_movies', text: 'Movies & Shows' },
     { icon: 'videogame_asset', text: 'Gaming' },
     { icon: 'live_tv', text: 'Live' }
