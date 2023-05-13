@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TipoDocumentosController;
 use App\Http\Controllers\DepartamentosController;
+use App\Http\Controllers\MunicipiosController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,3 +43,14 @@ Route::post('/agregar_departamento', [DepartamentosController::class, 'AgregarDe
 Route::post('/actualizar_departamento', [DepartamentosController::class, 'ActualizarDepartamentos']);
 // Eliminar
 Route::post('/eliminar_departamento/{id}', [DepartamentosController::class, 'EliminarDepartamentos']);
+
+/* MUNICIPIOS */
+// Ver
+Route::get('/tabla_municipios', [MunicipiosController::class, 'TablaMunicipios']);
+// Agregar
+Route::post('/agregar_municipio', [MunicipiosController::class, 'AgregarMunicipios']);
+// Actualizar
+Route::post('/actualizar_municipio', [MunicipiosController::class, 'ActualizarMunicipios']);
+// Eliminar
+Route::post('/eliminar_municipio/{id}', [MunicipiosController::class, 'EliminarMunicipios']);
+
