@@ -41,5 +41,9 @@ Route::middleware([
     Route::get('/municipios', function(){
         return Inertia::render('Direccion/Municipios');
     })->name('municipios');
+
+    Route::get('/direcciones', function(){
+        return Inertia::render('Direccion/Direcciones');
+    })->name('direcciones');
 });
 

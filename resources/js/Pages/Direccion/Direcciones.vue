@@ -1,26 +1,50 @@
 <template>
-    <AppLayout title="Municipios">
+    <AppLayout title="Direcciones">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Municipios</div>
-                    <div class="text-subtitle">Registro de los municipios que el empleado puede agregar a su dirección.</div>
+                    <div class="text-h6">Direcciones</div>
+                    <div class="text-subtitle">Registro de los direcciones que el empleado puede agregar.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="hayError(errores.nombre)" />
+                                <q-input filled bottom-slots v-model="direccion.calle" class="full-width"
+                                    label="Calle" :error-message="errores.calle && errores.calle[0]"
+                                    :error="hayError(errores.calle)" />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.departamento_id" type="number"
-                                    class="full-width" label="Departamento"
-                                    :error-message="errores.departamento_id && errores.departamento_id[0]"
-                                    :error="hayError(errores.departamento_id)" />
+                                <q-input filled bottom-slots v-model="direccion.colonia"
+                                    class="full-width" label="Colonia"
+                                    :error-message="errores.colonia && errores.colonia[0]"
+                                    :error="hayError(errores.colonia)" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="direccion.identificador_casa"
+                                    class="full-width" label="Identificador de casa"
+                                    :error-message="errores.identificador_casa && errores.identificador_casa[0]"
+                                    :error="hayError(errores.identificador_casa)" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="direccion.apto_local" type="number"
+                                    class="full-width" label="Número de Apartamento o Local"
+                                    :error-message="errores.apto_local && errores.apto_local[0]"
+                                    :error="hayError(errores.apto_local)" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="direccion.municipio_id" type="number"
+                                    class="full-width" label="Municipio"
+                                    :error-message="errores.municipio_id && errores.municipio_id[0]"
+                                    :error="hayError(errores.municipio_id)" />
                             </q-item>
                         </div>
                     </div>
@@ -85,7 +109,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const municipio = ref({}) // El objeto que se enviara mediante el request
+const direccion = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -111,8 +135,11 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'nombre_departamento', align: 'left', label: 'Departamento', field: 'nombre_departamento', sortable: true },
+    { name: 'calle', align: 'left', label: 'Calle', field: 'calle', sortable: true },
+    { name: 'colonia', align: 'left', label: 'Colonia', field: 'colonia', sortable: true },
+    { name: 'identificador_casa', align: 'left', label: 'Identificador de Casa', field: 'identificador_casa', sortable: true },
+    { name: 'apto_local', align: 'left', label: 'Apartamento o Local', field: 'apto_local', sortable: true },
+    { name: 'nombre_municipio', align: 'left', label: 'Municipio', field: 'nombre_municipio', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -124,7 +151,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    municipio.value = {}
+    direccion.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -149,16 +176,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (municipio.value.id) {
+    if (direccion.value.id) {
         await axios
-            .post("/api/actualizar_municipio",municipio.value)
+            .post("/api/actualizar_direccion",direccion.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Municipio actualizado.'
+                        message: 'Dirección actualizada.'
                     }
                 )
 
@@ -172,7 +199,7 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al actualizar el municipio.'
+                        message: 'Error al actualizar la dirección.'
                     }
                 )
             })
@@ -180,14 +207,14 @@ const guardar = async () => {
     // Guardar
     else {
         await axios
-            .post("/api/agregar_municipio", municipio.value)
+            .post("/api/agregar_direccion", direccion.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Municipio guardado.'
+                        message: 'Dirección guardada.'
                     }
                 )
 
@@ -201,23 +228,23 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el municipio.'
+                        message: 'Error al agregar la dirección.'
                     }
                 )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarMunicipios) => {
-    municipio.value = { ...editarMunicipios }
+const editar = (editarDirecciones) => {
+    direccion.value = { ...editarDirecciones }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
-    municipio.value.id = id
-    nombreRegistroEliminar.value = nombre
+const confirmarEliminar = (id, calle) => {
+    direccion.value.id = id
+    nombreRegistroEliminar.value = calle
     confirmarEliminacion.value = true
 }
 
@@ -225,14 +252,14 @@ const confirmarEliminar = (id, nombre) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/eliminar_municipio/" + municipio.value.id)
+        .post("/api/eliminar_direccion/" + direccion.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Municipio eliminado.'
+                    message: 'Dirección eliminada.'
                 }
             )
 
@@ -242,7 +269,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el municipio.'
+                    message: 'Error al eliminar la dirección.'
                 }
             )
         })
@@ -256,7 +283,7 @@ const generarTabla = async (props) => {
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tabla_municipios", {
+        .get("/api/tabla_direcciones", {
             params: {
                 page,
                 rowsPerPage,
