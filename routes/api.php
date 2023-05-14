@@ -45,6 +45,8 @@ Route::post('/agregar_departamento', [DepartamentosController::class, 'AgregarDe
 Route::post('/actualizar_departamento', [DepartamentosController::class, 'ActualizarDepartamentos']);
 //Eliminar
 Route::post('/eliminar_departamento/{id}', [DepartamentosController::class, 'EliminarDepartamentos']);
+//Consultar Departamentos
+Route::get('/data_departamentos', [DepartamentosController::class, 'ConsultarDepartamentos']);
 
 /* MUNICIPIOS */
 //Ver

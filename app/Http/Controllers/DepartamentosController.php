@@ -74,4 +74,11 @@ class DepartamentosController extends Controller
             'codigo_iso' => 'required|between:0,5',
         ]);
     }
+
+    //Consulta a departamentos
+    public function ConsultarDepartamentos()
+    {
+        $departamentos = Departamento::all();
+        return response()->json($departamentos);
+    }
 }

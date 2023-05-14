@@ -8,17 +8,22 @@
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="municipio.nombre" class="full-width"
                                     label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
                                     :error="hayError(errores.nombre)" />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.departamento_id" type="number"
-                                    class="full-width" label="Departamento"
+                                <q-select v-model="municipio.departamento_id" class="full-width"
+                                    :options="departamentos"
+                                    label="Departamento"
+                                    emit-value
+                                    map-options
+                                    option-label="nombre"
+                                    option-value="id"
                                     :error-message="errores.departamento_id && errores.departamento_id[0]"
                                     :error="hayError(errores.departamento_id)" />
                             </q-item>
@@ -88,7 +93,7 @@ const errored = ref(false)
 const municipio = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
-
+const departamentos = ref({})//Para almacenar el array de los departamentos
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -122,6 +127,15 @@ onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
 
+onMounted(async() =>{
+    try {
+        const response = await axios.get('/api/data_departamentos');
+        departamentos.value = response.data;
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
     municipio.value = {}
@@ -130,7 +144,6 @@ const reiniciarValores = () => {
     errored.value = false
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
-
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
