@@ -130,8 +130,8 @@ const direccion = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
-const municipios = ref({})//Para almacenar el array de los municipios
-const departamentos = ref({})//Para almacenar el array de los departamentos
+const municipios = ref([])//Para almacenar el array de los municipios
+const departamentos = ref([])//Para almacenar el array de los departamentos
 const selectedDepartamento = ref(null)
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
@@ -180,6 +180,7 @@ onMounted(async() =>{
 
 
 const cargarMunicipios = async () => {
+    direccion.value.municipio_id = null
     if (selectedDepartamento.value){
         try {
             const response = await axios.get('/api/data_municipios/'+ selectedDepartamento.value);
@@ -199,6 +200,8 @@ const reiniciarValores = () => {
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
+    departamentos.value = []
+    municipios = []
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }

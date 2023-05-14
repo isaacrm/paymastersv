@@ -14,7 +14,11 @@ class DepartamentosController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Departamento::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = Departamento::where(function ($query) use ($filtro) {
+                $query->where('nombre', 'like', '%' . $filtro . '%')
+                ->orWhere('codigo_iso', 'like', '%' . $filtro . '%');
+                 })
+        ->orderBy('id');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual

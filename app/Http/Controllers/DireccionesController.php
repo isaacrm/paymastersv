@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Models\Direccion;
+
 use Illuminate\Http\Request;
 
 class DireccionesController extends Controller
@@ -16,11 +17,18 @@ class DireccionesController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        //$query = Municipio::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        
         $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio')
                    ->join('municipios', 'direccions.municipio_id', '=', 'municipios.id')
-                   ->where('direccions.calle', 'like', '%' . $filtro . '%')
+                   ->where(function ($query) use ($filtro) {
+                       $query->where('direccions.calle', 'like', '%' . $filtro . '%')
+                           ->orWhere('direccions.colonia', 'like', '%' . $filtro . '%')
+                           ->orWhere('identificador_casa', 'like', '%' . $filtro . '%')
+                           ->orWhere('apto_local', 'like', '%' . $filtro . '%')
+                           ->orWhere('municipios.nombre', 'like', '%' . $filtro . '%');
+                   })
                    ->orderBy('direccions.id');
+               
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual

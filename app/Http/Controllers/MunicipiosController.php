@@ -17,7 +17,10 @@ class MunicipiosController extends Controller
         //$query = Municipio::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
         $query = Municipio::select('municipios.*', 'departamentos.nombre AS nombre_departamento')
                    ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
-                   ->where('municipios.nombre', 'like', '%' . $filtro . '%')
+                   ->where(function ($query) use ($filtro) {
+                    $query->where('municipios.nombre', 'like', '%' . $filtro . '%')
+                        ->orWhere('departamentos.nombre', 'like', '%' . $filtro . '%');
+                    })
                    ->orderBy('municipios.id');
         $tuplas = $query->count();
 
@@ -86,4 +89,5 @@ class MunicipiosController extends Controller
         $municipios = Municipio::where('departamento_id', $departamento_id)->get();
         return response()->json($municipios);
     }
+    
 }

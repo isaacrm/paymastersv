@@ -93,7 +93,7 @@ const errored = ref(false)
 const municipio = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
-const departamentos = ref({})//Para almacenar el array de los departamentos
+const departamentos = ref([])//Para almacenar el array de los departamentos
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -144,6 +144,8 @@ const reiniciarValores = () => {
     errored.value = false
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
+
+    departamentos.value = []
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
