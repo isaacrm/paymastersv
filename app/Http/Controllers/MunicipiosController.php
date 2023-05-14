@@ -14,7 +14,6 @@ class MunicipiosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
-        //$query = Municipio::with('departamento')->where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
         $query = Municipio::select('municipios.*', 'departamentos.nombre AS nombre_departamento')
                    ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
                    ->where('municipios.nombre', 'like', '%' . $filtro . '%')

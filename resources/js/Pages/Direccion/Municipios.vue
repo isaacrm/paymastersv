@@ -17,7 +17,7 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.departamento_id" class="full-width" 
+                                <q-input filled bottom-slots v-model="municipio.departamento_id" type="number" class="full-width" 
                                     label="Departamento" :error-message="errores.departamento_id && errores.departamento_id[0]"
                                     :error="hayError(errores.departamento_id)" />
                             </q-item>
