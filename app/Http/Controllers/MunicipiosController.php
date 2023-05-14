@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Departamento;
+use App\Models\Municipio;
 use Illuminate\Http\Request;
 
-class DepartamentosController extends Controller
+class MunicipiosController extends Controller
 {
-    public function TablaDepartamentos(Request $request)
+    public function TablaMunicipios(Request $request)
     {
         // Para la paginación desde el servidor
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Departamento::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        //$query = Municipio::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = Municipio::select('municipios.*', 'departamentos.nombre AS nombre_departamento')
+                   ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
+                   ->where('municipios.nombre', 'like', '%' . $filtro . '%')
+                   ->orderBy('municipios.id');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual
@@ -37,32 +41,26 @@ class DepartamentosController extends Controller
             ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
     }
     // La operación de Create [C]RUD
-    public function AgregarDepartamentos(Request $request)
+    public function AgregarMunicipios(Request $request)
     {
         // Comprobando que los campos se hayan ingresado correctamente
         $this->validacion($request);
         // Estableciendo el modelo donde se guardara la informacion
-        $departamentos = new Departamento();
+        $municipios = new Municipio();
         // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
-        $departamentos->nombre = $request->nombre;
-        $departamentos->codigo_iso = $request->codigo_iso;
+        $municipios->nombre = $request->nombre;
+        $municipios->departamento_id = $request->departamento_id;
         // Guardando la informacion
-        $departamentos->save();
+        $municipios->save();
     }
     // La operación de Update CR[U]D
-    public function ActualizarDepartamentos(Request $request)
+    public function ActualizarMunicipios(Request $request)
     {
         $this->validacion($request);
-        $departamentos = Departamento::find($request->id);
-        $departamentos->nombre = $request->nombre;
-        $departamentos->codigo_iso = $request->codigo_iso;
-        $departamentos->save();
-    }
-    // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
-    public function EliminarDepartamentos(Request $request)
-    {
-        $departamentos = Departamento::find($request->id);
-        $departamentos->delete();
+        $municipios = Municipio::find($request->id);
+        $municipios->nombre = $request->nombre;
+        $municipios->departamento_id = $request->departamento_id;
+        $municipios->save();
     }
     /* METODOS INTERNOS con camelPascal */
     // Validacion de campos con Laravel
@@ -70,8 +68,8 @@ class DepartamentosController extends Controller
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
-            'nombre' => 'required|max:30',
-            'codigo_iso' => 'required|between:0,5',
+            'nombre' => 'required|max:75',
+            'departamento_id' => 'required|integer',
         ]);
     }
 }

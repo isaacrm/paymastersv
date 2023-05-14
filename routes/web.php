@@ -37,5 +37,9 @@ Route::middleware([
     Route::get('/departamentos', function(){
         return Inertia::render('Direccion/Departamentos');
     })->name('departamentos');
+
+    Route::get('/municipios', function(){
+        return Inertia::render('Direccion/Municipios');
+    })->name('municipios');
 });
 
