@@ -78,4 +78,12 @@ class MunicipiosController extends Controller
             'departamento_id' => 'required|integer',
         ]);
     }
+
+    //Consulta a departamentos
+    public function ConsultarMunicipios($departamento_id)
+    {
+        //$municipios = Municipio::all();
+        $municipios = Municipio::where('departamento_id', $departamento_id)->get();
+        return response()->json($municipios);
+    }
 }

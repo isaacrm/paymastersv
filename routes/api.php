@@ -57,6 +57,8 @@ Route::post('/agregar_municipio',[MunicipiosController::class, 'AgregarMunicipio
 Route::post('/actualizar_municipio', [MunicipiosController::class, 'ActualizarMunicipios']);
 //Eliminar
 Route::post('/eliminar_municipio/{id}', [MunicipiosController::class, 'EliminarMunicipios']);
+//Consultar Municipios
+Route::get('/data_municipios/{id}', [MunicipiosController::class, 'ConsultarMunicipios']);
 
 /* DIRECCIONES */
 //Ver

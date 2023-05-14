@@ -41,8 +41,25 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="direccion.municipio_id" type="number"
-                                    class="full-width" label="Municipio"
+                                <q-select v-model="selectedDepartamento" class="full-width"
+                                    :options="departamentos"
+                                    label="Departamento"
+                                    emit-value
+                                    map-options
+                                    option-label="nombre"
+                                    option-value="id" 
+                                    @update:model-value="cargarMunicipios"/>
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-select v-model="direccion.municipio_id" class="full-width"
+                                    :options="municipios"
+                                    label="Municipios"
+                                    emit-value
+                                    map-options
+                                    option-label="nombre"
+                                    option-value="id"
                                     :error-message="errores.municipio_id && errores.municipio_id[0]"
                                     :error="hayError(errores.municipio_id)" />
                             </q-item>
@@ -113,6 +130,9 @@ const direccion = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
+const municipios = ref({})//Para almacenar el array de los municipios
+const departamentos = ref({})//Para almacenar el array de los departamentos
+const selectedDepartamento = ref(null)
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -148,6 +168,27 @@ const columns = [
 onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
+
+onMounted(async() =>{
+    try {
+        const response = await axios.get('/api/data_departamentos');
+        departamentos.value = response.data;
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+const cargarMunicipios = async () => {
+    if (selectedDepartamento.value){
+        try {
+            const response = await axios.get('/api/data_municipios/'+ selectedDepartamento.value);
+            municipios.value = response.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {

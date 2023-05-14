@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Departamento;
+use App\Models\Municipio;
 use App\Models\Direccion;
 use Illuminate\Http\Request;
 
