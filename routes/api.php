@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TipoDocumentosController;
+use App\Http\Controllers\DepartamentosController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,3 +32,14 @@ Route::post('/agregar', [TipoDocumentosController::class, 'AgregarTipoDocumentos
 Route::post('/actualizar', [TipoDocumentosController::class, 'ActualizarTipoDocumentos']);
 // Eliminar
 Route::post('/eliminar/{id}', [TipoDocumentosController::class, 'EliminarTipoDocumentos']);
+
+
+/* DEPARTAMENTOS */
+//Ver
+Route::get('/tabla_departamentos', [DepartamentosController::class, 'TablaDepartamentos']);
+//Agregar
+Route::post('/agregar_departamento', [DepartamentosController::class, 'AgregarDepartamentos']);
+//Actualizar
+Route::post('/actualizar_departamento', [DepartamentosController::class, 'ActualizarDepartamentos']);
+//Eliminar
+Route::post('/eliminar_departamento/{id}', [DepartamentosController::class, 'EliminarDepartamentos']);
