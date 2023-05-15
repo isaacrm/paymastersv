@@ -41,7 +41,7 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="selectedDepartamento" class="full-width"
+                                <q-select v-model="direccion.departamento_id" class="full-width"
                                     :options="departamentos"
                                     label="Departamento"
                                     emit-value
@@ -58,8 +58,8 @@
                                     label="Municipios"
                                     emit-value
                                     map-options
-                                    option-label="nombre"
-                                    option-value="id"
+                                    option-label="nombre_municipio"
+                                    option-value="municipio_id"
                                     :error-message="errores.municipio_id && errores.municipio_id[0]"
                                     :error="hayError(errores.municipio_id)" />
                             </q-item>
@@ -171,19 +171,19 @@ onMounted(async () => {
 
 onMounted(async() =>{
     try {
-        const response = await axios.get('/api/data_departamentos');
-        departamentos.value = response.data;
+        const response = await axios.get('/api/data_departamentos')
+        departamentos.value = response.data
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 });
 
 
 const cargarMunicipios = async () => {
-    direccion.value.municipio_id = null
-    if (selectedDepartamento.value){
+    //direccion.value.municipio_id = null
+    if (direccion.value.departamento_id){
         try {
-            const response = await axios.get('/api/data_municipios/'+ selectedDepartamento.value);
+            const response = await axios.get('/api/data_municipios/'+ direccion.value.departamento_id)
             municipios.value = response.data
         } catch (error) {
             console.log(error)
@@ -200,8 +200,9 @@ const reiniciarValores = () => {
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
-    departamentos.value = []
-    municipios = []
+
+    direccion.municipio_id = null
+    direccion.departamento_id = null
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }

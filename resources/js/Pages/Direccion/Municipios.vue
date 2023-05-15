@@ -145,7 +145,7 @@ const reiniciarValores = () => {
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
-    departamentos.value = []
+    municipio.departamento_id = null
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }

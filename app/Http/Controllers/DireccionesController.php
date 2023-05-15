@@ -18,8 +18,9 @@ class DireccionesController extends Controller
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
         
-        $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio')
+        $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio', 'departamentos.id AS departamento_id','departamentos.nombre AS departamento_nombre')
                    ->join('municipios', 'direccions.municipio_id', '=', 'municipios.id')
+                   ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
                    ->where(function ($query) use ($filtro) {
                        $query->where('direccions.calle', 'like', '%' . $filtro . '%')
                            ->orWhere('direccions.colonia', 'like', '%' . $filtro . '%')

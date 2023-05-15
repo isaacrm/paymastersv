@@ -86,7 +86,9 @@ class MunicipiosController extends Controller
     public function ConsultarMunicipios($departamento_id)
     {
         //$municipios = Municipio::all();
-        $municipios = Municipio::where('departamento_id', $departamento_id)->get();
+        $municipios = Municipio::select('municipios.*', 'municipios.id AS municipio_id', 'municipios.nombre AS nombre_municipio', 'departamentos.nombre AS nombre_departamento')
+        ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
+        ->where('departamento_id', $departamento_id)->get();
         return response()->json($municipios);
     }
     
