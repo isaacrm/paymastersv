@@ -3,6 +3,7 @@
 use App\Http\Controllers\TipoDocumentosController;
 use App\Http\Controllers\DepartamentosController;
 use App\Http\Controllers\MunicipiosController;
+use App\Http\Controllers\DireccionesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,23 +35,49 @@ Route::post('/actualizar', [TipoDocumentosController::class, 'ActualizarTipoDocu
 // Eliminar
 Route::post('/eliminar/{id}', [TipoDocumentosController::class, 'EliminarTipoDocumentos']);
 
+
 /* DEPARTAMENTOS */
-// Ver
+//Ver
 Route::get('/tabla_departamentos', [DepartamentosController::class, 'TablaDepartamentos']);
-// Agregar
+//Agregar
 Route::post('/agregar_departamento', [DepartamentosController::class, 'AgregarDepartamentos']);
-// Actualizar
+//Actualizar
 Route::post('/actualizar_departamento', [DepartamentosController::class, 'ActualizarDepartamentos']);
-// Eliminar
+//Eliminar
 Route::post('/eliminar_departamento/{id}', [DepartamentosController::class, 'EliminarDepartamentos']);
+//Consultar Departamentos
+Route::get('/data_departamentos', [DepartamentosController::class, 'ConsultarDepartamentos']);
 
 /* MUNICIPIOS */
-// Ver
+//Ver
 Route::get('/tabla_municipios', [MunicipiosController::class, 'TablaMunicipios']);
-// Agregar
-Route::post('/agregar_municipio', [MunicipiosController::class, 'AgregarMunicipios']);
-// Actualizar
+//Agregar
+Route::post('/agregar_municipio',[MunicipiosController::class, 'AgregarMunicipios']);
+//Actualizar
 Route::post('/actualizar_municipio', [MunicipiosController::class, 'ActualizarMunicipios']);
-// Eliminar
+//Eliminar
 Route::post('/eliminar_municipio/{id}', [MunicipiosController::class, 'EliminarMunicipios']);
+//Consultar Municipios
+Route::get('/data_municipios/{id}', [MunicipiosController::class, 'ConsultarMunicipios']);
+//Consultar municipio para editar
+Route::get('/municipio/{id}', [MunicipiosController::class, 'GetMunicipio']);
 
+/* DIRECCIONES */
+//Ver
+Route::get('/tabla_direcciones', [DireccionesController::class, 'TablaDirecciones']);
+//Agregar
+Route::post('/agregar_direccion', [DireccionesController::class, 'AgregarDirecciones']);
+//Actualizar
+Route::post('/actualizar_direccion', [DireccionesController::class, 'ActualizarDirecciones']);
+//Eliminar
+Route::post('/eliminar_direccion/{id}', [DireccionesController::class, 'EliminarDirecciones']);
+
+/* INGRESOS */
+// Ver
+Route::get('/tabla_ingresos', [IngresosController::class, 'TablaIngresos']);
+// Agregar
+Route::post('/agregar_ingreso', [IngresosController::class, 'AgregarIngresos']);
+// Actualiza
+Route::post('/actualizar_ingreso', [IngresosController::class, 'ActualizarIngresos']);
+// Eliminar
+Route::post('/eliminar_registro/{id}', [IngresosController::class, 'EliminarIngresos']);

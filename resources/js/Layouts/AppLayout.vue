@@ -59,13 +59,11 @@
 
                     <q-separator class="q-mt-md q-mb-xs" />
 
-                    <q-separator class="q-my-md" />
-
                     <q-item-label header class="text-weight-bold text-uppercase">
-                        Direccion
+                        Direcciones
                     </q-item-label>
 
-                    <q-item v-for="link in direccion" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -73,7 +71,6 @@
                             <q-item-label>{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-separator class="q-mt-md q-mb-xs" />
 
                     <q-separator class="q-my-md" />
 
@@ -90,6 +87,20 @@
                         </q-item-section>
                     </q-item>
 
+                    <q-separator class="q-my-md" />
+
+                    <q-item-label header class="text-weight-bold text-uppercase">
+                        Registro
+                    </q-item-label>
+
+                    <q-item v-for="link in registro" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item-section avatar>
+                            <q-icon color="grey" :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
 
                     <q-separator class="q-mt-md q-mb-lg" />
 
@@ -161,12 +172,10 @@ const links2 = [
     { icon: 'watch_later', text: 'Watch later' },
     { icon: 'thumb_up_alt', text: 'Liked videos' }
 ]
-
-const direccion = [
-    { icon: 'person_pin_circle', text: 'Municipios', path: '/municipios' },
-    { icon: 'local_library', text: 'Departamentos', path: '/departamentos' },
-    { icon: 'local_movies', text: 'Movies & Shows' },
-    { icon: 'videogame_asset', text: 'Gaming' },
+const direcciones = [
+    { icon: 'map', text: 'Departamentos', path: '/departamentos' },
+    { icon: 'location_city', text: 'Municipios', path: '/municipios' },
+    { icon: 'location_on', text: 'Direcciones', path: '/direcciones' },
     { icon: 'live_tv', text: 'Live' }
 ]
 const configuracion = [
@@ -174,6 +183,12 @@ const configuracion = [
     { icon: 'flag', text: 'Report history' },
     { icon: 'help', text: 'Help' },
     { icon: 'feedback', text: 'Send feedback' }
+]
+const registro = [
+    { icon: 'perm_identity', text: 'Empleados' },
+    { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
+    { icon: 'query_stats', text: 'Descuentos' },
+    { icon: 'update', text: 'Send feedback' }
 ]
 const sidebar_footer = [
     { text: 'About' },

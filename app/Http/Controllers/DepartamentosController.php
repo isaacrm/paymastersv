@@ -9,6 +9,7 @@ class DepartamentosController extends Controller
 {
     public function TablaDepartamentos(Request $request)
     {
+<<<<<<< HEAD
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
@@ -17,12 +18,33 @@ class DepartamentosController extends Controller
         $detalle = $query->skip(($pagina - 1) * $filasPorPagina)
             ->take($filasPorPagina)
             ->get();
+=======
+        // Para la paginación desde el servidor
+        $pagina = $request->page;
+        $filasPorPagina = $request->rowsPerPage;
+        $filtro = $request->filter;
+        // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
+        $query = Departamento::where(function ($query) use ($filtro) {
+                $query->where('nombre', 'like', '%' . $filtro . '%')
+                ->orWhere('codigo_iso', 'like', '%' . $filtro . '%');
+                 })
+        ->orderBy('id');
+        $tuplas = $query->count();
+
+        // Obtener los datos de la página actual
+        $detalle = $query->skip(($pagina - 1) * $filasPorPagina)
+            ->take($filasPorPagina)
+            ->get();
+
+        // Informacion pertinente a la paginacion para llamarlos en la vista
+>>>>>>> origin/kath02
         $paginacion = [
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
             'filtro' => $filtro
         ];
+<<<<<<< HEAD
         return response()->json([
             'detalle' => $detalle,
             'paginacion' => $paginacion,
@@ -36,6 +58,26 @@ class DepartamentosController extends Controller
         $departamentos = new Departamento();
         $departamentos->nombre = $request->nombre;
         $departamentos->codigo_iso = $request->codigo_iso;
+=======
+
+        // El json que se manda a la vista para poder visualizar la información
+        return response()->json([
+            'detalle' => $detalle,
+            'paginacion' => $paginacion,
+            ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
+    }
+    // La operación de Create [C]RUD
+    public function AgregarDepartamentos(Request $request)
+    {
+        // Comprobando que los campos se hayan ingresado correctamente
+        $this->validacion($request);
+        // Estableciendo el modelo donde se guardara la informacion
+        $departamentos = new Departamento();
+        // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
+        $departamentos->nombre = $request->nombre;
+        $departamentos->codigo_iso = $request->codigo_iso;
+        // Guardando la informacion
+>>>>>>> origin/kath02
         $departamentos->save();
     }
     // La operación de Update CR[U]D
@@ -47,18 +89,41 @@ class DepartamentosController extends Controller
         $departamentos->codigo_iso = $request->codigo_iso;
         $departamentos->save();
     }
+<<<<<<< HEAD
     // La operación de Delete CR[U]D
+=======
+    // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
+>>>>>>> origin/kath02
     public function EliminarDepartamentos(Request $request)
     {
         $departamentos = Departamento::find($request->id);
         $departamentos->delete();
     }
+<<<<<<< HEAD
     // La operación de validación
     private function validacion(Request $request)
     {
+=======
+    /* METODOS INTERNOS con camelPascal */
+    // Validacion de campos con Laravel
+    private function validacion(Request $request)
+    {
+        // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
+>>>>>>> origin/kath02
         $request->validate([
             'nombre' => 'required|max:30',
             'codigo_iso' => 'required|between:0,5',
         ]);
     }
+<<<<<<< HEAD
 }
+=======
+
+    //Consulta a departamentos
+    public function ConsultarDepartamentos()
+    {
+        $departamentos = Departamento::all();
+        return response()->json($departamentos);
+    }
+}
+>>>>>>> origin/kath02
