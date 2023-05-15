@@ -14,7 +14,6 @@ class MunicipiosController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        //$query = Municipio::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
         $query = Municipio::select('municipios.*', 'departamentos.nombre AS nombre_departamento')
                    ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
                    ->where(function ($query) use ($filtro) {
@@ -85,11 +84,9 @@ class MunicipiosController extends Controller
     //Consulta a departamentos
     public function ConsultarMunicipios($departamento_id)
     {
-        //$municipios = Municipio::all();
-        $municipios = Municipio::select('municipios.*', 'municipios.id AS municipio_id', 'municipios.nombre AS nombre_municipio', 'departamentos.nombre AS nombre_departamento')
-        ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
-        ->where('departamento_id', $departamento_id)->get();
-        return response()->json($municipios);
+        $municipios = Municipio::where('departamento_id', $departamento_id)->get();
+        // El json que se manda a la vista para poder visualizar la información
+        return response()->json($municipios)->setEncodingOptions(JSON_NUMERIC_CHECK);
     }
     
 }

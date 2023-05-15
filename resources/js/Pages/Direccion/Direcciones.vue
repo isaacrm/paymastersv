@@ -58,8 +58,8 @@
                                     label="Municipios"
                                     emit-value
                                     map-options
-                                    option-label="nombre_municipio"
-                                    option-value="municipio_id"
+                                    option-label="nombre"
+                                    option-value="id"
                                     :error-message="errores.municipio_id && errores.municipio_id[0]"
                                     :error="hayError(errores.municipio_id)" />
                             </q-item>
@@ -132,7 +132,6 @@ const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el mo
 
 const municipios = ref([])//Para almacenar el array de los municipios
 const departamentos = ref([])//Para almacenar el array de los departamentos
-const selectedDepartamento = ref(null)
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -282,6 +281,7 @@ const guardar = async () => {
 // Para mostrar los datos en el form
 const editar = (editarDirecciones) => {
     direccion.value = { ...editarDirecciones }
+    cargarMunicipios()
     submitted.value = false;
     errores.value = {}
 }
