@@ -20,7 +20,14 @@ class UnidadesController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Unidades::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        // $query = Unidades::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = DB::table('unidades as u1')
+            ->leftJoin('unidades as u2', 'u1.nivel_organizacional', '=', 'u2.id')
+            ->leftJoin('puestos as p', 'u1.superior_id', '=', 'p.id')
+            ->leftJoin('centro_de_costos as c', 'u1.centro_costos_id', '=', 'c.id')
+            ->select('u1.id', 'u1.nombre', 'u1.superior_id', 'u1.centro_costos_id', 'u1.nivel_organizacional', 'u2.nombre as nivel_organizacional_nombre', 'p.nombre as superior_nombre', 'c.anyo as centro_costos_año')
+            ->where('u1.nombre', 'like', '%' . $filtro . '%')
+            ->orderBy('u1.id');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual

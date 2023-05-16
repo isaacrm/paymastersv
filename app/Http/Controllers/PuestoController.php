@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Puesto;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class PuestoController extends Controller
 {
@@ -18,7 +19,12 @@ class PuestoController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Puesto::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        // $query = Puesto::select('id,n')->where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = DB::table('puestos as p2')
+            ->leftJoin('puestos as p1', 'p2.superior_id', '=', 'p1.id')
+            ->select('p2.id', 'p2.nombre', 'p2.nro_plazas', 'p2.salario_desde', 'p2.salario_hasta', 'p2.superior_id', 'p1.nombre as superior_nombre', )
+            ->where('p2.nombre', 'like', '%' . $filtro . '%')
+            ->orderBy('p2.id');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual

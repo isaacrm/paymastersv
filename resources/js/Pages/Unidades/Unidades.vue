@@ -126,9 +126,9 @@ const pagination = ref({
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
     { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'superior_id', align: 'left', label: 'Superior', field: 'superior_id' },
-    { name: 'centro_costos_id', align: 'left', label: 'Centro de costos', field: 'centro_costos_id' },
-    { name: 'nivel_organizacional', align: 'left', label: 'Nivel organizacional', field: 'nivel_organizacional' },
+    { name: 'superior_nombre', align: 'left', label: 'Superior', field: 'superior_nombre' },
+    { name: 'centro_costos_año', align: 'left', label: 'Centro de costos', field: 'centro_costos_año' },
+    { name: 'nivel_organizacional_nombre', align: 'left', label: 'Nivel organizacional', field: 'nivel_organizacional_nombre' },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 
 ]

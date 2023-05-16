@@ -136,7 +136,7 @@ const columns = [
     { name: 'nro_plazas', align: 'left', label: 'Plazas', field: 'nro_plazas', sortable: true },
     { name: 'salario_desde', align: 'left', label: 'Salario minimo', field: 'salario_desde', sortable: true },
     { name: 'salario_hasta', align: 'left', label: 'Salario maximo', field: 'salario_hasta', sortable: true },
-    { name: 'superior_id', align: 'left', label: 'Superior', field: 'superior_id', sortable: true },
+    { name: 'superior_nombre', align: 'left', label: 'Superior', field: 'superior_nombre', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 
 ]
