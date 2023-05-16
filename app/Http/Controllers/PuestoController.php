@@ -108,6 +108,24 @@ class PuestoController extends Controller
         $puesto->delete();
     }
 
+    public function consultarPuestos()
+    {
+        $superior = Puesto::select('id', 'nombre as name')->get();
+        return response()->json($superior, 200);
+    }
+
+    public function consultarSuperiores(Request $request)
+    {
+        $ids = Puesto::select('superior_id')->whereNotNull('superior_id')->groupBy('superior_id')->get();
+        $superiores = [];
+
+        foreach ($ids as $element) {
+            array_push($superiores, Puesto::select('id', 'nombre as name')->where('id', $element->superior_id)->first());
+        }
+
+        return response()->json(['superiores' => $superiores], 200);
+    }
+
     private function validacion(Request $request)
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.

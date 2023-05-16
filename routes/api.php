@@ -45,6 +45,10 @@ Route::post('/puestos_agregar', [PuestoController::class, 'store']);
 Route::post('/puestos_actualizar', [PuestoController::class, 'update']);
 // Eliminar
 Route::post('/puestos_eliminar/{id}', [PuestoController::class, 'destroy']);
+//Consultar superior
+Route::get('/puestos_consultar_superiores', [PuestoController::class, 'consultarSuperiores']);
+//Consultar puestos
+Route::get('/puestos_consultar_puestos', [PuestoController::class, 'consultarPuestos']);
 
 /* Unidades */
 // Ver
@@ -55,12 +59,8 @@ Route::post('/unidades_agregar', [UnidadesController::class, 'store']);
 Route::post('/unidades_actualizar', [UnidadesController::class, 'update']);
 // Eliminar
 Route::post('/unidades_eliminar/{id}', [UnidadesController::class, 'destroy']);
-//Obtener los supeiores
-Route::get('/unidades_superiores', [UnidadesController::class, 'superiores']);
-//Consultar superior
-Route::get('/unidades_consultar_superiores', [UnidadesController::class, 'consultarSuperiores']);
-//Obtener los centro de costos
-Route::get('/unidades_centro_de_costos', [UnidadesController::class, 'centro_de_costos']);
+//Consultar nivel organizacional
+Route::get('/unidades_consultar_unidades', [UnidadesController::class, 'consultarUnidades']);
 
 /* Centro_de_costos */
 // Ver
@@ -71,3 +71,5 @@ Route::post('/centro_de_costos_agregar', [CentroDeCostosController::class, 'stor
 Route::post('/centro_de_costos_actualizar', [CentroDeCostosController::class, 'update']);
 // Eliminar
 Route::post('/centro_de_costos_eliminar/{id}', [CentroDeCostosController::class, 'destroy']);
+//Obtener los centro de costos
+Route::get('/centro_de_costos_consultar_centro_de_costos', [CentroDeCostosController::class, 'centro_de_costos']);

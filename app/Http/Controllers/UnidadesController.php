@@ -108,28 +108,10 @@ class UnidadesController extends Controller
         $datos->delete();
     }
 
-    public function superiores(Request $request)
+    public function consultarUnidades()
     {
-        $ids = Puesto::select('superior_id')->whereNotNull('superior_id')->groupBy('superior_id')->get();
-        $superiores = [];
-
-        foreach ($ids as $element) {
-            array_push($superiores, Puesto::select('id', 'nombre as name')->where('id', $element->superior_id)->first());
-        }
-
-        return response()->json(['superiores' => $superiores], 200);
-    }
-
-    public function consultarSuperiores($id)
-    {
-        $superior = Puesto::select('id', 'nombre as name');
-        return response()->json($superior, 200);
-    }
-
-    public function centro_de_costos(Request $request)
-    {
-        $centro_de_costos = CentroDeCostos::select('id', 'anyo as name')->get();
-        return response()->json(['centro_de_costos' => $centro_de_costos], 200);
+        $datos = Unidades::select('id', 'nombre as name')->get();
+        return response()->json($datos, 200);
     }
 
     private function validacion(Request $request)

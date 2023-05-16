@@ -44,9 +44,9 @@
                     <div class="row">
                         <div class="col-12 col-md-12">
                             <q-item>
-                                <q-input filled bottom-slots v-model="puesto.superior_id" class="full-width"
-                                    label="Superior:" :error-message="errores.superior_id && errores.superior_id[0]"
-                                    :error="hayError(errores.superior_id)" />
+                                <q-select v-model="puesto.superior_id" label="Seleccione un superior"
+                                    :options="consultarPuestos" option-label="name" option-value="id" class="full-width"
+                                    filled clearable />
                             </q-item>
                         </div>
                     </div>
@@ -140,6 +140,8 @@ const columns = [
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 
 ]
+
+const consultarPuestos = ref([])
 /* METODOS */
 // Lo que sucede al cargar por primera vez la vista
 onMounted(async () => {
@@ -167,6 +169,11 @@ const hayError = (valor) => {
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
+    
+    if(puesto.value.superior_id){
+        puesto.value.superior_id = puesto.value.superior_id.id
+    }
+
     // Actualizar
     if (puesto.value.id) {
         await axios
@@ -278,5 +285,15 @@ const generarTabla = async (props) => {
         })
     // Apagando el indicador de carga. Este no se toca
     loading.value = false
+
+    // * Los valores de select para recargarlos
+    await obtenerPuestos()
+}
+
+const obtenerPuestos = async () => {
+    await axios.get('/api/puestos_consultar_puestos',).then(response => {
+        console.log(response.data);
+        consultarPuestos.value = response.data;
+    })
 }
 </script>

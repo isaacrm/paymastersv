@@ -21,24 +21,23 @@
                         <div class="col-12 col-md-6">
                             <q-item>
                                 <q-select v-model="datos.superior_id" label="Seleccione un superior" :options="superiores"
-                                    option-label="name" option-value="id" class="full-width" filled />
+                                    option-label="name" option-value="id" class="full-width" filled clearable />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
                                 <q-select v-model="datos.centro_de_costos" label="Seleccione un centro de costos"
                                     :options="centro_de_costos" option-label="name" option-value="id" class="full-width"
-                                    filled />
+                                    filled clearable />
                             </q-item>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 col-md-12">
                             <q-item>
-                                <q-input filled bottom-slots v-model="datos.nivel_organizacional" class="full-width"
-                                    label="Nivel organizacional:"
-                                    :error-message="errores.nivel_organizacional && errores.nivel_organizacional[0]"
-                                    :error="hayError(errores.nivel_organizacional)" />
+                                <q-select v-model="datos.nivel_organizacional"
+                                    label="Seleccione el superior en el nivel organizacional" :options="unidades"
+                                    option-label="name" option-value="id" class="full-width" filled clearable />
                             </q-item>
                         </div>
                     </div>
@@ -111,6 +110,7 @@ const nombres = {
 
 const superiores = ref([])
 const centro_de_costos = ref([])
+const unidades = ref([])
 
 const confirmarEliminacion = ref(false)
 const nombreRegistroEliminar = ref('')
@@ -135,8 +135,6 @@ const columns = [
 /* METODOS */
 // Lo que sucede al cargar por primera vez la vista
 onMounted(async () => {
-    await obtenerSuperiores()
-    await obtenerCentroDeCostos()
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
 // Para reiniciar los valores luego de realizar alguna operacion
@@ -166,8 +164,10 @@ const guardar = async () => {
     submitted.value = true
     errores.value = {}
     // Actualizar
-    datos.value.centro_de_costos = datos.value.centro_de_costos.id
-    datos.value.superior_id = datos.value.superior_id.id
+    if (datos.value.centro_de_costos) { datos.value.centro_de_costos = datos.value.centro_de_costos.id }
+    if (datos.value.superior_id) { datos.value.superior_id = datos.value.superior_id.id }
+    if (datos.value.nivel_organizacional) { datos.value.nivel_organizacional = datos.value.nivel_organizacional.id }
+
     if (datos.value.id) {
         await axios
             .post(`/api/${nombres.minu}es_actualizar`, datos.value)
@@ -278,17 +278,29 @@ const generarTabla = async (props) => {
         })
     // Apagando el indicador de carga. Este no se toca
     loading.value = false
+
+
+    // * Los valores de select para recargarlos
+    await obtenerSuperiores()
+    await obtenerCentroDeCostos()
+    await obtenerUnidades()
 }
 
 const obtenerSuperiores = async () => {
-    await axios.get('/api/unidades_superiores',).then(response => {
+    await axios.get('/api/puestos_consultar_superiores',).then(response => {
         superiores.value = response.data.superiores;
     })
 }
 
 const obtenerCentroDeCostos = async () => {
-    await axios.get('/api/unidades_centro_de_costos',).then(response => {
+    await axios.get('/api/centro_de_costos_consultar_centro_de_costos',).then(response => {
         centro_de_costos.value = response.data.centro_de_costos;
+    })
+}
+
+const obtenerUnidades = async () => {
+    await axios.get('/api/unidades_consultar_unidades',).then(response => {
+        unidades.value = response.data;
     })
 }
 </script>

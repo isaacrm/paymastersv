@@ -117,6 +117,12 @@ class CentroDeCostosController extends Controller
         $datos->delete();
     }
 
+    public function centro_de_costos(Request $request)
+    {
+        $centro_de_costos = CentroDeCostos::select('id', 'anyo as name')->get();
+        return response()->json(['centro_de_costos' => $centro_de_costos], 200);
+    }
+
     private function validacion(Request $request)
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
