@@ -5,8 +5,7 @@
                 <q-card-section class="ml-6">
                     <div class="text-h6">Tipo de decuentos</div>
                     <div class="text-subtitle">
-                        Registro de los documentos que el empleado puede
-                        entregar.
+                        Registro de los descuentos aplicados al empleado.
                     </div>
                 </q-card-section>
                 <q-card-section>
