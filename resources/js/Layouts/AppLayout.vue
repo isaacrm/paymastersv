@@ -173,9 +173,9 @@ const links2 = [
     { icon: 'thumb_up_alt', text: 'Liked videos' }
 ]
 const direcciones = [
-    { icon: 'map', text: 'Departamentos', path: '/departamentos' },
-    { icon: 'location_city', text: 'Municipios', path: '/municipios' },
-    { icon: 'location_on', text: 'Direcciones', path: '/direcciones' },
+    { icon: 'map', text: 'Departamentos' },
+    { icon: 'location_city', text: 'Municipios' },
+    { icon: 'location_on', text: 'Direcciones' },
     { icon: 'live_tv', text: 'Live' }
 ]
 const configuracion = [
@@ -187,7 +187,7 @@ const configuracion = [
 const registro = [
     { icon: 'perm_identity', text: 'Empleados' },
     { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
-    { icon: 'query_stats', text: 'Descuentos' },
+    { icon: 'query_stats', text: 'Descuentos',path: '/descuentos' },
     { icon: 'update', text: 'Send feedback' }
 ]
 const sidebar_footer = [

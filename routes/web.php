@@ -34,19 +34,11 @@ Route::middleware([
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
 
-    Route::get('/departamentos', function(){
-        return Inertia::render('Direccion/Departamentos');
-    })->name('departamentos');
-
-    Route::get('/municipios', function(){
-        return Inertia::render('Direccion/Municipios');
-    })->name('municipios');
-
-    Route::get('/direcciones', function(){
-        return Inertia::render('Direccion/Direcciones');
-    })->name('direcciones');
-
     Route::get('/ingresos', function () {
         return Inertia::render('Registros/Ingresos');
     })->name('ingresos');
+
+    Route::get('/descuentos', function () {
+        return Inertia::render('Registros/Descuentos');
+    })->name('descuentos');
 });
