@@ -66,6 +66,7 @@
                 </template>
                 <template v-slot:top-left>
                     <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
@@ -138,7 +139,6 @@ const columns = [
     { name: 'salario_hasta', align: 'left', label: 'Salario maximo', field: 'salario_hasta', sortable: true },
     { name: 'superior_nombre', align: 'left', label: 'Superior', field: 'superior_nombre', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
-
 ]
 
 const consultarPuestos = ref([])
@@ -165,12 +165,17 @@ const hayError = (valor) => {
     else
         return false
 }
+
+const cancelar = () => {
+    puesto.value = {}
+}
+
 // Operacion de guardar
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
-    
-    if(puesto.value.superior_id){
+
+    if (puesto.value.superior_id) {
         puesto.value.superior_id = puesto.value.superior_id.id
     }
 
@@ -228,7 +233,13 @@ const guardar = async () => {
 }
 // Para mostrar los datos en el form
 const editar = (editarPuesto) => {
-    puesto.value = { ...editarPuesto }
+    // puesto.value = { ...editarPuesto }
+    puesto.value.id = editarPuesto.id
+    puesto.value.nombre = editarPuesto.nombre
+    puesto.value.nro_plazas = editarPuesto.nro_plazas
+    puesto.value.salario_desde = editarPuesto.salario_desde
+    puesto.value.salario_hasta = editarPuesto.salario_hasta
+    puesto.value.superior_id = { id: editarPuesto.superior_id, name: editarPuesto.superior_nombre }
     submitted.value = false;
     errores.value = {}
 }
@@ -292,7 +303,6 @@ const generarTabla = async (props) => {
 
 const obtenerPuestos = async () => {
     await axios.get('/api/puestos_consultar_puestos',).then(response => {
-        console.log(response.data);
         consultarPuestos.value = response.data;
     })
 }

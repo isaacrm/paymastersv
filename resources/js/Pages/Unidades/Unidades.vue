@@ -221,7 +221,13 @@ const guardar = async () => {
 }
 // Para mostrar los datos en el form
 const editar = (editardatos) => {
-    datos.value = { ...editardatos }
+    // datos.value = { ...editardatos }
+    datos.value.id = editardatos.id
+    datos.value.nombre = editardatos.nombre
+    datos.value.superior_id = { id: editardatos.superior_id, name: editardatos.superior_nombre }
+    datos.value.centro_de_costos = { id: editardatos.centro_costos_id, name: editardatos.centro_costos_año }
+    datos.value.nivel_organizacional = { id: editardatos.nivel_organizacional, name: editardatos.nivel_organizacional_nombre }
+
     submitted.value = false;
     errores.value = {}
 }

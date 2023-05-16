@@ -63,6 +63,7 @@
                 </template>
                 <template v-slot:top-left>
                     <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
@@ -171,6 +172,11 @@ const hayError = (valor) => {
     else
         return false
 }
+
+const cancelar = () => {
+    datos.value = {}
+}
+
 // Operacion de guardar
 const guardar = async () => {
     submitted.value = true
