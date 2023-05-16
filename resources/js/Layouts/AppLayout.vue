@@ -48,6 +48,17 @@
 
                     <q-separator class="q-my-md" />
 
+                    <q-item v-for="link in rosalio" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item-section avatar>
+                            <q-icon color="grey" :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-separator class="q-mt-md q-mb-xs" />
+
                     <q-item v-for="link in links2" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
@@ -148,6 +159,11 @@ function toggleLeftDrawer() {
 // En path va la ruta que se especifica en web.php
 const inicio = [
     { icon: 'home', text: 'Dashboard', path: '/dashboard' }
+]
+const rosalio = [
+    {icon:'whatshot', text: 'Puestos', path:'/puestos'},
+    {icon:'whatshot', text: 'Unidades', path:'/unidades'},
+    {icon:'whatshot', text: 'Centro de costos', path:'/centro_de_costos'},
 ]
 const links2 = [
     { icon: 'whatshot', text: 'Trending' },
