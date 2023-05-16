@@ -20,12 +20,12 @@ class CentroDeCostosController extends Controller
         $query = CentroDeCostos::where('id', 'like', '%' . $filtro . '%')->orderBy('id');
         // $query = CentroDeCostos::all()->orderBy('id');
         $tuplas = $query->count();
-        
+
         // Obtener los datos de la página actual
         $detalle = $query->skip(($pagina - 1) * $filasPorPagina)
-        ->take($filasPorPagina)
-        ->get();
-        
+            ->take($filasPorPagina)
+            ->get();
+
         //Mandamos los meses y no el id
         $meses = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         foreach ($detalle as $element) {
@@ -129,9 +129,9 @@ class CentroDeCostosController extends Controller
         $request->validate([
             'mes_del' => 'required',
             'mes_al' => 'required',
-            'anyo' => 'required',
-            'presupuesto_inicial' => 'required|min:0|max:9999999999',
-            'presupuesto_restante' => 'required|min:0|max:9999999999',
+            'anyo' => 'required|integer|min:1999|max:2099',
+            'presupuesto_inicial' => 'required|integer|min:1000|max:9999999',
+            'presupuesto_restante' => 'required|integer|min:0|max:' . $request->presupuesto_inicial,
         ]);
     }
 }

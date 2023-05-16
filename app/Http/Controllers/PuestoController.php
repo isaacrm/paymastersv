@@ -141,12 +141,12 @@ class PuestoController extends Controller
             'salario_desde' => [
                 'required',
                 'numeric',
-                'between:0,5000',
+                'between:365,5000',
             ],
             'salario_hasta' => [
                 'required',
                 'numeric',
-                'between:0,5000',
+                'between:'.$request->salario_desde.',5000',
             ],
         ]);
     }
