@@ -20,13 +20,13 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="datos.superior_id" label="Seleccione un superior" :options="superiores"
+                                <q-select v-model="datosSelect.superior_id" label="Seleccione un superior" :options="superiores"
                                     option-label="name" option-value="id" class="full-width" filled clearable />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="datos.centro_de_costos" label="Seleccione un centro de costos"
+                                <q-select v-model="datosSelect.centro_de_costos" label="Seleccione un centro de costos"
                                     :options="centro_de_costos" option-label="name" option-value="id" class="full-width"
                                     filled clearable />
                             </q-item>
@@ -35,7 +35,7 @@
                     <div class="row">
                         <div class="col-12 col-md-12">
                             <q-item>
-                                <q-select v-model="datos.nivel_organizacional"
+                                <q-select v-model="datosSelect.nivel_organizacional"
                                     label="Seleccione el superior en el nivel organizacional" :options="unidades"
                                     option-label="name" option-value="id" class="full-width" filled clearable />
                             </q-item>
@@ -103,6 +103,7 @@ const submitted = ref(false) // Para comprobar si se ha dado click en los botone
 const errored = ref(false)
 
 const datos = ref({}) // El objeto que se enviara mediante el request
+const datosSelect = ref({})
 const nombres = {
     minu: "unidad",
     mayu: "Unidad",
@@ -140,6 +141,7 @@ onMounted(async () => {
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
     datos.value = {}
+    datosSelect.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -163,10 +165,11 @@ const hayError = (valor) => {
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
+
     // Actualizar
-    if (datos.value.centro_de_costos) { datos.value.centro_de_costos = datos.value.centro_de_costos.id }
-    if (datos.value.superior_id) { datos.value.superior_id = datos.value.superior_id.id }
-    if (datos.value.nivel_organizacional) { datos.value.nivel_organizacional = datos.value.nivel_organizacional.id }
+    if (datosSelect.value.centro_de_costos) { datos.value.centro_de_costos = datosSelect.value.centro_de_costos.id }
+    if (datosSelect.value.superior_id) { datos.value.superior_id = datosSelect.value.superior_id.id }
+    if (datosSelect.value.nivel_organizacional) { datos.value.nivel_organizacional = datosSelect.value.nivel_organizacional.id }
 
     if (datos.value.id) {
         await axios
