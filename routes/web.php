@@ -41,4 +41,8 @@ Route::middleware([
     Route::get('/descuentos', function () {
         return Inertia::render('Registros/Descuentos');
     })->name('descuentos');
+
+    Route::get('/empresas', function () {
+        return Inertia::render('Registros/Empresas');
+    })->name('empresas');
 });

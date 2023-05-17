@@ -188,7 +188,7 @@ const registro = [
     { icon: 'perm_identity', text: 'Empleados' },
     { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
     { icon: 'query_stats', text: 'Descuentos',path: '/descuentos' },
-    { icon: 'update', text: 'Send feedback' }
+    { icon: 'store', text: 'Empresas',path: '/empresas' }
 ]
 const sidebar_footer = [
     { text: 'About' },

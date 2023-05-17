@@ -3,6 +3,7 @@
 use App\Http\Controllers\TipoDocumentosController;
 use App\Http\Controllers\IngresosController;
 use App\Http\Controllers\DescuentosController;
+use App\Http\Controllers\EmpresasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,3 +54,13 @@ Route::post('/agregar_descuento', [DescuentosController::class, 'AgregarDescuent
 Route::post('/actualizar_descuento', [DescuentosController::class, 'ActualizarDescuentos']);
 // Eliminar
 Route::post('/eliminar_descuento/{id}', [DescuentosController::class, 'EliminarDescuentos']);
+
+/* DESCUENTOS */
+// Ver
+Route::get('/tabla_empresas', [EmpresasController::class, 'TablaEmpresas']);
+// Agregar
+Route::post('/agregar_empresa', [EmpresasController::class, 'AgregarEmpresas']);
+// Actualiza
+Route::post('/actualizar_empresa', [EmpresasController::class, 'ActualizarEmpresas']);
+// Eliminar
+Route::post('/eliminar_empresa/{id}', [EmpresasController::class, 'EliminarEmpresas']);
