@@ -20,8 +20,9 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="datosSelect.superior_id" label="Seleccione un superior" :options="superiores"
-                                    option-label="name" option-value="id" class="full-width" filled clearable />
+                                <q-select v-model="datosSelect.superior_id" label="Seleccione un superior"
+                                    :options="superiores" option-label="name" option-value="id" class="full-width" filled
+                                    clearable />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
@@ -153,6 +154,7 @@ const reiniciarValores = () => {
 
 const cancelar = () => {
     datos.value = {}
+    datosSelect.value = {}
 }
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {
@@ -227,9 +229,9 @@ const editar = (editardatos) => {
     // datos.value = { ...editardatos }
     datos.value.id = editardatos.id
     datos.value.nombre = editardatos.nombre
-    datos.value.superior_id = { id: editardatos.superior_id, name: editardatos.superior_nombre }
-    datos.value.centro_de_costos = { id: editardatos.centro_costos_id, name: editardatos.centro_costos_año }
-    datos.value.nivel_organizacional = { id: editardatos.nivel_organizacional, name: editardatos.nivel_organizacional_nombre }
+    datosSelect.value.superior_id = { id: editardatos.superior_id, name: editardatos.superior_nombre }
+    datosSelect.value.centro_de_costos = { id: editardatos.centro_costos_id, name: editardatos.centro_costos_año }
+    datosSelect.value.nivel_organizacional = { id: editardatos.nivel_organizacional, name: editardatos.nivel_organizacional_nombre }
 
     submitted.value = false;
     errores.value = {}

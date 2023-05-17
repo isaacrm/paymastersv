@@ -243,7 +243,7 @@ const editar = (editarPuesto) => {
     puesto.value.nro_plazas = editarPuesto.nro_plazas
     puesto.value.salario_desde = editarPuesto.salario_desde
     puesto.value.salario_hasta = editarPuesto.salario_hasta
-    puesto.value.superior_id = { id: editarPuesto.superior_id, name: editarPuesto.superior_nombre }
+    puestoSelect.value.superior_id = { id: editarPuesto.superior_id, name: editarPuesto.superior_nombre }
     submitted.value = false;
     errores.value = {}
 }
