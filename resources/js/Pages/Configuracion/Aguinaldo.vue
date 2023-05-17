@@ -3,24 +3,31 @@
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Tipo de Documentos</div>
-                    <div class="text-subtitle">Registro de los documentos que el empleado puede entregar.</div>
+                    <div class="text-h6">Aguinaldo</div>
+                    <div class="text-subtitle">Tabla de referencia para el cálculo del aguinaldo.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="errores.hasOwnProperty('nombre')" />
+                                <q-input filled bottom-slots v-model="aguinaldo.desde" type="number" suffix="año(s)"
+                                    class="full-width" label="Desde" :error-message="errores.desde && errores.desde[0]"
+                                    :error="errores.hasOwnProperty('desde')" autofocus />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.longitud" type="number"
-                                    class="full-width" label="Longitud"
-                                    :error-message="errores.longitud && errores.longitud[0]"
-                                    :error="errores.hasOwnProperty('longitud')" />
+                                <q-input filled bottom-slots v-model="aguinaldo.hasta" type="number" suffix="año(s)"
+                                    class="full-width" label="Hasta" :error-message="errores.hasta && errores.hasta[0]"
+                                    :error="errores.hasOwnProperty('hasta')" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="aguinaldo.cantidad_dias" type="number"
+                                    class="full-width" label="Cantidad de días de salario"
+                                    :error-message="errores.cantidad_dias && errores.cantidad_dias[0]"
+                                    :error="errores.hasOwnProperty('cantidad_dias')" />
                             </q-item>
                         </div>
                     </div>
@@ -45,7 +52,7 @@
                     <q-td :props="props">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                            @click="confirmarEliminar(props.row.id, props.row.desde, props.row.hasta)"></q-btn>
                     </q-td>
                 </template>
             </q-table>
@@ -56,7 +63,7 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
+                        <span class="q-ml-sm">¿Desea eliminar el registro con rango {{ nombreRegistroEliminar }}?.</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -85,7 +92,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const tipoDocumento = ref({}) // El objeto que se enviara mediante el request
+const aguinaldo = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -97,7 +104,7 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
-    sortBy: 'nombre', // Se actualiza segun columna de ordenamiento por defecto
+    sortBy: 'desde', // Se actualiza segun columna de ordenamiento por defecto
     descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
@@ -111,12 +118,18 @@ const pagination = ref({
 })
 // Fin de fijos e imperativos
 
+// Para mostrar en la tabla con la leyenda "años"
+const formatoAnyo = (valor) => {
+    return valor + ' Año(s)';
+};
+
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 // name es importante porque mediante ello se hacen los ordenamientos por esa columna
 // field es importante porque es eso lo que permite mostrar los datos en la tabla
 const columns = [
-    { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'longitud', align: 'left', label: 'Longitud máxima', field: 'longitud', sortable: true },
+    { name: 'desde', align: 'left', label: 'Desde', field: 'desde', sortable: true, format: formatoAnyo },
+    { name: 'hasta', align: 'left', label: 'Hasta', field: 'hasta', sortable: true, format: formatoAnyo },
+    { name: 'cantidad_dias', align: 'left', label: 'Cantidad de días de salario', field: 'cantidad_dias', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -128,7 +141,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    tipoDocumento.value = {}
+    aguinaldo.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -139,22 +152,30 @@ const reiniciarValores = () => {
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
+// Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
+const hayError = (valor) => {
+    if (submitted && valor)
+        return true
+    else
+        return false
+}
+
 // Operacion de guardar
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
 
     // Actualizar
-    if (tipoDocumento.value.id) {
+    if (aguinaldo.value.id) {
         await axios
-            .post("/api/tipo_documentos/actualizar", tipoDocumento.value)
+            .post("/api/aguinaldo/actualizar", aguinaldo.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Rango de aguinaldo guardado.'
                     }
                 )
 
@@ -168,7 +189,7 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar el rango de aguinaldo.'
                     }
                 )
             })
@@ -176,14 +197,14 @@ const guardar = async () => {
     // Guardar
     else {
         await axios
-            .post("/api/tipo_documentos/agregar", tipoDocumento.value)
+            .post("/api/aguinaldo/agregar", aguinaldo.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Rango de aguinaldo guardado.'
                     }
                 )
 
@@ -197,23 +218,23 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar el rango de aguinaldo.'
                     }
                 )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarTipoDocumentos) => {
-    tipoDocumento.value = { ...editarTipoDocumentos }
+const editar = (editarRangoAguinaldo) => {
+    aguinaldo.value = { ...editarRangoAguinaldo }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
-    tipoDocumento.value.id = id
-    nombreRegistroEliminar.value = nombre
+const confirmarEliminar = (id, desde, hasta) => {
+    aguinaldo.value.id = id
+    nombreRegistroEliminar.value = 'desde ' + desde + ' hasta ' + hasta
     confirmarEliminacion.value = true
 }
 
@@ -221,14 +242,14 @@ const confirmarEliminar = (id, nombre) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/tipo_documentos/eliminar/" + tipoDocumento.value.id)
+        .post("/api/aguinaldo/eliminar/" + aguinaldo.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Tipo de documento eliminado.'
+                    message: 'Rango de aguinaldo eliminado.'
                 }
             )
 
@@ -238,7 +259,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el tipo de documento.'
+                    message: 'Error al eliminar el rango de aguinaldo.'
                 }
             )
         })
@@ -253,7 +274,7 @@ const generarTabla = async (props) => {
 
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tipo_documentos/tabla", {
+        .get("/api/aguinaldo/tabla", {
             params: {
                 page,
                 rowsPerPage,
