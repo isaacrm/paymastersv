@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
+use App\Models\TechosLaborale;
+use Carbon\Carbon;
 
-class TipoDocumentosController extends Controller
+class TechoLaboralController extends Controller
 {
-    /* FUNCIONES PUBLICAS con PascalCase. Todas las variables con kebab_style */
+/* FUNCIONES PUBLICAS con PascalCase. Todas las variables con kebab_style */
     // Lo que se usara en la llamada asincrona para mostrar los datos en la tabla de la vista C[R]UD
-    public function TablaTipoDocumentos(Request $request)
+    public function TablaTechoLaboral(Request $request)
     {
         // Para la paginación desde el servidor
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending; //true es descendente (mayor a menor) false es ascendente (menor a mayor). False default
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = TipoDocumento::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = TechosLaborale::where('anyo', 'like', '%' . $filtro . '%')
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual
@@ -29,7 +33,8 @@ class TipoDocumentosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información
@@ -40,33 +45,35 @@ class TipoDocumentosController extends Controller
     }
 
     // La operación de Create [C]RUD
-    public function AgregarTipoDocumentos(Request $request)
+    public function AgregarTechoLaboral(Request $request)
     {
         // Comprobando que los campos se hayan ingresado correctamente
         $this->validacion($request);
         // Estableciendo el modelo donde se guardara la informacion
-        $tipo_documentos = new TipoDocumento();
+        $techo_laboral = new TechosLaborale();
         // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
-        $tipo_documentos->nombre = $request->nombre;
-        $tipo_documentos->longitud = $request->longitud;
+        $techo_laboral->afp = $request->afp;
+        $techo_laboral->isss = $request->isss;
+        $techo_laboral->anyo = $request->anyo;
         // Guardando la informacion
-        $tipo_documentos->save();
+        $techo_laboral->save();
     }
     // La operación de Update CR[U]D
-    public function ActualizarTipoDocumentos(Request $request)
+    public function ActualizarTechoLaboral(Request $request)
     {
         $this->validacion($request);
-        $tipo_documentos = TipoDocumento::find($request->id);
-        $tipo_documentos->nombre = $request->nombre;
-        $tipo_documentos->longitud = $request->longitud;
-        $tipo_documentos->save();
+        $techo_laboral = TechosLaborale::find($request->id);
+        $techo_laboral->afp = $request->afp;
+        $techo_laboral->isss = $request->isss;
+        $techo_laboral->anyo = $request->anyo;
+        $techo_laboral->save();
     }
 
     // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
-    public function EliminarTipoDocumentos(Request $request)
+    public function EliminarTechoLaboral(Request $request)
     {
-        $tipo_documentos = TipoDocumento::find($request->id);
-        $tipo_documentos->delete();
+        $techo_laboral = TechosLaborale::find($request->id);
+        $techo_laboral->delete();
     }
 
     /* METODOS INTERNOS con camelPascal */
@@ -75,8 +82,18 @@ class TipoDocumentosController extends Controller
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
-            'nombre' => 'required|max:75',
-            'longitud' => 'required|integer|between:0,35',
+            'afp' => 'required|numeric|between:0,9999.99',
+            'isss' => 'required|numeric|between:0,9999.99',
+            'anyo' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    $currentYear = Carbon::now()->year;
+                    if ($value < 0 || $value > $currentYear) {
+                        $fail("El campo $attribute debe estar entre 0 and $currentYear.");
+                    }
+                },
+            ]
         ]);
     }
 }

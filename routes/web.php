@@ -30,8 +30,20 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
     Route::get('/tipo_documentos', function () {
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
-});
 
+    Route::get('/renta_mensual', function () {
+        return Inertia::render('Configuracion/RentaMensual');
+    })->name('renta_mensual');
+
+    Route::get('/techo_laboral', function () {
+        return Inertia::render('Configuracion/TechoLaboral');
+    })->name('techo_laboral');
+
+    Route::get('/aguinaldo', function () {
+        return Inertia::render('Configuracion/Aguinaldo');
+    })->name('aguinaldo');
+});

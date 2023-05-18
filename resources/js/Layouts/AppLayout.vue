@@ -165,9 +165,9 @@ const links3 = [
 ]
 const configuracion = [
     { icon: 'perm_identity', text: 'Tipo de Documentos', path: '/tipo_documentos' },
-    { icon: 'flag', text: 'Report history' },
-    { icon: 'help', text: 'Help' },
-    { icon: 'feedback', text: 'Send feedback' }
+    { icon: 'table_rows', text: 'Tabla de Renta Mensual', path: '/renta_mensual' },
+    { icon: 'roofing', text: 'Techo Laboral', path: '/techo_laboral' },
+    { icon: 'money', text: 'Tabla de Aguinaldo', path: '/aguinaldo' }
 ]
 const sidebar_footer = [
     { text: 'About' },

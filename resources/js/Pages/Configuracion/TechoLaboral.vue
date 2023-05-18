@@ -3,24 +3,33 @@
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Tipo de Documentos</div>
-                    <div class="text-subtitle">Registro de los documentos que el empleado puede entregar.</div>
+                    <div class="text-h6">Techo Laboral</div>
+                    <div class="text-subtitle">Según la legislación salvadoreña, es el máximo al cuál se le puede aplicar un
+                        determinado descuento.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="errores.hasOwnProperty('nombre')" />
+                                <q-input filled bottom-slots v-model="techoLaboral.anyo" class="full-width" type="number"
+                                    label="Año de vigencia" :error-message="errores.anyo && errores.anyo[0]"
+                                    :error="errores.hasOwnProperty('anyo')" autofocus />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.longitud" type="number"
-                                    class="full-width" label="Longitud"
-                                    :error-message="errores.longitud && errores.longitud[0]"
-                                    :error="errores.hasOwnProperty('longitud')" />
+                                <q-input filled bottom-slots v-model="techoLaboral.afp" type="number"
+                                    class="full-width" label="Techo AFP"
+                                    :error-message="errores.afp && errores.afp[0]"
+                                    :error="errores.hasOwnProperty('afp')" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="techoLaboral.isss" type="number"
+                                    class="full-width" label="Techo ISSS"
+                                    :error-message="errores.isss && errores.isss[0]"
+                                    :error="errores.hasOwnProperty('isss')" />
                             </q-item>
                         </div>
                     </div>
@@ -45,7 +54,7 @@
                     <q-td :props="props">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                            @click="confirmarEliminar(props.row.id, props.row.anyo)"></q-btn>
                     </q-td>
                 </template>
             </q-table>
@@ -56,7 +65,8 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
+                        <span class="q-ml-sm">¿Desea eliminar los techos laborales del año {{ nombreRegistroEliminar
+                        }}?.</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -73,7 +83,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useQuasar } from 'quasar'
+import { format, useQuasar } from 'quasar'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import axios from 'axios';
 
@@ -85,7 +95,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const tipoDocumento = ref({}) // El objeto que se enviara mediante el request
+const techoLaboral = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -97,8 +107,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
-    sortBy: 'nombre', // Se actualiza segun columna de ordenamiento por defecto
-    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
+    sortBy: 'anyo', // Se actualiza segun columna de ordenamiento por defecto
+    descending: true, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -111,12 +121,18 @@ const pagination = ref({
 })
 // Fin de fijos e imperativos
 
+// Para mostrar en la tabla con dos decimales en valores monetarios
+const formatoDinero = (valor) => {
+    return valor.toFixed(2);
+};
+
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 // name es importante porque mediante ello se hacen los ordenamientos por esa columna
 // field es importante porque es eso lo que permite mostrar los datos en la tabla
 const columns = [
-    { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'longitud', align: 'left', label: 'Longitud máxima', field: 'longitud', sortable: true },
+    { name: 'anyo', align: 'left', label: 'Año de vigencia', field: 'anyo', sortable: true },
+    { name: 'afp', align: 'left', label: 'AFP', field: 'afp', sortable: true, format: formatoDinero },
+    { name: 'isss', align: 'left', label: 'ISSS', field: 'isss', sortable: true, format: formatoDinero },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -128,7 +144,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    tipoDocumento.value = {}
+    techoLaboral.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -145,16 +161,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (tipoDocumento.value.id) {
+    if (techoLaboral.value.id) {
         await axios
-            .post("/api/tipo_documentos/actualizar", tipoDocumento.value)
+            .post("/api/techo_laboral/actualizar", techoLaboral.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Techo laboral guardado.'
                     }
                 )
 
@@ -168,7 +184,7 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar el techo laboral.'
                     }
                 )
             })
@@ -176,14 +192,14 @@ const guardar = async () => {
     // Guardar
     else {
         await axios
-            .post("/api/tipo_documentos/agregar", tipoDocumento.value)
+            .post("/api/techo_laboral/agregar", techoLaboral.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Techo laboral guardado.'
                     }
                 )
 
@@ -197,23 +213,23 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar el techo laboral.'
                     }
                 )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarTipoDocumentos) => {
-    tipoDocumento.value = { ...editarTipoDocumentos }
+const editar = (editarTechoLaboral) => {
+    techoLaboral.value = { ...editarTechoLaboral }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
-    tipoDocumento.value.id = id
-    nombreRegistroEliminar.value = nombre
+const confirmarEliminar = (id, anyo) => {
+    techoLaboral.value.id = id
+    nombreRegistroEliminar.value = anyo
     confirmarEliminacion.value = true
 }
 
@@ -221,14 +237,14 @@ const confirmarEliminar = (id, nombre) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/tipo_documentos/eliminar/" + tipoDocumento.value.id)
+        .post("/api/techo_laboral/eliminar/" + techoLaboral.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Tipo de documento eliminado.'
+                    message: 'Techo laboral eliminado.'
                 }
             )
 
@@ -238,7 +254,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el tipo de documento.'
+                    message: 'Error al eliminar el techo laboral.'
                 }
             )
         })
@@ -253,7 +269,7 @@ const generarTabla = async (props) => {
 
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tipo_documentos/tabla", {
+        .get("/api/techo_laboral/tabla", {
             params: {
                 page,
                 rowsPerPage,
