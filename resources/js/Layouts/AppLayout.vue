@@ -60,10 +60,10 @@
                     <q-separator class="q-mt-md q-mb-xs" />
 
                     <q-item-label header class="text-weight-bold text-uppercase">
-                        More from Youtube
+                        Direcciones
                     </q-item-label>
 
-                    <q-item v-for="link in links3" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -157,10 +157,10 @@ const links2 = [
     { icon: 'watch_later', text: 'Watch later' },
     { icon: 'thumb_up_alt', text: 'Liked videos' }
 ]
-const links3 = [
-    { icon: fabYoutube, text: 'YouTube Premium' },
-    { icon: 'local_movies', text: 'Movies & Shows' },
-    { icon: 'videogame_asset', text: 'Gaming' },
+const direcciones = [
+    { icon: 'map', text: 'Departamentos', path: '/departamentos' },
+    { icon: 'location_city', text: 'Municipios', path: '/municipios' },
+    { icon: 'location_on', text: 'Direcciones', path: '/direcciones' },
     { icon: 'live_tv', text: 'Live' }
 ]
 const configuracion = [

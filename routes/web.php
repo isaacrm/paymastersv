@@ -35,6 +35,18 @@ Route::middleware([
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
 
+    Route::get('/departamentos', function(){
+        return Inertia::render('Direccion/Departamentos');
+    })->name('departamentos');
+
+    Route::get('/municipios', function(){
+        return Inertia::render('Direccion/Municipios');
+    })->name('municipios');
+
+    Route::get('/direcciones', function(){
+        return Inertia::render('Direccion/Direcciones');
+    })->name('direcciones');
+
     Route::get('/renta_mensual', function () {
         return Inertia::render('Configuracion/RentaMensual');
     })->name('renta_mensual');
