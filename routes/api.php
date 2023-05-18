@@ -10,6 +10,9 @@ use App\Http\Controllers\DireccionesController;
 use App\Http\Controllers\IngresosController;
 use App\Http\Controllers\DescuentosController;
 use App\Http\Controllers\EmpresasController;
+use App\Http\Controllers\PuestoController;
+use App\Http\Controllers\CentroDeCostosController;
+use App\Http\Controllers\UnidadesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -137,3 +140,40 @@ Route::post('/agregar_empresa', [EmpresasController::class, 'AgregarEmpresas']);
 Route::post('/actualizar_empresa', [EmpresasController::class, 'ActualizarEmpresas']);
 // Eliminar
 Route::post('/eliminar_empresa/{id}', [EmpresasController::class, 'EliminarEmpresas']);
+/* Puestos */
+// Ver
+Route::get('/puestos', [PuestoController::class, 'index']);
+// Agregar
+Route::post('/puestos_agregar', [PuestoController::class, 'store']);
+// Actualizar
+Route::post('/puestos_actualizar', [PuestoController::class, 'update']);
+// Eliminar
+Route::post('/puestos_eliminar/{id}', [PuestoController::class, 'destroy']);
+//Consultar superior
+Route::get('/puestos_consultar_superiores', [PuestoController::class, 'consultarSuperiores']);
+//Consultar puestos
+Route::get('/puestos_consultar_puestos', [PuestoController::class, 'consultarPuestos']);
+
+/* Unidades */
+// Ver
+Route::get('/unidades', [UnidadesController::class, 'index']);
+// Agregar
+Route::post('/unidades_agregar', [UnidadesController::class, 'store']);
+// Actualizar
+Route::post('/unidades_actualizar', [UnidadesController::class, 'update']);
+// Eliminar
+Route::post('/unidades_eliminar/{id}', [UnidadesController::class, 'destroy']);
+//Consultar nivel organizacional
+Route::get('/unidades_consultar_unidades', [UnidadesController::class, 'consultarUnidades']);
+
+/* Centro_de_costos */
+// Ver
+Route::get('/centro_de_costos', [CentroDeCostosController::class, 'index']);
+// Agregar
+Route::post('/centro_de_costos_agregar', [CentroDeCostosController::class, 'store']);
+// Actualizar
+Route::post('/centro_de_costos_actualizar', [CentroDeCostosController::class, 'update']);
+// Eliminar
+Route::post('/centro_de_costos_eliminar/{id}', [CentroDeCostosController::class, 'destroy']);
+//Obtener los centro de costos
+Route::get('/centro_de_costos_consultar_centro_de_costos', [CentroDeCostosController::class, 'centro_de_costos']);
