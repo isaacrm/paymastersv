@@ -87,6 +87,21 @@
                         </q-item-section>
                     </q-item>
 
+                    <q-separator class="q-my-md" />
+
+                    <q-item-label header class="text-weight-bold text-uppercase">
+                        Registro
+                    </q-item-label>
+
+                    <q-item v-for="link in registro" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item-section avatar>
+                            <q-icon color="grey" :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
                     <q-separator class="q-mt-md q-mb-lg" />
 
                     <div class="q-px-md text-grey-9">
@@ -168,6 +183,12 @@ const configuracion = [
     { icon: 'table_rows', text: 'Tabla de Renta Mensual', path: '/renta_mensual' },
     { icon: 'roofing', text: 'Techo Laboral', path: '/techo_laboral' },
     { icon: 'money', text: 'Tabla de Aguinaldo', path: '/aguinaldo' }
+]
+const registro = [
+    { icon: 'perm_identity', text: 'Empleados' },
+    { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
+    { icon: 'query_stats', text: 'Descuentos',path: '/descuentos' },
+    { icon: 'store', text: 'Empresas',path: '/empresas' }
 ]
 const sidebar_footer = [
     { text: 'About' },

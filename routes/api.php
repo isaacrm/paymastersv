@@ -7,6 +7,9 @@ use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\DepartamentosController;
 use App\Http\Controllers\MunicipiosController;
 use App\Http\Controllers\DireccionesController;
+use App\Http\Controllers\IngresosController;
+use App\Http\Controllers\DescuentosController;
+use App\Http\Controllers\EmpresasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -105,3 +108,32 @@ Route::post('/agregar_direccion', [DireccionesController::class, 'AgregarDirecci
 Route::post('/actualizar_direccion', [DireccionesController::class, 'ActualizarDirecciones']);
 //Eliminar
 Route::post('/eliminar_direccion/{id}', [DireccionesController::class, 'EliminarDirecciones']);
+/* INGRESOS */
+// Ver
+Route::get('/tabla_ingresos', [IngresosController::class, 'TablaIngresos']);
+// Agregar
+Route::post('/agregar_ingreso', [IngresosController::class, 'AgregarIngresos']);
+// Actualiza
+Route::post('/actualizar_ingreso', [IngresosController::class, 'ActualizarIngresos']);
+// Eliminar
+Route::post('/eliminar_registro/{id}', [IngresosController::class, 'EliminarIngresos']);
+
+/* DESCUENTOS */
+// Ver
+Route::get('/tabla_descuentos', [DescuentosController::class, 'TablaDescuentos']);
+// Agregar
+Route::post('/agregar_descuento', [DescuentosController::class, 'AgregarDescuentos']);
+// Actualiza
+Route::post('/actualizar_descuento', [DescuentosController::class, 'ActualizarDescuentos']);
+// Eliminar
+Route::post('/eliminar_descuento/{id}', [DescuentosController::class, 'EliminarDescuentos']);
+
+/* DESCUENTOS */
+// Ver
+Route::get('/tabla_empresas', [EmpresasController::class, 'TablaEmpresas']);
+// Agregar
+Route::post('/agregar_empresa', [EmpresasController::class, 'AgregarEmpresas']);
+// Actualiza
+Route::post('/actualizar_empresa', [EmpresasController::class, 'ActualizarEmpresas']);
+// Eliminar
+Route::post('/eliminar_empresa/{id}', [EmpresasController::class, 'EliminarEmpresas']);

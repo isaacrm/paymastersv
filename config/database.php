@@ -103,7 +103,7 @@ return [
             'charset' => env('DB_CHARSET', 'AL32UTF8'),
             'prefix' => '',
             'prefix_schema' => '',
-        ],
+            ],
 
     ],
 
