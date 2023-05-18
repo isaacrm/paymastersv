@@ -74,7 +74,7 @@ class EmpresasController extends Controller
             'nrc' => ['required', 'regex:/^\d{6}-\d$/'],
             'email' => 'required|email|max:75',
             'sitio_web' => 'required|max:250',
-            'numero_patronal' => 'required|max:50',
+            'numero_patronal' => ['required', 'numeric', 'digits:9'],
             'representante_legal' => 'required|max:250',
         ]);
     }
