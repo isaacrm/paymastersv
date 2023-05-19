@@ -70,8 +70,8 @@ class EmpresasController extends Controller
         $request->validate([
             'nombre' => 'required|max:30',
             'nit' => ['required', 'regex:/^\d{4}-\d{6}-\d{3}-\d$/'],
-            'telefono' => ['required', 'numeric', 'digits_between:1,8', 'regex:/^[267][0-9]*$/'],
-            'nrc' => ['required', 'regex:/^\d{6}-\d$/'],
+            'telefono' => ['required', 'numeric', 'digits_between:1,8', 'regex:/^[267][0-8]*$/'],
+            'nrc' => 'required|max:7',
             'email' => 'required|email|max:75',
             'sitio_web' => 'required|max:250',
             'numero_patronal' => ['required', 'numeric', 'digits:9'],

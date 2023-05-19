@@ -10,13 +10,13 @@
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8" style="display: flex;">
-                            <q-item style="margin-right: 16px;">
+                        <div class="col-12 col-md-4">
+                            <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
                                     v-model="empresa.nombre"
-                                    style="width: 250px"
+                                    class="full-width"
                                     label="Nombre"
                                     :error-message="
                                         errores.nombre && errores.nombre[0]
@@ -24,14 +24,17 @@
                                     :error="hayError(errores.nombre)"
                                 />
                             </q-item>
+                        </div>   
+                        <div class="col-12 col-md-4"> 
                             <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
                                     v-model="empresa.nit"
-                                    class="q-mr-md"
-                                    style="width: 250px"
+                                    class="full-width"
                                     label="Número de NIT"
+                                    mask="####-######-###-#"
+                                    fill-mask="_"
                                     :error-message="
                                         errores.nit &&
                                         errores.nit[0]
@@ -39,12 +42,14 @@
                                     :error="hayError(errores.nit)"
                                 />
                             </q-item>
+                        </div>
+                        <div class="col-12 col-md-4"> 
                             <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
                                     v-model="empresa.telefono"
-                                    style="width: 250px"
+                                    class="full-width"
                                     label="Número de teléfono"
                                     :error-message="
                                         errores.telefono &&
@@ -54,13 +59,15 @@
                                 />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-8" style="display: flex;">
-                            <q-item style="margin-right: 16px;">
+                    </div>    
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
                                     v-model="empresa.nrc"
-                                    style="width: 250px"
+                                    class="full-width"
                                     label="Número de NRC"
                                     :error-message="
                                         errores.nrc &&
@@ -68,69 +75,75 @@
                                     "
                                     :error="hayError(errores.nrc)"
                                 />
-                            </q-item>
-                            <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.email"
-                                    class="q-mr-md"
-                                    style="width: 250px"
-                                    label="Correo electrónico"
-                                    :error-message="
-                                        errores.email &&
-                                        errores.email[0]
-                                    "
-                                    :error="hayError(errores.email)"
-                                />
-                            </q-item>
-                            <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.sitio_web"
-                                    style="width: 250px"
-                                    label="Sitio web"
-                                    :error-message="
-                                        errores.sitio_web &&
-                                        errores.sitio_web[0]
-                                    "
-                                    :error="hayError(errores.sitio_web)"
-                                />
-                            </q-item>
+                                </q-item>
+                            </div>
+                            <div class="col-12 col-md-4"> 
+                                <q-item>
+                                    <q-input
+                                        filled
+                                        bottom-slots
+                                        v-model="empresa.email"
+                                        class="full-width"
+                                        label="Correo electrónico"
+                                        :error-message="
+                                            errores.email &&
+                                            errores.email[0]
+                                        "
+                                        :error="hayError(errores.email)"
+                                    />
+                                </q-item>
+                            </div>  
+                            <div class="col-12 col-md-4">   
+                                <q-item>
+                                    <q-input
+                                        filled
+                                        bottom-slots
+                                        v-model="empresa.sitio_web"
+                                        class="full-width"
+                                        label="Sitio web"
+                                        :error-message="
+                                            errores.sitio_web &&
+                                            errores.sitio_web[0]
+                                        "
+                                        :error="hayError(errores.sitio_web)"
+                                    />
+                                </q-item>
+                            </div>  
+                        </div> 
+                        <div class="row">         
+                            <div class="col-12 col-md-6">
+                                <q-item>
+                                    <q-input
+                                        filled
+                                        bottom-slots
+                                        v-model="empresa.numero_patronal"
+                                        class="full-width"
+                                        label="Número patronal"
+                                        :error-message="
+                                            errores.numero_patronal &&
+                                            errores.numero_patronal[0]
+                                        "
+                                        :error="hayError(errores.numero_patronal)"
+                                    />
+                                </q-item>
+                        </div>    
+                            <div class="col-12 col-md-6">
+                                <q-item>
+                                    <q-input
+                                        filled
+                                        bottom-slots
+                                        v-model="empresa.representante_legal"
+                                        class="full-width"
+                                        label="Representante legal"
+                                        :error-message="
+                                            errores.representante_legal &&
+                                            errores.representante_legal[0]
+                                        "
+                                        :error="hayError(errores.representante_legal)"
+                                    />
+                                </q-item>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-8" style="display: flex;">
-                            <q-item style="margin-right: 16px;">
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.numero_patronal"
-                                    style="width: 250px"
-                                    label="Número patronal"
-                                    :error-message="
-                                        errores.numero_patronal &&
-                                        errores.numero_patronal[0]
-                                    "
-                                    :error="hayError(errores.numero_patronal)"
-                                />
-                            </q-item>
-                            <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.representante_legal"
-                                    class="q-mr-md"
-                                    style="width: 250px"
-                                    label="Representante legal"
-                                    :error-message="
-                                        errores.representante_legal &&
-                                        errores.representante_legal[0]
-                                    "
-                                    :error="hayError(errores.representante_legal)"
-                                />
-                            </q-item>
-                        </div>
-                    </div>    
                 </q-card-section>
             </q-card>
         </div>
