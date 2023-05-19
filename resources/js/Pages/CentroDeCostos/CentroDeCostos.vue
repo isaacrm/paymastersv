@@ -24,7 +24,7 @@
                         <div class="col-12 col-md-4">
                             <q-item>
                                 <q-input filled bottom-slots v-model="datos.anyo" class="full-width" label="Año:"
-                                    mask="####" fill-mask="#" hint="Año:####, FillMask: #"
+                                    mask="####" fill-mask="#" hint="Año:####"
                                     :error-message="errores.anyo && errores.anyo[0]" :error="hayError(errores.anyo)" />
                             </q-item>
                         </div>
