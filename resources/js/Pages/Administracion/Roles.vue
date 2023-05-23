@@ -1,31 +1,18 @@
 <template>
-    <AppLayout title="Municipios">
+    <AppLayout title="Roles">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Municipios</div>
-                    <div class="text-subtitle">Registro de los municipios que el empleado puede agregar a su dirección.</div>
+                    <div class="text-h6">Roles</div>
+                    <div class="text-subtitle">Registro de los roles a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-8">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="hayError(errores.nombre)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-select v-model="municipio.departamento_id" class="full-width"
-                                    :options="departamentos"
-                                    label="Departamento"
-                                    emit-value
-                                    map-options
-                                    option-label="nombre"
-                                    option-value="id"
-                                    :error-message="errores.departamento_id && errores.departamento_id[0]"
-                                    :error="hayError(errores.departamento_id)" />
+                                <q-input filled bottom-slots v-model="roles.name" class="full-width"
+                                    label="Nombre" :error-message="errores.name && errores.name[0]"
+                                    :error="hayError(errores.name)" />
                             </q-item>
                         </div>
                     </div>
@@ -50,7 +37,7 @@
                     <q-td :props="props">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                            @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
                     </q-td>
                 </template>
             </q-table>
@@ -61,7 +48,7 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
+                        <span class="q-ml-sm">¿Desea eliminar el rol {{ nombreRegistroEliminar }}?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -90,10 +77,10 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const municipio = ref({}) // El objeto que se enviara mediante el request
+const roles = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
-const departamentos = ref([])//Para almacenar el array de los departamentos
+
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -102,6 +89,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
+    sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -116,8 +105,7 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'nombre_departamento', align: 'left', label: 'Departamento', field: 'nombre_departamento', sortable: true },
+    { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -127,25 +115,15 @@ onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
 
-onMounted(async() =>{
-    try {
-        const response = await axios.get('/api/data_departamentos');
-        departamentos.value = response.data;
-    } catch (error) {
-        console.log(error);
-    }
-});
-
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    municipio.value = {}
+    roles.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
-    municipio.departamento_id = null
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
@@ -164,16 +142,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (municipio.value.id) {
+    if (roles.value.id) {
         await axios
-            .post("/api/actualizar_municipio",municipio.value)
+            .post("/api/roles/actualizar", roles.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Municipio actualizado.'
+                        message: 'Rol actualizado.'
                     }
                 )
 
@@ -181,28 +159,38 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el rol.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El nombre del rol ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el rol.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al actualizar el municipio.'
-                    }
-                )
             })
     }
     // Guardar
     else {
         await axios
-            .post("/api/agregar_municipio", municipio.value)
+            .post("/api/roles/agregar", roles.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Municipio guardado.'
+                        message: 'Rol guardado.'
                     }
                 )
 
@@ -210,30 +198,39 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el rol.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El rol ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el rol.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el municipio.'
-                    }
-                )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarMunicipios) => {
-    console.log(editarMunicipios);
-    municipio.value = { ...editarMunicipios }
+const editar = (editarRoles) => {
+    roles.value = { ...editarRoles }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
-    municipio.value.id = id
-    nombreRegistroEliminar.value = nombre
+const confirmarEliminar = (id, name) => {
+    roles.value.id = id
+    nombreRegistroEliminar.value = name;
     confirmarEliminacion.value = true
 }
 
@@ -241,14 +238,14 @@ const confirmarEliminar = (id, nombre) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/eliminar_municipio/" + municipio.value.id)
+        .post("/api/roles/eliminar/" + roles.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Municipio eliminado.'
+                    message: 'Rol eliminado.'
                 }
             )
 
@@ -258,7 +255,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el municipio.'
+                    message: 'Error al eliminar el rol.'
                 }
             )
         })
@@ -267,16 +264,18 @@ const eliminar = async () => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca
-    const { page, rowsPerPage } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tabla_municipios", {
+        .get("/api/roles/tabla", {
             params: {
                 page,
                 rowsPerPage,
-                filter
+                filter,
+                sortBy,
+                descending: descending ? 0 : 1
             }
         })
         .then(response => {
@@ -285,6 +284,8 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+            pagination.value.sortBy = response.data.paginacion.ordenarPor
+            pagination.value.descending = descending
         })
         .catch(error => {
             errored.value = true

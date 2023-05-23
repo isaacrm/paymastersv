@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    /*
     public function up(): void
     {
         Schema::create('unidades', function (Blueprint $table) {
@@ -27,13 +28,14 @@ return new class extends Migration
                 ->onUpdate('cascade');;
             $table->timestamps();
         });
-    }
+    }*/
 
     /**
      * Reverse the migrations.
      */
+    /*
     public function down(): void
     {
         Schema::dropIfExists('unidades');
-    }
+    }*/
 };

@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Spatie\Permission\Exceptions\UnauthorizedException;
+use Inertia\Inertia;
+
 
 class Handler extends ExceptionHandler
 {
@@ -27,4 +30,16 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+
+    // Error 403
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof UnauthorizedException) {
+            return Inertia::render('Errores/403')->toResponse($request)->setStatusCode(403);
+        }
+    
+        return parent::render($request, $exception);
+    }
+
 }

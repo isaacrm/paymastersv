@@ -1,31 +1,34 @@
 <template>
-    <AppLayout title="Municipios">
+    <AppLayout title="Asignar permisos">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Municipios</div>
-                    <div class="text-subtitle">Registro de los municipios que el empleado puede agregar a su dirección.</div>
+                    <div class="text-h6">Asignar Permisos</div>
+                    <div class="text-subtitle">Asignación de permisos a roles.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="municipio.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="hayError(errores.nombre)" />
+                                <q-input filled bottom-slots v-model="roles.role_name" class="full-width"
+                                    readonly
+                                    label="Nombre" :error-message="errores.role_name && errores.role_name[0]"
+                                    :error="hayError(errores.role_name)" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="municipio.departamento_id" class="full-width"
-                                    :options="departamentos"
-                                    label="Departamento"
+                                <q-select filled v-model="selectedPermissions" class="full-width"
+                                    multiple
+                                    :options="permisos"
+                                    label="Permisos"
                                     emit-value
                                     map-options
-                                    option-label="nombre"
+                                    option-label="name"
                                     option-value="id"
-                                    :error-message="errores.departamento_id && errores.departamento_id[0]"
-                                    :error="hayError(errores.departamento_id)" />
+                                    stack-label
+                                    clearable
+                                    />
                             </q-item>
                         </div>
                     </div>
@@ -48,31 +51,11 @@
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        <q-btn round color="positive" icon="key" class="mr-2" @click="editar(props.row)"></q-btn>
                     </q-td>
                 </template>
             </q-table>
         </div>
-
-        <div class="q-pa-md q-gutter-sm">
-            <q-dialog v-model="confirmarEliminacion" persistent>
-                <q-card>
-                    <q-card-section class="row items-center">
-                        <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
-                    </q-card-section>
-
-                    <q-card-actions align="right">
-                        <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
-        </div>
-
-
     </AppLayout>
 </template>
 
@@ -87,15 +70,18 @@ import axios from 'axios';
 const $q = useQuasar() // Para mensajes de exito o error
 
 // De la vista
-const detalleTabla = ref()
+const detalleTabla = ref([])
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const municipio = ref({}) // El objeto que se enviara mediante el request
-const confirmarEliminacion = ref(false) // Para modal de eliminacion
-const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
-const departamentos = ref([])//Para almacenar el array de los departamentos
+
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
+
+const permisos = ref([])
+const roles = ref({}) // El objeto que se enviara mediante el request para cargar roles
+const selectedPermissions = ref([])
+
+
 
 // Para el q-table con server-rendering
 // Fijos e imperativos que no se tocan
@@ -116,10 +102,18 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'nombre_departamento', align: 'left', label: 'Departamento', field: 'nombre_departamento', sortable: true },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
-]
+  { name: 'role_name', align: 'left', label: 'Rol', field: 'role_name', sortable: false },
+  { 
+    name: 'permissions', 
+    align: 'left', 
+    label: 'Permisos', 
+    field: 'permissions', 
+    sortable: false, 
+    format: (value) => value.map((permiso) => permiso.name).join(', ')
+  },
+  { name: 'operaciones', align: 'center', label: 'Asignación de Permisos' }
+];
+
 
 /* METODOS */
 // Lo que sucede al cargar por primera vez la vista
@@ -129,23 +123,22 @@ onMounted(async () => {
 
 onMounted(async() =>{
     try {
-        const response = await axios.get('/api/data_departamentos');
-        departamentos.value = response.data;
+        const response = await axios.get('/api/permisos/select')
+        permisos.value = response.data
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
-});
+})
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    municipio.value = {}
+    roles.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
-    confirmarEliminacion.value = false
-    nombreRegistroEliminar.value = ''
 
-    municipio.departamento_id = null
+    selectedPermissions.value = ''
+
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
@@ -162,21 +155,21 @@ const hayError = (valor) => {
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
+    roles.value.permissions=selectedPermissions.value
 
     // Actualizar
-    if (municipio.value.id) {
+    if (roles.value.id) {
         await axios
-            .post("/api/actualizar_municipio",municipio.value)
+            .post("/api/roles/permisos/asignar", roles.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Municipio actualizado.'
+                        message: 'Permisos asignados.'
                     }
                 )
-
             })
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
@@ -187,81 +180,21 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al actualizar el municipio.'
-                    }
-                )
-            })
-    }
-    // Guardar
-    else {
-        await axios
-            .post("/api/agregar_municipio", municipio.value)
-            .then((response) => {
-                reiniciarValores()
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'positive',
-                        message: 'Municipio guardado.'
-                    }
-                )
-
-            })
-            .catch((e) => {
-                // Si es un error de tipo 422, es decir, contenido inprocesable
-                if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
-                }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el municipio.'
+                        message: 'Error al actualizar el permiso.'
                     }
                 )
             })
     }
 }
+
 // Para mostrar los datos en el form
-const editar = (editarMunicipios) => {
-    console.log(editarMunicipios);
-    municipio.value = { ...editarMunicipios }
+const editar = (editarRoles) => {
+    roles.value = { ...editarRoles }
+    const permisosSeleccionados = roles.value.permissions;
+    selectedPermissions.value = permisosSeleccionados;
+
     submitted.value = false;
     errores.value = {}
-}
-
-// Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
-    municipio.value.id = id
-    nombreRegistroEliminar.value = nombre
-    confirmarEliminacion.value = true
-}
-
-
-// Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
-    await axios
-        .post("/api/eliminar_municipio/" + municipio.value.id)
-        .then((response) => {
-            reiniciarValores()
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'positive',
-                    message: 'Municipio eliminado.'
-                }
-            )
-
-        })
-        .catch((e) => {
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'negative',
-                    message: 'Error al eliminar el municipio.'
-                }
-            )
-        })
 }
 
 /* EXCLUSIVO DE TABLA */
@@ -272,7 +205,7 @@ const generarTabla = async (props) => {
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tabla_municipios", {
+        .get("/api/roles/permisos/tabla", {
             params: {
                 page,
                 rowsPerPage,
@@ -285,6 +218,7 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+
         })
         .catch(error => {
             errored.value = true

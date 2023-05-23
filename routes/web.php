@@ -3,6 +3,11 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\Permission\Middlewares\RoleMiddleware;
+use Spatie\Permission\Middlewares\PermissionMiddleware;
+use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,17 +27,46 @@ Route::get('/', function () {
     ]);
 });
 
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador'
+    ])->group(function(){
+        Route::get('/asignacion', function (){
+            return Inertia::render('Administracion/AsignarPermisos');
+        })->name('asignacion');
+
+        Route::get('/roles', function (){
+            return Inertia::render('Administracion/Roles');
+        })->name('roles');
+
+        Route::get('/permisos', function (){
+            return Inertia::render('Administracion/Permisos');
+        })->name('permisos');
+
+        Route::get('usuarios', function(){
+            return Inertia::render('Administracion/Usuarios');
+        })->name('usuarios');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    RoleOrPermissionMiddleware::class . ':' . 'Administrador|SuperAdministrador|Contador|Visitante|Asistente|Usuario|Empleado|Planillero|Inicio'
+
+    ])->group(function(){
+        Route::get('/dashboard', function () {
+            return Inertia::render('Dashboard');
+        })->name('dashboard');
+});
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-
     Route::get('/tipo_documentos', function () {
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
@@ -97,4 +131,5 @@ Route::middleware([
             return Inertia::render($ruta['render']);
         })->name($ruta['nombre']);
     }
+    
 });

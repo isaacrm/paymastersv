@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    /*
     public function up(): void
     {
         Schema::table('unidades', function (Blueprint $table) {
@@ -19,13 +20,13 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
-    }
+    }*/
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    /*public function down(): void
     {
         Schema::dropIfExists('posts');
-    }
+    }*/
 };

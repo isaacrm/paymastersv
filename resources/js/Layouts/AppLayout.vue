@@ -59,7 +59,30 @@
 
                     <q-separator class="q-mt-md q-mb-xs" />
 
-                    <q-item v-for="link in links2" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item-label header class="text-weight-bold text-uppercase">
+                        Administracion
+                    </q-item-label>
+
+                    <q-item-section>
+                        <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
+                            Roles y Permisos
+                        </q-item-label>
+                    </q-item-section>
+                    <q-item v-for="link in roles_permisos" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item-section avatar>
+                            <q-icon color="grey" :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-item-section>
+                        <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
+                            Usuarios
+                        </q-item-label>
+                    </q-item-section>
+                    <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -180,19 +203,20 @@ const rosalio = [
     {icon:'whatshot', text: 'Unidades', path:'/unidades'},
     {icon:'whatshot', text: 'Centro de costos', path:'/centro_de_costos'},
 ]
-const links2 = [
-    { icon: 'whatshot', text: 'Trending' },
-    { icon: 'subscriptions', text: 'Subscriptions' },
-    { icon: 'folder', text: 'Library' },
-    { icon: 'restore', text: 'History' },
-    { icon: 'watch_later', text: 'Watch later' },
-    { icon: 'thumb_up_alt', text: 'Liked videos' }
+const roles_permisos = [
+    { icon: 'lock', text: 'Roles', path: '/roles' },
+    { icon: 'key', text: 'Permisos', path: '/permisos' },
+    { icon: 'lock_open', text: 'Asignación de Permisos', path: '/asignacion' }
 ]
+
+const usuarios_roles = [
+    { icon: 'manage_accounts', text: 'Asignación de Roles', path: '/usuarios' }
+]
+
 const direcciones = [
-    { icon: 'map', text: 'Departamentos', path: '/departamentos' },
+    { icon: 'location_on', text: 'Departamentos', path: '/departamentos' },
     { icon: 'location_city', text: 'Municipios', path: '/municipios' },
-    { icon: 'location_on', text: 'Direcciones', path: '/direcciones' },
-    { icon: 'live_tv', text: 'Live' }
+    { icon: 'home', text: 'Direcciones', path: '/direcciones' }
 ]
 const configuracion = [
     { icon: 'perm_identity', text: 'Tipo de Documentos', path: '/tipo_documentos' },

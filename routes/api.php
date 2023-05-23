@@ -13,6 +13,10 @@ use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\PuestoController;
 use App\Http\Controllers\CentroDeCostosController;
 use App\Http\Controllers\UnidadesController;
+use App\Http\Controllers\RolController;
+use App\Http\Controllers\PermisosController;
+use App\Http\Controllers\UsuariosController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +37,45 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /* CUSTOM */
 // Lo que esta en comillas, lo primero es la ruta que se llama en Vue, lo segundo el nombre de la funcion dentro del controlador indicado
+
+//Administración
+/* USUARIOS */
+// Ver
+Route::get('/usuarios/tabla', [UsuariosController::class, 'TablaUsuarios']);
+// Asignar roles
+Route::post('usuarios/roles/asignar',[UsuariosController::class, 'asignarRoles']);
+
+
+
+/* ROLES */
+//Ver
+Route::get('/roles/tabla',[RolController::class,'TablaRoles']);
+// Agregar
+Route::post('/roles/agregar',[RolController::class, 'AgregarRoles']);
+// Actualizar
+Route::post('/roles/actualizar',[RolController::class, 'ActualizarRoles']);
+// Eliminar
+Route::post('/roles/eliminar/{id}',[RolController::class, 'EliminarRoles']);
+// Permisos de roles
+Route::get('roles/permisos/tabla',[RolController::class,'TablaRolesPermisos']);
+// Asignar permisos
+Route::post('roles/permisos/asignar',[RolController::class, 'asignarPermisos']);
+// Consultar roles
+Route::get('/roles/select',[RolController::class, 'CargarRoles']);
+
+
+/* PERMISOS */
+//Ver
+Route::get('/permisos/tabla',[PermisosController::class,'TablaPermisos']);
+// Agregar
+Route::post('/permisos/agregar',[PermisosController::class, 'AgregarPermisos']);
+// Actualizar
+Route::post('/permisos/actualizar',[PermisosController::class, 'ActualizarPermisos']);
+// Eliminar
+Route::post('/permisos/eliminar/{id}',[PermisosController::class, 'EliminarPermisos']);
+// Consultar permisos
+Route::get('/permisos/select',[PermisosController::class, 'CargarPermisos']);
+
 
 /* TIPO DE DOCUMENTOS */
 // Ver

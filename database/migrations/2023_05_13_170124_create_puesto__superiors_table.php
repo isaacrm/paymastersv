@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('puestos', function (Blueprint $table) {
+        /*Schema::table('puestos', function (Blueprint $table) {
             $table->unsignedBigInteger('superior_id')->nullable();
             
             $table->foreign('superior_id')
                 ->references('id')->on('puestos')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-        });
+        });*/
     }
 
     /**
@@ -26,9 +26,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('puestos', function (Blueprint $table) {
+     /*   Schema::table('puestos', function (Blueprint $table) {
             $table->dropForeign(['puesto_superior_id']);
             $table->dropColumn('superior_id');
-        });
+        });*/
     }
 };
