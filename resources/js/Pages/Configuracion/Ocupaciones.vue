@@ -3,25 +3,19 @@
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Tipo de Documentos</div>
-                    <div class="text-subtitle">Registro de los documentos que el empleado puede entregar.</div>
+                    <div class="text-h6">Ocupaciones</div>
+                    <div class="text-subtitle">Registro de las Ocupaciones.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
                         <div class="col-12 col-md-8">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.nombre" class="full-width"
-                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
+                                <q-input filled bottom-slots v-model="ocupaciones.nombre" class="full-width"
+                                    label="Ocupación" :error-message="errores.nombre && errores.nombre[0]"
                                     :error="hayError(errores.nombre)" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="tipoDocumento.longitud" type="number"
-                                    class="full-width" label="Longitud"
-                                    :error-message="errores.longitud && errores.longitud[0]"
-                                    :error="hayError(errores.longitud)" />
-                            </q-item>
                         </div>
                     </div>
                 </q-card-section>
@@ -59,7 +53,7 @@
                         <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
                     </q-card-section>
 
-                    <q-card-actions align="right">
+                    <q-card-actions alignt="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
                         <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
                     </q-card-actions>
@@ -85,7 +79,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const tipoDocumento = ref({}) // El objeto que se enviara mediante el request
+const ocupaciones = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -112,7 +106,6 @@ const pagination = ref({
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
     { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
-    { name: 'longitud', align: 'left', label: 'Longitud máxima', field: 'longitud', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -124,7 +117,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    tipoDocumento.value = {}
+    ocupaciones.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -149,16 +142,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (tipoDocumento.value.id) {
+    if (ocupaciones.value.id) {
         await axios
-            .post("/api/actualizar",tipoDocumento.value)
+            .post("/api/actualizarOcupaciones",ocupaciones.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Tipo de ocupacion guardado.'
                     }
                 )
 
@@ -172,7 +165,7 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar la ocupación.'
                     }
                 )
             })
@@ -180,14 +173,14 @@ const guardar = async () => {
     // Guardar
     else {
         await axios
-            .post("/api/agregar", tipoDocumento.value)
+            .post("/api/agregarOcupaciones", ocupaciones.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Tipo de documento guardado.'
+                        message: 'Ocupación guardada.'
                     }
                 )
 
@@ -201,22 +194,22 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el tipo de documento.'
+                        message: 'Error al agregar la ocupación.'
                     }
                 )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarTipoDocumentos) => {
-    tipoDocumento.value = { ...editarTipoDocumentos }
+const editar = (editarOcupaciones) => {
+    ocupaciones.value = { ...editarOcupaciones }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
 const confirmarEliminar = (id, nombre) => {
-    tipoDocumento.value.id = id
+    ocupaciones.value.id = id
     nombreRegistroEliminar.value = nombre
     confirmarEliminacion.value = true
 }
@@ -225,14 +218,14 @@ const confirmarEliminar = (id, nombre) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/eliminar/" + tipoDocumento.value.id)
+        .post("/api/eliminarOcupaciones/" + ocupaciones.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Tipo de documento eliminado.'
+                    message: 'Ocupación eliminada.'
                 }
             )
 
@@ -242,7 +235,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el tipo de documento.'
+                    message: 'Error al eliminar la ocupación.'
                 }
             )
         })
@@ -256,7 +249,7 @@ const generarTabla = async (props) => {
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/tabla_tipo_documentos", {
+        .get("/api/tabla_ocupaciones", {
             params: {
                 page,
                 rowsPerPage,

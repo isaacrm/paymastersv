@@ -1,4 +1,4 @@
-<!--script setup>
+<script setup>
 import ApiTokenManager from '@/Pages/API/Partials/ApiTokenManager.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -27,4 +27,4 @@ defineProps({
             </div>
         </div>
     </AppLayout>
-</template-->
+</template>

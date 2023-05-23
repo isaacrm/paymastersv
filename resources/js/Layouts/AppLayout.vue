@@ -48,17 +48,6 @@
 
                     <q-separator class="q-my-md" />
 
-                    <q-item v-for="link in rosalio" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-mt-md q-mb-xs" />
-
                     <q-item v-for="link in links2" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
@@ -71,10 +60,10 @@
                     <q-separator class="q-mt-md q-mb-xs" />
 
                     <q-item-label header class="text-weight-bold text-uppercase">
-                        Direcciones
+                        More from Youtube
                     </q-item-label>
 
-                    <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-for="link in links3" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -90,21 +79,6 @@
                     </q-item-label>
 
                     <q-item v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-my-md" />
-
-                    <q-item-label header class="text-weight-bold text-uppercase">
-                        Registro
-                    </q-item-label>
-
-                    <q-item v-for="link in registro" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="grey" :name="link.icon" />
                         </q-item-section>
@@ -175,11 +149,6 @@ function toggleLeftDrawer() {
 const inicio = [
     { icon: 'home', text: 'Dashboard', path: '/dashboard' }
 ]
-const rosalio = [
-    {icon:'whatshot', text: 'Puestos', path:'/puestos'},
-    {icon:'whatshot', text: 'Unidades', path:'/unidades'},
-    {icon:'whatshot', text: 'Centro de costos', path:'/centro_de_costos'},
-]
 const links2 = [
     { icon: 'whatshot', text: 'Trending' },
     { icon: 'subscriptions', text: 'Subscriptions' },
@@ -188,23 +157,20 @@ const links2 = [
     { icon: 'watch_later', text: 'Watch later' },
     { icon: 'thumb_up_alt', text: 'Liked videos' }
 ]
-const direcciones = [
-    { icon: 'map', text: 'Departamentos', path: '/departamentos' },
-    { icon: 'location_city', text: 'Municipios', path: '/municipios' },
-    { icon: 'location_on', text: 'Direcciones', path: '/direcciones' },
+const links3 = [
+    { icon: fabYoutube, text: 'YouTube Premium' },
+    { icon: 'local_movies', text: 'Movies & Shows' },
+    { icon: 'videogame_asset', text: 'Gaming' },
     { icon: 'live_tv', text: 'Live' }
 ]
 const configuracion = [
     { icon: 'perm_identity', text: 'Tipo de Documentos', path: '/tipo_documentos' },
-    { icon: 'table_rows', text: 'Tabla de Renta Mensual', path: '/renta_mensual' },
-    { icon: 'roofing', text: 'Techo Laboral', path: '/techo_laboral' },
-    { icon: 'money', text: 'Tabla de Aguinaldo', path: '/aguinaldo' }
-]
-const registro = [
-    { icon: 'perm_identity', text: 'Empleados' },
-    { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
-    { icon: 'query_stats', text: 'Descuentos',path: '/descuentos' },
-    { icon: 'store', text: 'Empresas',path: '/empresas' }
+    { icon: 'perm_identity', text: 'Generos', path: '/generos' },
+    { icon: 'perm_identity', text: 'Ocupaciones', path: '/ocupaciones' },
+    { icon: 'perm_identity', text: 'Estados Civiles', path: '/estados_civiles' },
+    { icon: 'flag', text: 'Report history' },
+    { icon: 'help', text: 'Help' },
+    { icon: 'feedback', text: 'Send feedback' }
 ]
 const sidebar_footer = [
     { text: 'About' },

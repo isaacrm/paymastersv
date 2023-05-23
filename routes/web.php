@@ -22,79 +22,30 @@ Route::get('/', function () {
     ]);
 });
 
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-
     Route::get('/tipo_documentos', function () {
         return Inertia::render('Configuracion/TipoDocumentos');
     })->name('tipo_documentos');
 
-    Route::get('/departamentos', function () {
-        return Inertia::render('Direccion/Departamentos');
-    })->name('departamentos');
+    Route::get('/generos', function () {
+        return Inertia::render('Configuracion/Generos');
+    })->name('generos');
 
-    Route::get('/municipios', function () {
-        return Inertia::render('Direccion/Municipios');
-    })->name('municipios');
+    Route::get('/ocupaciones', function () {
+        return Inertia::render('Configuracion/Ocupaciones');
+    })->name('ocupaciones');
 
-    Route::get('/direcciones', function () {
-        return Inertia::render('Direccion/Direcciones');
-    })->name('direcciones');
+    Route::get('/estados_civiles', function () {
+        return Inertia::render('Configuracion/EstadosCiviles');
+    })->name('estados_civiles');
 
-    Route::get('/renta_mensual', function () {
-        return Inertia::render('Configuracion/RentaMensual');
-    })->name('renta_mensual');
 
-    Route::get('/techo_laboral', function () {
-        return Inertia::render('Configuracion/TechoLaboral');
-    })->name('techo_laboral');
-
-    Route::get('/aguinaldo', function () {
-        return Inertia::render('Configuracion/Aguinaldo');
-    })->name('aguinaldo');
-
-    Route::get('/ingresos', function () {
-        return Inertia::render('Registros/Ingresos');
-    })->name('ingresos');
-
-    Route::get('/descuentos', function () {
-        return Inertia::render('Registros/Descuentos');
-    })->name('descuentos');
-
-    Route::get('/empresas', function () {
-        return Inertia::render('Registros/Empresas');
-    })->name('empresas');
-
-    // * Contenedor de rutas
-    $rutas = [
-        'puesto' => [
-            'ruta' => '/puestos',
-            'render' => 'Puestos/Puesto',
-            'nombre' => 'puesto'
-        ],
-        'unidad' => [
-            'ruta' => '/unidades',
-            'render' => 'Unidades/Unidades',
-            'nombre' => 'unidades'
-        ],
-        'CentroDeCostos' => [
-            'ruta' => '/centro_de_costos',
-            'render' => 'CentroDeCostos/CentroDeCostos',
-            'nombre' => 'centro_de_costos'
-        ],
-    ];
-
-    foreach ($rutas as $ruta) {
-        Route::get($ruta['ruta'], function () use ($ruta) {
-            return Inertia::render($ruta['render']);
-        })->name($ruta['nombre']);
-    }
 });
+
