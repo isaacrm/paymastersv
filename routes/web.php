@@ -90,6 +90,26 @@ Route::middleware([
             'render' => 'CentroDeCostos/CentroDeCostos',
             'nombre' => 'centro_de_costos'
         ],
+        'Planillas'=>[
+            'ruta' => '/planillas',
+            'render' => 'Planillas/Planillas',
+            'nombre' => 'planillas'
+        ],
+        'Estados Civiles'=>[
+            'ruta' => '/estados_civiles',
+            'render' => 'Estados_civiles/Estados_civiles',
+            'nombre' => 'estados_civiles'
+        ],
+        'Ocupaciones'=>[
+            'ruta' => '/ocupaciones',
+            'render' => 'Ocupaciones/Ocupaciones',
+            'nombre' => 'ocupaciones'
+        ],
+        'Generos'=>[
+            'ruta' => '/generos',
+            'render' => 'Generos/Generos',
+            'nombre' => 'generos'
+        ],
     ];
 
     foreach ($rutas as $ruta) {

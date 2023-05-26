@@ -179,6 +179,10 @@ const rosalio = [
     {icon:'whatshot', text: 'Puestos', path:'/puestos'},
     {icon:'whatshot', text: 'Unidades', path:'/unidades'},
     {icon:'whatshot', text: 'Centro de costos', path:'/centro_de_costos'},
+    {icon:'whatshot', text: 'Planillas', path:'/planillas'},
+    {icon:'whatshot', text: 'Generos', path:'/generos'},
+    {icon:'whatshot', text: 'Ocupaciones', path:'/ocupaciones'},
+    {icon:'whatshot', text: 'Estados Civiles', path:'/estados_civiles'},
 ]
 const links2 = [
     { icon: 'whatshot', text: 'Trending' },

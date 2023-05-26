@@ -1,12 +1,11 @@
 <template>
-  <AppLayout title="Centro de costos">
+  <AppLayout title="Ocupaciones">
     <div class="q-pa-md">
       <q-card class="my-card">
         <q-card-section class="ml-6">
-          <div class="text-h6">{{ nombres.nombreMayuscula }}</div>
+          <div class="text-h6">{{ nombres.mayus }}</div>
           <div class="text-subtitle">
-            Registro de los {{ nombres.nombreMinuscula }} de trabajo de la
-            organizacion.
+            Registro de las {{ nombres.minus }}.
           </div>
         </q-card-section>
         <q-card-section>
@@ -18,89 +17,9 @@
                   bottom-slots
                   v-model="datos.nombre"
                   class="full-width"
-                  label="Nombre del centro de costo:"
+                  label="Nombre de la ocupacion:"
                   :error-message="errores.nombre && errores.nombre[0]"
                   :error="hayError(errores.nombre)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  filled
-                  bottom-slots
-                  class="full-width"
-                  v-model="datos.mes_del"
-                  :options="meses"
-                  label="Mes desde"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  filled
-                  bottom-slots
-                  class="full-width"
-                  v-model="datos.mes_al"
-                  :options="meses"
-                  label="Mes hasta"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.anyo"
-                  class="full-width"
-                  label="Año:"
-                  mask="####"
-                  fill-mask="#"
-                  hint="Año:####"
-                  :error-message="errores.anyo && errores.anyo[0]"
-                  :error="hayError(errores.anyo)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.presupuesto_inicial"
-                  type="number"
-                  class="full-width"
-                  label="Presupuesto inicial:"
-                  :error-message="
-                    errores.presupuesto_inicial &&
-                    errores.presupuesto_inicial[0]
-                  "
-                  :error="hayError(errores.presupuesto_inicial)"
-                  prefix="$"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.presupuesto_restante"
-                  type="number"
-                  class="full-width"
-                  label="Presupuesto restante:"
-                  :error-message="
-                    errores.presupuesto_restante &&
-                    errores.presupuesto_restante[0]
-                  "
-                  :error="hayError(errores.presupuesto_restante)"
-                  prefix="$"
                 />
               </q-item>
             </div>
@@ -204,43 +123,30 @@ import { onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import axios from "axios";
-/* VARIABLES Y CONSTANTES, con camelPascal */
-// De quasar
-const $q = useQuasar(); // Para mensajes de exito o error
-// De la vista
+
+const $q = useQuasar();
+
 const detalleTabla = ref();
-const submitted = ref(false); // Para comprobar si se ha dado click en los botones de operaciones
+const submitted = ref(false);
 const errored = ref(false);
 
-const datos = ref({}); // El objeto que se enviara mediante el request
+const datos = ref({});
 const nombres = {
-  minu: "centro_de_costo",
-  mayu: "centro_de_costo",
-  nombreMinuscula: "centro de costos",
-  nombreMayuscula: "Centro de costos",
+  mayus: "Ocupaciones",
+  minus: "ocupaciones",
+  link: "ocupaciones",
 };
 
-const confirmarEliminacion = ref(false); // Para modal de eliminacion
-const nombreRegistroEliminar = ref(""); // Para que se muestre el nombre en el modal de eliminacion
-// Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
-const errores = ref({}); // Para almacenar el array de errores que viene desde Laravel
-// Para el q-table con server-rendering
-// Fijos e imperativos que no se tocan
+const confirmarEliminacion = ref(false);
+const nombreRegistroEliminar = ref("");
+const errores = ref({});
 const filter = ref("");
 const loading = ref(false);
 const pagination = ref({
   page: 1,
   rowsPerPage: 5,
-  /* Cuando se usa server side pagination, QTable necesita
-    conocer el "rowsNumber" (Numero total de filas).
-    Por qué?
-    Porque Quasar no tiene forma de saber cuál será
-    la última página sin esta información!
-    Por lo tanto, ahora debemos proporcionarle un "número de filas" nosotros mismos.. */
   rowsNumber: 0,
 });
-// Fin de fijos e imperativos
-// Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
   {
     name: "nombre",
@@ -249,58 +155,13 @@ const columns = [
     field: "nombre",
     sortable: true,
   },
-  {
-    name: "mes_del",
-    align: "left",
-    label: "Desde el mes:",
-    field: "mes_del",
-    sortable: true,
-  },
-  {
-    name: "mes_al",
-    align: "left",
-    label: "Hasta el mes:",
-    field: "mes_al",
-    sortable: true,
-  },
-  { name: "anyo", align: "left", label: "Año", field: "anyo", sortable: true },
-  {
-    name: "presupuesto_inicial",
-    align: "left",
-    label: "Presupuesto inicial",
-    field: "presupuesto_inicial",
-    sortable: true,
-  },
-  {
-    name: "presupuesto_restante",
-    align: "left",
-    label: "Presupuesto restante",
-    field: "presupuesto_restante",
-    sortable: true,
-  },
   { name: "operaciones", align: "center", label: "Operaciones" },
 ];
 
-const meses = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
-];
-/* METODOS */
-// Lo que sucede al cargar por primera vez la vista
 onMounted(async () => {
   await generarTabla({ pagination: pagination.value, filter: filter.value });
 });
-// Para reiniciar los valores luego de realizar alguna operacion
+
 const reiniciarValores = () => {
   datos.value = {};
   errores.value = {};
@@ -308,10 +169,10 @@ const reiniciarValores = () => {
   errored.value = false;
   confirmarEliminacion.value = false;
   nombreRegistroEliminar.value = "";
-  // Actualiza la tabla
+
   generarTabla({ pagination: pagination.value, filter: filter.value });
 };
-// Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
+
 const hayError = (valor) => {
   if (submitted && valor) return true;
   else return false;
@@ -328,31 +189,26 @@ const guardar = async () => {
   // Actualizar
   if (datos.value.id) {
     await axios
-      .post(`/api/${nombres.minu}s_actualizar`, datos.value)
+      .post(`/api/${nombres.link}_actualizar`, datos.value)
       .then((response) => {
         reiniciarValores();
-        // Mensaje de alerta
         $q.notify({
           type: "positive",
           message: "datos actualizado.",
         });
       })
       .catch((e) => {
-        // Si es un error de tipo 422, es decir, contenido inprocesable
         if (e.response.status === 422) {
           errores.value = e.response.data.errors;
         }
-        // Mensaje de alerta
         $q.notify({
           type: "negative",
           message: "Error al agregar el datos.",
         });
       });
-  }
-  //Guardar datos
-  else {
+  } else {
     await axios
-      .post(`/api/${nombres.minu + "s"}_agregar`, datos.value)
+      .post(`/api/${nombres.link}_agregar`, datos.value)
       .then((response) => {
         reiniciarValores();
         $q.notify({
@@ -371,22 +227,22 @@ const guardar = async () => {
       });
   }
 };
-// Para mostrar los datos en el form
+
 const editar = (editardatos) => {
   datos.value = { ...editardatos };
   submitted.value = false;
   errores.value = {};
 };
-// Para desplegar el modal
+
 const confirmarEliminar = (id, nombre) => {
   datos.value.id = id;
   nombreRegistroEliminar.value = nombre;
   confirmarEliminacion.value = true;
 };
-// Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
+
 const eliminar = async () => {
   await axios
-    .post(`/api/${nombres.minu + "s"}_eliminar/` + datos.value.id)
+    .post(`/api/${nombres.link}_eliminar/` + datos.value.id)
     .then((response) => {
       reiniciarValores();
       $q.notify({
@@ -401,15 +257,13 @@ const eliminar = async () => {
       });
     });
 };
-/* EXCLUSIVO DE TABLA */
+
 const generarTabla = async (props) => {
-  // No se toca
   const { page, rowsPerPage } = props.pagination;
   const filter = props.filter;
   loading.value = true;
-  // Obteniendo la tabla de datos
   await axios
-    .get(`/api/${nombres.minu + "s"}`, {
+    .get(`/api/${nombres.link}`, {
       params: {
         page,
         rowsPerPage,
@@ -418,7 +272,6 @@ const generarTabla = async (props) => {
     })
     .then((response) => {
       detalleTabla.value = response.data.detalle;
-      // Actualizando el objeto de paginación local. Solamente se cambia la info del response data de ser necesario
       pagination.value.page = response.data.paginacion.pagina;
       pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina;
       pagination.value.rowsNumber = response.data.paginacion.tuplas;
@@ -426,7 +279,6 @@ const generarTabla = async (props) => {
     .catch((error) => {
       errored.value = true;
     });
-  // Apagando el indicador de carga. Este no se toca
   loading.value = false;
 };
 </script>

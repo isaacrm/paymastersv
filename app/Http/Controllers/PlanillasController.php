@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CentroDeCostos;
+use App\Models\Planillas;
 use Illuminate\Http\Request;
 
-class CentroDeCostosController extends Controller
+class PlanillasController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class CentroDeCostosController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = CentroDeCostos::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = Planillas::where('id', 'like', '%' . $filtro . '%')->orderBy('id');
         // $query = CentroDeCostos::all()->orderBy('id');
         $tuplas = $query->count();
 
@@ -29,8 +29,7 @@ class CentroDeCostosController extends Controller
         //Mandamos los meses y no el id
         $meses = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
         foreach ($detalle as $element) {
-            $element['mes_del'] = $meses[$element['mes_del']];
-            $element['mes_al'] = $meses[$element['mes_al']];
+            $element['mes_periodo'] = $meses[$element['mes_periodo']];
         }
 
         // Informacion pertinente a la paginacion para llamarlos en la vista
@@ -65,21 +64,20 @@ class CentroDeCostosController extends Controller
         // Comprobando que los campos se hayan ingresado correctamente
         $this->validacion($request);
         // Estableciendo el modelo donde se guardara la informacion
-        $datos = new CentroDeCostos();
+        $datos = new Planillas();
         // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
-        $datos->mes_del = array_search($request->mes_del, $meses);
-        $datos->mes_al = array_search($request->mes_al, $meses);
-        $datos->anyo = $request->anyo;
-        $datos->nombre = $request->nombre;
-        $datos->presupuesto_inicial = $request->presupuesto_inicial;
-        $datos->presupuesto_restante = $request->presupuesto_restante;
+        $datos->mes_periodo = array_search($request->mes_periodo, $meses);
+        $datos->anyo_periodo = $request->anyo_periodo;
+        $datos->fecha_generacion = $request->fecha_generacion;
+        $datos->dias_laborales = $request->dias_laborales;
+        $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CentroDeCostos $centroDeCostos)
+    public function show(Planillas $planillas)
     {
         //
     }
@@ -87,7 +85,7 @@ class CentroDeCostosController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CentroDeCostos $centroDeCostos)
+    public function edit(Planillas $planillas)
     {
         //
     }
@@ -95,18 +93,19 @@ class CentroDeCostosController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, Planillas $planillas)
     {
         $meses = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
-
+        // Comprobando que los campos se hayan ingresado correctamente
         $this->validacion($request);
-        $datos = CentroDeCostos::find($request->id);
-        $datos->mes_del = array_search($request->mes_del, $meses);
-        $datos->mes_al = array_search($request->mes_al, $meses);
-        $datos->nombre = $request->nombre;
-        $datos->anyo = $request->anyo;
-        $datos->presupuesto_inicial = $request->presupuesto_inicial;
-        $datos->presupuesto_restante = $request->presupuesto_restante;
+        // Estableciendo el modelo donde se guardara la informacion
+        $datos = Planillas::find($request->id);
+        // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
+        $datos->mes_periodo = array_search($request->mes_periodo, $meses);
+        $datos->anyo_periodo = $request->anyo_periodo;
+        $datos->fecha_generacion = $request->fecha_generacion;
+        $datos->dias_laborales = $request->dias_laborales;
+        $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
     }
 
@@ -115,26 +114,19 @@ class CentroDeCostosController extends Controller
      */
     public function destroy(Request $request)
     {
-        $datos = CentroDeCostos::find($request->id);
+        $datos = Planillas::find($request->id);
         $datos->delete();
-    }
-
-    public function centro_de_costos()
-    {
-        $centro_de_costos = CentroDeCostos::select('id', 'nombre as name')->get();
-        return response()->json(['centro_de_costos' => $centro_de_costos], 200);
     }
 
     private function validacion(Request $request)
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
-            'mes_del' => 'required',
-            'mes_al' => 'required',
-            'anyo' => 'required|integer|min:1999|max:2099',
-            'presupuesto_inicial' => 'required|integer|min:1000|max:9999999',
-            'presupuesto_restante' => 'required|integer|min:0|max:' . $request->presupuesto_inicial,
-            'nombre'=>'required|max:150'
+            'mes_periodo' => 'required',
+            'anyo_periodo' => 'required|integer|min:1999|max:2099',
+            'fecha_generacion' => 'required',
+            'dias_laborales' => 'required|integer|min:0|max:30',
+            'horas_laborales' => 'required|integer|min:0|max:300',
         ]);
     }
 }
