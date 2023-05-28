@@ -78,7 +78,9 @@ Route::post('/aguinaldo/agregar', [AguinaldoController::class, 'AgregarAguinaldo
 Route::post('/aguinaldo/actualizar', [AguinaldoController::class, 'ActualizarAguinaldo']);
 // Eliminar
 Route::post('/aguinaldo/eliminar/{id}', [AguinaldoController::class, 'EliminarAguinaldo']);
-Route::post('/eliminar/{id}', [TipoDocumentosController::class, 'EliminarTipoDocumentos']);
+
+// ! Y este eliminar porque esta aqui?
+Route::post('/eliminar/{id}', [TipoDocumentoController::class, 'EliminarTipoDocumentos']);
 
 
 /* DEPARTAMENTOS */

@@ -114,6 +114,11 @@ Route::middleware([
             'ruta' => '/movimientos',
             'render' => 'Movimientos/Movimientos',
             'nombre' => 'movimientos'
+        ],        
+        'Empleados'=>[
+            'ruta' => '/empleados',
+            'render' => 'Empleados/Empleados',
+            'nombre' => 'Empleados'
         ],
     ];
 

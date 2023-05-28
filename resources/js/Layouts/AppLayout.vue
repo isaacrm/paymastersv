@@ -183,6 +183,7 @@ const rosalio = [
     {icon:'whatshot', text: 'Generos', path:'/generos'},
     {icon:'whatshot', text: 'Ocupaciones', path:'/ocupaciones'},
     {icon:'whatshot', text: 'Estados Civiles', path:'/estados_civiles'},
+    {icon:'whatshot', text: 'Empleados', path:'/empleados'},
 ]
 const links2 = [
     { icon: 'whatshot', text: 'Trending' },
