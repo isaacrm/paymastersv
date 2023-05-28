@@ -134,7 +134,14 @@ class CentroDeCostosController extends Controller
             'anyo' => 'required|integer|min:1999|max:2099',
             'presupuesto_inicial' => 'required|integer|min:1000|max:9999999',
             'presupuesto_restante' => 'required|integer|min:0|max:' . $request->presupuesto_inicial,
-            'nombre'=>'required|max:150'
+            'nombre' => 'required|max:150'
         ]);
+    }
+
+    public function obtenerNombre(Request $request)
+    {
+        $nombre = CentroDeCostos::select('nombre')->where('id', '=', $request->id)->get();
+
+        return response()->json($nombre, 200);
     }
 }

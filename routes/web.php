@@ -110,6 +110,11 @@ Route::middleware([
             'render' => 'Generos/Generos',
             'nombre' => 'generos'
         ],
+        'Movimientos'=>[
+            'ruta' => '/movimientos',
+            'render' => 'Movimientos/Movimientos',
+            'nombre' => 'movimientos'
+        ],
     ];
 
     foreach ($rutas as $ruta) {

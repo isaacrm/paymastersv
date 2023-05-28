@@ -14,6 +14,7 @@ use App\Http\Controllers\PuestoController;
 use App\Http\Controllers\CentroDeCostosController;
 use App\Http\Controllers\EstadosCivilesController;
 use App\Http\Controllers\GenerosController;
+use App\Http\Controllers\MovimientosController;
 use App\Http\Controllers\OcupacionesController;
 use App\Http\Controllers\PlanillasController;
 use App\Http\Controllers\UnidadesController;
@@ -181,8 +182,10 @@ Route::post('/centro_de_costos_actualizar', [CentroDeCostosController::class, 'u
 Route::post('/centro_de_costos_eliminar/{id}', [CentroDeCostosController::class, 'destroy']);
 //Obtener los centro de costos
 Route::get('/centro_de_costos_consultar_centro_de_costos', [CentroDeCostosController::class, 'centro_de_costos']);
+//Obtener nombre
+Route::post('/centro_de_costos/obtener_nombre', [CentroDeCostosController::class, 'obtenerNombre']);
 
-/* Centro_de_costos */
+/* Planillas */
 // Ver
 Route::get('/planillas', [PlanillasController::class, 'index']);
 // Agregar
@@ -209,3 +212,9 @@ Route::get('/estados_civiles', [EstadosCivilesController::class, 'index']);
 Route::post('/estados_civiles_agregar', [EstadosCivilesController::class, 'store']);
 Route::post('/estados_civiles_actualizar', [EstadosCivilesController::class, 'update']);
 Route::post('/estados_civiles_eliminar/{id}', [EstadosCivilesController::class, 'destroy']);
+
+/* Movimientos */
+Route::get('/movimientos', [MovimientosController::class, 'index']);
+Route::post('/movimientos_agregar', [MovimientosController::class, 'store']);
+Route::post('/movimientos_actualizar', [MovimientosController::class, 'update']);
+Route::post('/movimientos_eliminar/{id}', [MovimientosController::class, 'destroy']);

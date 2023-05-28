@@ -1,12 +1,12 @@
 <template>
-  <AppLayout title="Centro de costos">
+  <AppLayout title="Movimientos">
     <div class="q-pa-md">
       <q-card class="my-card">
         <q-card-section class="ml-6">
-          <div class="text-h6">{{ nombres.nombreMayuscula }}</div>
+          <div class="text-h6">{{ nombres.mayu + centro_costo_nombre }}</div>
           <div class="text-subtitle">
-            Registro de los {{ nombres.nombreMinuscula }} de trabajo de la
-            organizacion.
+            Agregar presuouesto a el centro de costo de
+            {{ centro_costo_nombre }} de la organizacion.
           </div>
         </q-card-section>
         <q-card-section>
@@ -16,91 +16,27 @@
                 <q-input
                   filled
                   bottom-slots
-                  v-model="datos.nombre"
+                  v-model="datos.descripcion"
                   class="full-width"
-                  label="Nombre del centro de costo:"
-                  :error-message="errores.nombre && errores.nombre[0]"
-                  :error="hayError(errores.nombre)"
+                  label="Describa el porque de la operacion:"
+                  :error-message="errores.descripcion && errores.descripcion[0]"
+                  :error="hayError(errores.descripcion)"
                 />
               </q-item>
             </div>
           </div>
           <div class="row">
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  filled
-                  bottom-slots
-                  class="full-width"
-                  v-model="datos.mes_del"
-                  :options="meses"
-                  label="Mes desde"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  filled
-                  bottom-slots
-                  class="full-width"
-                  v-model="datos.mes_al"
-                  :options="meses"
-                  label="Mes hasta"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-12">
               <q-item>
                 <q-input
                   filled
                   bottom-slots
-                  v-model="datos.anyo"
-                  class="full-width"
-                  label="Año:"
-                  mask="####"
-                  fill-mask="#"
-                  hint="Año:####"
-                  :error-message="errores.anyo && errores.anyo[0]"
-                  :error="hayError(errores.anyo)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.presupuesto_inicial"
+                  v-model="datos.monto"
                   type="number"
                   class="full-width"
-                  label="Presupuesto inicial:"
-                  :error-message="
-                    errores.presupuesto_inicial &&
-                    errores.presupuesto_inicial[0]
-                  "
-                  :error="hayError(errores.presupuesto_inicial)"
-                  prefix="$"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.presupuesto_restante"
-                  type="number"
-                  class="full-width"
-                  label="Presupuesto restante:"
-                  :error-message="
-                    errores.presupuesto_restante &&
-                    errores.presupuesto_restante[0]
-                  "
-                  :error="hayError(errores.presupuesto_restante)"
-                  prefix="$"
+                  label="Asigne el monto de la operacion:"
+                  :error-message="errores.monto && errores.monto[0]"
+                  :error="hayError(errores.monto)"
                 />
               </q-item>
             </div>
@@ -168,12 +104,6 @@
               icon="delete"
               @click="confirmarEliminar(props.row.id, props.row.nombre)"
             ></q-btn>
-            <q-btn
-              round
-              color="secondary"
-              icon="list"
-              @click="confirmarMovimiento(props.row.id, props.row.nombre)"
-            ></q-btn>
           </q-td>
         </template>
       </q-table>
@@ -202,31 +132,6 @@
         </q-card>
       </q-dialog>
     </div>
-
-    <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="confirmarRealizacionMovimiento" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="warning" color="red" text-color="white" />
-            <span class="q-ml-sm"
-              >¿Desea gestionar los movimientos de
-              {{ movimientos.nombre }}?.</span
-            >
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="No" color="primary" v-close-popup />
-            <q-btn
-              flat
-              label="Sí"
-              color="primary"
-              @click="gestionarMovimiento"
-              v-close-popup
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
   </AppLayout>
 </template>
 
@@ -244,95 +149,56 @@ const submitted = ref(false); // Para comprobar si se ha dado click en los boton
 const errored = ref(false);
 
 const datos = ref({}); // El objeto que se enviara mediante el request
-const movimientos = ref({});
+
+const centro_costo_nombre = ref("");
+const centro_costos_id = ref("");
+
 const nombres = {
-  minu: "centro_de_costo",
-  mayu: "centro_de_costo",
-  nombreMinuscula: "centro de costos",
-  nombreMayuscula: "Centro de costos",
+  minu: "movimientos de ",
+  mayu: "Movimientos de ",
+  url: "movimientos",
 };
 
-const confirmarEliminacion = ref(false); // Para modal de eliminacion
-const confirmarRealizacionMovimiento = ref(false);
-const nombreRegistroAGestionarMovimientos = ref("");
-const nombreRegistroEliminar = ref(""); // Para que se muestre el nombre en el modal de eliminacion
-// Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
-const errores = ref({}); // Para almacenar el array de errores que viene desde Laravel
-// Para el q-table con server-rendering
-// Fijos e imperativos que no se tocan
+const confirmarEliminacion = ref(false);
+const nombreRegistroEliminar = ref("");
+const errores = ref({});
 const filter = ref("");
 const loading = ref(false);
 const pagination = ref({
   page: 1,
   rowsPerPage: 5,
-  /* Cuando se usa server side pagination, QTable necesita
-    conocer el "rowsNumber" (Numero total de filas).
-    Por qué?
-    Porque Quasar no tiene forma de saber cuál será
-    la última página sin esta información!
-    Por lo tanto, ahora debemos proporcionarle un "número de filas" nosotros mismos.. */
   rowsNumber: 0,
 });
 // Fin de fijos e imperativos
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
   {
-    name: "nombre",
+    name: "descripcion",
     align: "left",
-    label: "Nombre:",
-    field: "nombre",
+    label: "Descripcion",
+    field: "descripcion",
     sortable: true,
   },
   {
-    name: "mes_del",
+    name: "monto",
     align: "left",
-    label: "Desde el mes:",
-    field: "mes_del",
-    sortable: true,
-  },
-  {
-    name: "mes_al",
-    align: "left",
-    label: "Hasta el mes:",
-    field: "mes_al",
-    sortable: true,
-  },
-  { name: "anyo", align: "left", label: "Año", field: "anyo", sortable: true },
-  {
-    name: "presupuesto_inicial",
-    align: "left",
-    label: "Presupuesto inicial",
-    field: "presupuesto_inicial",
-    sortable: true,
-  },
-  {
-    name: "presupuesto_restante",
-    align: "left",
-    label: "Presupuesto restante",
-    field: "presupuesto_restante",
-    sortable: true,
+    label: "Monto",
+    field: "monto",
   },
   { name: "operaciones", align: "center", label: "Operaciones" },
-];
-
-const meses = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
 ];
 /* METODOS */
 // Lo que sucede al cargar por primera vez la vista
 onMounted(async () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  centro_costos_id.value = searchParams.get("ccid");
+
   await generarTabla({ pagination: pagination.value, filter: filter.value });
+  const respuesta = await axios.post("/api/centro_de_costos/obtener_nombre", {
+    id: centro_costos_id.value,
+  });
+
+  centro_costo_nombre.value = respuesta.data[0].nombre;
 });
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
@@ -342,31 +208,28 @@ const reiniciarValores = () => {
   errored.value = false;
   confirmarEliminacion.value = false;
   nombreRegistroEliminar.value = "";
-
-  movimientos.value = {};
-  confirmarRealizacionMovimiento.value = false;
-
   // Actualiza la tabla
   generarTabla({ pagination: pagination.value, filter: filter.value });
+};
+
+const cancelar = () => {
+  datos.value = {};
 };
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {
   if (submitted && valor) return true;
   else return false;
 };
-
-const cancelar = () => {
-  datos.value = {};
-};
-
 // Operacion de guardar
 const guardar = async () => {
   submitted.value = true;
   errores.value = {};
-  // Actualizar
+
+  datos.value.centro_costos_id = centro_costos_id.value;
+
   if (datos.value.id) {
     await axios
-      .post(`/api/${nombres.minu}s_actualizar`, datos.value)
+      .post(`/api/${nombres.url}_actualizar`, datos.value)
       .then((response) => {
         reiniciarValores();
         // Mensaje de alerta
@@ -390,7 +253,7 @@ const guardar = async () => {
   //Guardar datos
   else {
     await axios
-      .post(`/api/${nombres.minu + "s"}_agregar`, datos.value)
+      .post(`/api/${nombres.url}_agregar`, datos.value)
       .then((response) => {
         reiniciarValores();
         $q.notify({
@@ -421,17 +284,10 @@ const confirmarEliminar = (id, nombre) => {
   nombreRegistroEliminar.value = nombre;
   confirmarEliminacion.value = true;
 };
-
-const confirmarMovimiento = (id, nombre) => {
-  confirmarRealizacionMovimiento.value = true;
-  movimientos.value.id = id;
-  movimientos.value.nombre = nombre;
-};
-
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
   await axios
-    .post(`/api/${nombres.minu + "s"}_eliminar/` + datos.value.id)
+    .post(`/api/${nombres.url}_eliminar/` + datos.value.id)
     .then((response) => {
       reiniciarValores();
       $q.notify({
@@ -446,12 +302,6 @@ const eliminar = async () => {
       });
     });
 };
-
-const gestionarMovimiento = () => {
-  if (movimientos.value.id) {
-    window.location.href = `/movimientos?ccid=${movimientos.value.id}`;
-  }
-};
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
   // No se toca
@@ -460,11 +310,12 @@ const generarTabla = async (props) => {
   loading.value = true;
   // Obteniendo la tabla de datos
   await axios
-    .get(`/api/${nombres.minu + "s"}`, {
+    .get(`/api/${nombres.url}`, {
       params: {
         page,
         rowsPerPage,
         filter,
+        centro_costos_id: centro_costos_id.value,
       },
     })
     .then((response) => {
