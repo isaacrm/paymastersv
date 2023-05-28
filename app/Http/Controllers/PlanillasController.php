@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Planillas;
+use App\Models\Descuento;
 use Illuminate\Http\Request;
 
 class PlanillasController extends Controller
@@ -116,6 +117,15 @@ class PlanillasController extends Controller
     {
         $datos = Planillas::find($request->id);
         $datos->delete();
+    }
+
+    public function CantidadRegistros()
+    {
+        $cantidadDescuentos = Descuento::where('descuento','=', 'S')->count();
+        // El json que se manda a la vista para poder visualizar la información
+        return response()->json([
+            'descuentosExistentes' => $cantidadDescuentos,
+        ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
     }
 
     private function validacion(Request $request)

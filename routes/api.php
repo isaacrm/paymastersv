@@ -194,6 +194,8 @@ Route::post('/planillas_agregar', [PlanillasController::class, 'store']);
 Route::post('/planillas_actualizar', [PlanillasController::class, 'update']);
 // Eliminar
 Route::post('/planillas_eliminar/{id}', [PlanillasController::class, 'destroy']);
+// Consultar existencia de Empleados y Descuentos. Ingresos extra no porque no son obligatorios.
+Route::get('planillas/comprobacion', [PlanillasController::class, 'CantidadRegistros']);
 
 /* Generos */
 Route::get('/generos', [GenerosController::class, 'index']);
