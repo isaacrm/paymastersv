@@ -45,7 +45,7 @@ Route::middleware([
             return Inertia::render('Administracion/Permisos');
         })->name('permisos');
 
-        Route::get('usuarios', function(){
+        Route::get('/usuarios', function(){
             return Inertia::render('Administracion/Usuarios');
         })->name('usuarios');
 });
@@ -66,6 +66,8 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    RoleOrPermissionMiddleware::class . ':' . 'Administrador|SuperAdministrador|Contador|Visitante|Asistente|Usuario|Empleado|Planillero'
+
 ])->group(function () {
     Route::get('/tipo_documentos', function () {
         return Inertia::render('Configuracion/TipoDocumentos');

@@ -1,9 +1,9 @@
 <template>
-    <AppLayout title="Usuario">
+    <AppLayout title="Usuarios">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Usurios</div>
+                    <div class="text-h6">Usuarios</div>
                     <div class="text-subtitle">Registro de los usuarios existentes en el sistema a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
@@ -199,7 +199,7 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors;
+                    errores.value = e.response.data.errors
                     // Mensaje de alerta para error 422 - Datos improsesables
                     $q.notify({
                     type: 'negative',

@@ -18,7 +18,10 @@
                             <q-item class="GL__menu-link-signed-in">
                                 <q-item-section>
                                     <div>Usuario: <strong>{{ $page.props.auth.user.name }}</strong></div>
+                                    <div>Roles:</div>
+                                    <div v-for="role in $page.props.auth.user.roles" :key="role.id"><strong>{{ role.name }}</strong></div>
                                 </q-item-section>
+
                             </q-item>
                             <q-separator />
                             <q-item clickable class="GL__menu-link" @click="perfil()">
@@ -59,39 +62,37 @@
 
                     <q-separator class="q-mt-md q-mb-xs" />
 
-                    <q-item-label header class="text-weight-bold text-uppercase">
-                        Administracion
-                    </q-item-label>
-
-                    <q-item-section>
+                    <q-item-section v-if="checkSuperAdminRole($page.props.auth.user.roles)">
+                        <q-item-label header class="text-weight-bold text-uppercase">
+                            Administracion
+                        </q-item-label>
                         <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
                             Roles y Permisos
                         </q-item-label>
+                        <q-item v-for="link in roles_permisos" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="grey" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
                     </q-item-section>
-                    <q-item v-for="link in roles_permisos" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
 
-                    <q-item-section>
+                    <q-item-section v-if="checkAdminRole($page.props.auth.user.roles)">
                         <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
                             Usuarios
                         </q-item-label>
+                        <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="grey" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-separator class="q-mt-md q-mb-xs" />
                     </q-item-section>
-                    <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-mt-md q-mb-xs" />
 
                     <q-item-label header class="text-weight-bold text-uppercase">
                         Direcciones
@@ -246,6 +247,28 @@ const buttons2 = [
     { text: 'Test new features' }
 ]
 
+/* VERIFICACIÓN DE ROLES */
+// Verificar acceso si es rol Administrador o Super Administrador
+const checkAdminRole = (roles) => {
+  for (let i = 0; i < roles.length; i++) {
+    const roleName = roles[i].name;
+    if (roleName === 'Administrador' || roleName === 'SuperAdministrador') {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Verificar acceso si es rol Super Administrador
+const checkSuperAdminRole = (roles) => {
+    for (let i = 0; i < roles.length; i++) {
+        const roleName = roles[i].name;
+        if (roleName === 'SuperAdministrador') {
+            return true;
+        }
+    }
+    return false;
+}
 </script>
 
 <style lang="sass">
