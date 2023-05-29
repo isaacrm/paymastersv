@@ -43,7 +43,10 @@ class UsuariosController extends Controller
         // Filtrar por el filtro ingresado
         if ($filtro) {
             $detalle = array_filter($detalle, function ($item) use ($filtro) {
-                return str_contains($item['user_name'], $filtro);
+                $userMatches = str_contains($item['user_name'], $filtro);
+                $roleMatches = str_contains($item['roles'], $filtro); // Agregar esta línea para filtrar por el campo "role"
+
+                return $userMatches || $roleMatches; // Devolver true si alguna de las condiciones se cumple
             });
           }
 
@@ -70,6 +73,9 @@ class UsuariosController extends Controller
     // La operación de Asignación de Permisos al Rol
     public function asignarRoles(Request $request)
     {
+        $request->validate([
+            'roles' => 'required|array|min:1', // Validar que 'roles' sea requerido, un array y tenga al menos un elemento
+        ]);
         // Obtener el rol del ID enviado
         $usuario = User::findOrFail($request->id);
         // Obtener los IDs de los permisos seleccionados

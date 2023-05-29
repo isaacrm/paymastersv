@@ -14,14 +14,16 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 'Administrador'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'SuperAdministrador'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Contador'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Asistente'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Visitante'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Usuario'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Planillero'])->givePermissionTo('Inicio');
-        Role::create(['name' => 'Empleado'])->givePermissionTo('Inicio');
+        $permisoVisualizar = Permission::where('name', 'Inicio')->first(); // Obtén el rol correspondiente
+
+        Role::create(['name' => 'Administrador'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'SuperAdministrador'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Contador'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Asistente'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Visitante'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Usuario'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Planillero'])->syncPermissions($permisoVisualizar);
+        Role::create(['name' => 'Empleado'])->syncPermissions($permisoVisualizar);
 
 
     }

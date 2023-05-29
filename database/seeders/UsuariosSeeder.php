@@ -16,7 +16,7 @@ class UsuariosSeeder extends Seeder
     {
         // Usuarios Administradores
         User::create([
-            'name' => 'Super Administrador',
+            'name' => 'sadmin@admin.com',
             'email' => 'sadmin@admin.com',
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
@@ -28,7 +28,7 @@ class UsuariosSeeder extends Seeder
         ])->assignRole('SuperAdministrador');
 
         User::create([
-            'name' => 'Administrador',
+            'name' => 'admin@admin.com',
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
@@ -40,7 +40,7 @@ class UsuariosSeeder extends Seeder
         ])->assignRole('Administrador');
 
         User::create([
-            'name' => 'Contador',
+            'name' => 'conta@conta.com',
             'email' => 'conta@conta.com',
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password

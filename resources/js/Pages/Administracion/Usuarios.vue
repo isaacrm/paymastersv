@@ -12,8 +12,7 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
                                     readonly
-                                    label="Nombre" :error-message="errores.user_name && errores.user_name[0]"
-                                    :error="hayError(errores.name)" />
+                                    label="Usuario"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
@@ -21,13 +20,17 @@
                                 <q-select filled v-model="selectedRoles" class="full-width"
                                     multiple
                                     :options="roles"
-                                    label="Roles"
                                     emit-value
                                     map-options
                                     option-label="name"
                                     option-value="id"
                                     stack-label
                                     clearable
+                                    :rules="[val => !!val || 'Rol es requerido']"
+                                    label="Roles" :error-message="errores.selectedRoles && errores.selectedRoles[0]"
+                                    :error="hayError(errores.selectedRoles)"
+                                    transition-show="scale"
+                                    transition-hide="scale"
                                     />
                             </q-item>
                         </div>
@@ -47,7 +50,7 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <q-btn outline rounded color="primary" label="Asignar Rol" icon="add" @click="guardar"></q-btn>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
@@ -203,7 +206,7 @@ const guardar = async () => {
                     // Mensaje de alerta para error 422 - Datos improsesables
                     $q.notify({
                     type: 'negative',
-                    message: 'Error al actualizar el usuario.'
+                    message: "Error al actualizar el usuario."
                     });
                 } else if (e.response.status === 409) {
                     // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)

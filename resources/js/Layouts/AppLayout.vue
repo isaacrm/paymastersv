@@ -2,8 +2,8 @@
     <Head :title="title" />
 
     <q-layout view="hHh lpR fFf" class="bg-grey-1">
-        <q-header elevated class="bg-grey-9 text-white-8 q-py-xs" height-hint="58">
-            <q-toolbar class="bg-grey-9 text-white">
+        <q-header elevated class="bg-gradient-header text-white-8 q-py-xs" height-hint="58">
+            <q-toolbar class="bg-gradient-header text-white">
                 <q-btn flat round dense @click="toggleLeftDrawer" aria-label="Menu" icon="menu" />
                 <q-btn flat no-caps no-wrap class="q-ml-xs" v-if="$q.screen.gt.xs">
                     <q-toolbar-title shrink class="text-weight-bold" @click="dashboard()">
@@ -37,15 +37,15 @@
                 </q-btn>
             </q-toolbar>
         </q-header>
-        <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
+        <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-menu" :width="240">
             <q-scroll-area class="fit">
                 <q-list padding>
                     <q-item v-for="link in inicio" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
+                            <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
+                            <q-item-label class="text-weight-bold text-black">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -53,10 +53,10 @@
 
                     <q-item v-for="link in rosalio" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
+                            <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
+                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -71,7 +71,7 @@
                         </q-item-label>
                         <q-item v-for="link in roles_permisos" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
-                                <q-icon color="grey" :name="link.icon" />
+                                <q-icon color="black" :name="link.icon" />
                             </q-item-section>
                             <q-item-section>
                                 <q-item-label>{{ link.text }}</q-item-label>
@@ -85,7 +85,7 @@
                         </q-item-label>
                         <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
-                                <q-icon color="grey" :name="link.icon" />
+                                <q-icon color="black" :name="link.icon" />
                             </q-item-section>
                             <q-item-section>
                                 <q-item-label>{{ link.text }}</q-item-label>
@@ -100,10 +100,10 @@
 
                     <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
+                            <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
+                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -115,10 +115,10 @@
 
                     <q-item v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
+                            <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
+                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -130,10 +130,10 @@
 
                     <q-item v-for="link in registro" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
-                            <q-icon color="grey" :name="link.icon" />
+                            <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
+                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
 
