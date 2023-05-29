@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empleados;
+use App\Models\Puesto;
+use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -166,6 +168,9 @@ class EmpleadosController extends Controller
 
     private function validacion(Request $request)
     {
+        $longitud_tipo_documentos = TipoDocumento::select('longitud')->where('id', '=', $request->tipo_documentos_id)->get();
+        $salario_desde = Puesto::select('salario_desde')->where('id', '=', $request->puestos_id)->get();
+        $salario_hasta = Puesto::select('salario_hasta')->where('id', '=', $request->puestos_id)->get();
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
             'primer_nombre' => 'required|max:25',
@@ -175,14 +180,14 @@ class EmpleadosController extends Controller
             'apellido_casada' => 'required|max:35',
             'fecha_nacimiento' => 'required',
             'fecha_ingreso' => 'required',
-            'identificacion' => 'required|max:25',
+            'identificacion' => 'required|max:' . $longitud_tipo_documentos[0]->longitud,
             'nit' => 'required|max:25',
             'isss' => 'required|max:25',
             'nup' => 'required|max:20',
             'email_personal' =>  'required|email',
             'email_profesional' =>  'required|email',
             // 'salario_base' => 'required|decimal:2|min:365|max:9999',
-            'salario_base' => 'required|numeric|min:365|max:9999',
+            'salario_base' => 'required|numeric|min:' . $salario_desde[0]->salario_desde . '|max:' . $salario_hasta[0]->salario_hasta,
             'estados_civiles_id' => 'required',
             'generos_id' => 'required',
             'ocupaciones_id' => 'required',
