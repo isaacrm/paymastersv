@@ -73,6 +73,12 @@ class TipoDocumentoController extends Controller
         $tipo_documentos->delete();
     }
 
+    public function consultar_id_nombre()
+    {
+        $datos = TipoDocumento::select('id', 'nombre as name')->get();
+        return response()->json($datos, 200);
+    }
+
     /* METODOS INTERNOS con camelPascal */
     // Validacion de campos con Laravel
     private function validacion(Request $request)
