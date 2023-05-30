@@ -12,6 +12,7 @@ use App\Http\Controllers\DescuentosController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\PuestoController;
 use App\Http\Controllers\CentroDeCostosController;
+use App\Http\Controllers\EmpleadosController;
 use App\Http\Controllers\EstadosCivilesController;
 use App\Http\Controllers\GenerosController;
 use App\Http\Controllers\MovimientosController;
@@ -49,6 +50,8 @@ Route::post('/tipo_documentos/agregar', [TipoDocumentoController::class, 'Agrega
 Route::post('/tipo_documentos/actualizar', [TipoDocumentoController::class, 'ActualizarTipoDocumentos']);
 // Eliminar
 Route::post('/tipo_documentos/eliminar/{id}', [TipoDocumentoController::class, 'EliminarTipoDocumentos']);
+Route::get('/tipo_documentos_consultar_select', [TipoDocumentoController::class, 'consultar_id_nombre']);
+
 
 /* RENTA MENSUAL */
 // Ver
@@ -119,6 +122,8 @@ Route::post('/agregar_direccion', [DireccionesController::class, 'AgregarDirecci
 Route::post('/actualizar_direccion', [DireccionesController::class, 'ActualizarDirecciones']);
 //Eliminar
 Route::post('/eliminar_direccion/{id}', [DireccionesController::class, 'EliminarDirecciones']);
+Route::get('/direccion_consultar_select', [DireccionesController::class, 'consultar_id_nombre']);
+
 /* INGRESOS */
 // Ver
 Route::get('/tabla_ingresos', [IngresosController::class, 'TablaIngresos']);
@@ -161,6 +166,7 @@ Route::post('/puestos_eliminar/{id}', [PuestoController::class, 'destroy']);
 Route::get('/puestos_consultar_superiores', [PuestoController::class, 'consultarSuperiores']);
 //Consultar puestos
 Route::get('/puestos_consultar_puestos', [PuestoController::class, 'consultarPuestos']);
+Route::get('/puestos_consultar_select', [PuestoController::class, 'consultar_id_nombre']);
 
 /* Unidades */
 // Ver
@@ -207,18 +213,21 @@ Route::get('/generos', [GenerosController::class, 'index']);
 Route::post('/generos_agregar', [GenerosController::class, 'store']);
 Route::post('/generos_actualizar', [GenerosController::class, 'update']);
 Route::post('/generos_eliminar/{id}', [GenerosController::class, 'destroy']);
+Route::get('/generos_consultar_select', [GenerosController::class, 'consultar_id_nombre']);
 
 /* Ocupaciones */
 Route::get('/ocupaciones', [OcupacionesController::class, 'index']);
 Route::post('/ocupaciones_agregar', [OcupacionesController::class, 'store']);
 Route::post('/ocupaciones_actualizar', [OcupacionesController::class, 'update']);
 Route::post('/ocupaciones_eliminar/{id}', [OcupacionesController::class, 'destroy']);
+Route::get('/ocupaciones_consultar_select', [OcupacionesController::class, 'consultar_id_nombre']);
 
 /* Estados Civiles */
 Route::get('/estados_civiles', [EstadosCivilesController::class, 'index']);
 Route::post('/estados_civiles_agregar', [EstadosCivilesController::class, 'store']);
 Route::post('/estados_civiles_actualizar', [EstadosCivilesController::class, 'update']);
 Route::post('/estados_civiles_eliminar/{id}', [EstadosCivilesController::class, 'destroy']);
+Route::get('/estados_civiles_consultar_select', [EstadosCivilesController::class, 'consultar_id_nombre']);
 
 /* Movimientos */
 Route::get('/movimientos', [MovimientosController::class, 'index']);
@@ -231,3 +240,8 @@ Route::get('/registros', [RegistroController::class, 'index']);
 //Route::post('/registros/agregar', [RegistroController::class, 'store']);
 //Route::post('/registros/actualizar', [RegistroController::class, 'update']);
 //Route::post('/registros/eliminar/{id}', [RegistroController::class, 'destroy']);
+/* Empleados */
+Route::get('/empleados', [EmpleadosController::class, 'index']);
+Route::post('/empleados/agregar', [EmpleadosController::class, 'store']);
+Route::post('/empleados/actualizar', [EmpleadosController::class, 'update']);
+Route::post('/empleados/eliminar/{id}', [EmpleadosController::class, 'destroy']);

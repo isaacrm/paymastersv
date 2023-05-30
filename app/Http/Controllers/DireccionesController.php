@@ -85,6 +85,13 @@ class DireccionesController extends Controller
          $direcciones = Direccion::find($request->id);
          $direcciones->delete();
      }
+
+     public function consultar_id_nombre()
+     {
+         $datos = Direccion::select('id', 'calle as name')->get();
+         return response()->json($datos, 200);
+     }
+
     /* METODOS INTERNOS con camelPascal */
     // Validacion de campos con Laravel
     private function validacion(Request $request)

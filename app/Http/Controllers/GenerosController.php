@@ -94,6 +94,12 @@ class GenerosController extends Controller
         $objeto->delete();
     }
 
+    public function consultar_id_nombre()
+    {
+        $datos = Generos::select('id', 'nombre as name')->get();
+        return response()->json($datos, 200);
+    }
+
     private function validacion(Request $request)
     {
         $request->validate([
