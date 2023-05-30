@@ -55,7 +55,7 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    RoleOrPermissionMiddleware::class . ':' . 'Administrador|SuperAdministrador|Contador|Visitante|Asistente|Usuario|Empleado|Planillero|Inicio'
+    RoleOrPermissionMiddleware::class . ':' . 'Administrador|SuperAdministrador|Visitante|Empleado|Planillero|dashboard'
 
     ])->group(function(){
         Route::get('/dashboard', function () {

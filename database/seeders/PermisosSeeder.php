@@ -14,16 +14,16 @@ class PermisosSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'Inicio']);
-        Permission::create(['name' => 'Información de empleados']);
-        Permission::create(['name' => 'Direccion']);
-        Permission::create(['name' => 'Registro Empresa']);
-        Permission::create(['name' => 'Registro Movimientos']);
-        Permission::create(['name' => 'Roles y Permisos']);
-        Permission::create(['name' => 'TipoDoc']);
-        Permission::create(['name' => 'Usuarios']);
-        Permission::create(['name' => 'Empleados']);
-        Permission::create(['name' => 'Configuración']);
+        Permission::create(['name' => 'dashboard']);
+        Permission::create(['name' => 'empleados.config']);
+        Permission::create(['name' => 'direccion']);
+        Permission::create(['name' => 'registro.empresa']);
+        Permission::create(['name' => 'registro.movimientos']);
+        Permission::create(['name' => 'roles.permisos']);
+        Permission::create(['name' => 'configuracion.doc']);
+        Permission::create(['name' => 'roles.usuarios']);
+        Permission::create(['name' => 'empleados.datos']);
+        Permission::create(['name' => 'configuracion.desc']);
 
 
 

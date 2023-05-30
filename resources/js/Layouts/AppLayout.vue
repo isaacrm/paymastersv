@@ -260,7 +260,7 @@ const empleados_datos = [
 const checkAsigPermiso = (permissions) => {
   if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Roles y Permisos') {
+      if (permissions[i] === 'roles.permisos') {
         return true;
       }
     }
@@ -273,7 +273,7 @@ const checkAsigPermiso = (permissions) => {
 const checkAdministrador = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Usuarios') {
+      if (permissions[i] === 'roles.usuarios') {
         return true;
       }
     }
@@ -285,7 +285,7 @@ const checkAdministrador = (permissions) => {
 const checkInfoEmpleados = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Información de empleados') {
+      if (permissions[i] === 'empleados.config') {
         return true;
       }
     }
@@ -296,7 +296,7 @@ const checkInfoEmpleados = (permissions) => {
 const checkRegMovimientos = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Registro Movimientos') {
+      if (permissions[i] === 'registro.movimientos') {
         return true;
       }
     }
@@ -307,7 +307,7 @@ const checkRegMovimientos = (permissions) => {
 const checkTipoDoc = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'TipoDoc') {
+      if (permissions[i] === 'configuracion.doc') {
         return true;
       }
     }
@@ -318,7 +318,7 @@ const checkTipoDoc = (permissions) => {
 const checkRegEmpresa = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Registro Empresa') {
+      if (permissions[i] === 'registro.empresa') {
         return true;
       }
     }
@@ -329,7 +329,7 @@ const checkRegEmpresa = (permissions) => {
 const checkDireccion = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Direccion') {
+      if (permissions[i] === 'direccion') {
         return true;
       }
     }
@@ -340,7 +340,7 @@ const checkDireccion = (permissions) => {
 const checkConfPla = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Configuración') {
+      if (permissions[i] === 'configuracion.desc') {
         return true;
       }
     }
@@ -352,7 +352,7 @@ const checkConfPla = (permissions) => {
 const checkConfiguracion = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Configuración' || permissions[i] === 'TipoDoc') {
+      if (permissions[i] === 'configuracion.desc' || permissions[i] === 'configuracion.doc') {
         return true;
       }
     }
@@ -363,7 +363,7 @@ const checkConfiguracion = (permissions) => {
 const checkRegistro = ( permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Registro Movimientos' || permissions[i] === 'Registro Empresa') {
+      if (permissions[i] === 'registro.movimientos' || permissions[i] === 'registro.empresa') {
         return true;
       }
     }
@@ -374,7 +374,7 @@ const checkRegistro = ( permissions) => {
 const Inicio = ( permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Inicio') {
+      if (permissions[i] === 'dashboard') {
         return true;
       }
     }
@@ -385,7 +385,7 @@ const Inicio = ( permissions) => {
 const checkEmpleados = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Empleados') {
+      if (permissions[i] === 'empleados.datos') {
         return true;
       }
     }
@@ -396,7 +396,7 @@ const checkEmpleados = (permissions) => {
 const checkEmpLabel = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'Información de empleados' || permissions[i] === 'Empleados') {
+      if (permissions[i] === 'empleados.config' || permissions[i] === 'empleados.datos') {
         return true;
       }
     }

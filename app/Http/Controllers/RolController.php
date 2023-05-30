@@ -132,14 +132,14 @@ class RolController extends Controller
         }
 
         // Buscando el permiso Visualizar
-        $permisoVisualizar = Permission::where('name', 'Inicio')->first(); // Obtén el rol correspondiente
+        $permisoDashboard = Permission::where('name', 'dasboard')->first(); // Obtén el rol correspondiente
 
         // Estableciendo el modelo donde se guardara la informacion
         $rol = Role::create([
             'name' => $request->name,
         ]);
 
-        $rol->syncPermissions($permisoVisualizar); // Asigna el permiso visualizar  al rol nuevo
+        $rol->syncPermissions($permisoDashboard); // Asigna el permiso visualizar  al rol nuevo
     }
     
     // La operación de Update CR[U]D

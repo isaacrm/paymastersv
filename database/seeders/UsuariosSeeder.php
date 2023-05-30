@@ -83,14 +83,16 @@ class UsuariosSeeder extends Seeder
         $role4 = Role::findByName('Visitante');
         $role5 = Role::findByName('Empleado');
 
-        $permiso1 = Permission::findByName('Inicio');
-        $permiso2 = Permission::findByName('Direccion');
-        $permiso3 = Permission::findByName('Información de empleados');
-        $permiso4 = Permission::findByName('Registro Empresa');
-        $permiso5 = Permission::findByName('Registro Movimientos');
-        $permiso6 = Permission::findByName('Roles y Permisos');
-        $permiso7 = Permission::findByName('TipoDoc');
-        $permiso8 = Permission::findByName('Usuarios');
+        $permiso1 = Permission::findByName('dashboard');
+        $permiso2 = Permission::findByName('direccion');
+        $permiso3 = Permission::findByName('empleados.config');
+        $permiso4 = Permission::findByName('registro.empresa');
+        $permiso5 = Permission::findByName('registro.movimientos');
+        $permiso6 = Permission::findByName('roles.permisos');
+        $permiso7 = Permission::findByName('configuracion.doc');
+        $permiso8 = Permission::findByName('roles.usuarios');
+        $permiso8 = Permission::findByName('empleados.datos');
+        $permiso9 = Permission::findByName('configuracion.desc');
 
 
 
