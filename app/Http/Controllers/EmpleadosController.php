@@ -46,6 +46,12 @@ class EmpleadosController extends Controller
             ->orWhere('e.apellido_paterno', 'like', '%', $filtro, '%')
             ->orWhere('e.apellido_materno', 'like', '%', $filtro, '%')
             ->orWhere('e.apellido_casada', 'like', '%', $filtro, '%')
+            ->orWhere('e.identificacion', 'like', '%', $filtro, '%')
+            ->orWhere('e.nit', 'like', '%', $filtro, '%')
+            ->orWhere('e.nup', 'like', '%', $filtro, '%')
+            ->orWhere('e.fecha_nacimiento', 'like', '%', $filtro, '%')
+            ->orWhere('e.email_personal', 'like', '%', $filtro, '%')
+            ->orWhere('e.email_profesional', 'like', '%', $filtro, '%')
             ->orderBy('e.id');
 
         $tuplas = $query->count();
@@ -168,32 +174,52 @@ class EmpleadosController extends Controller
 
     private function validacion(Request $request)
     {
-        $longitud_tipo_documentos = TipoDocumento::select('longitud')->where('id', '=', $request->tipo_documentos_id)->get();
-        $salario_desde = Puesto::select('salario_desde')->where('id', '=', $request->puestos_id)->get();
-        $salario_hasta = Puesto::select('salario_hasta')->where('id', '=', $request->puestos_id)->get();
+        $longitud_tipo_documentos = 25;
+        if ($request->tipo_documentos_id) {
+            $longitud_tipo_documentos = TipoDocumento::select('longitud')->where('id', '=', $request->tipo_documentos_id)->get();
+            $longitud_tipo_documentos = $longitud_tipo_documentos[0]->longitud;
+        }
+
+        $salario_desde = 360;
+        $salario_hasta = 6000;
+        if ($request->puestos_id) {
+            $salario_desde = Puesto::select('salario_desde')->where('id', '=', $request->puestos_id)->get();
+            $salario_desde = $salario_desde[0]->salario_desde;
+            $salario_hasta = Puesto::select('salario_hasta')->where('id', '=', $request->puestos_id)->get();
+            $salario_hasta = $salario_hasta[0]->salario_hasta;
+        }
+
+        $fecha_de_hace_dieiciocho_años = date('Y-m-d', strtotime('-18 years'));
+
+        $messages = [
+            'fecha_nacimiento.before_or_equal' => 'El empleado debe ser mayor de 18 años para poder trabajar'
+        ];
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
             'primer_nombre' => 'required|max:25',
             'segundo_nombre' => 'required|max:25',
             'apellido_paterno' => 'required|max:30',
             'apellido_materno' => 'required|max:30',
-            'apellido_casada' => 'required|max:35',
-            'fecha_nacimiento' => 'required',
+            'apellido_casada' => 'max:35',
+            'fecha_nacimiento' => [
+                'required',
+                'before_or_equal:' . $fecha_de_hace_dieiciocho_años
+            ],
             'fecha_ingreso' => 'required',
-            'identificacion' => 'required|max:' . $longitud_tipo_documentos[0]->longitud,
-            'nit' => 'required|max:25',
+            'identificacion' => 'required|max:' . $longitud_tipo_documentos,
+            'nit' => ['required', 'max:25', 'regex:/^\d{4}-\d{6}-\d{3}-\d$/'],
             'isss' => 'required|max:25',
             'nup' => 'required|max:20',
             'email_personal' =>  'required|email',
             'email_profesional' =>  'required|email',
             // 'salario_base' => 'required|decimal:2|min:365|max:9999',
-            'salario_base' => 'required|numeric|min:' . $salario_desde[0]->salario_desde . '|max:' . $salario_hasta[0]->salario_hasta,
+            'salario_base' => 'required|numeric|min:' . $salario_desde . '|max:' . $salario_hasta,
             'estados_civiles_id' => 'required',
             'generos_id' => 'required',
             'ocupaciones_id' => 'required',
             'tipo_documentos_id' => 'required',
             'direcciones_id' => 'required',
             'puestos_id' => 'required',
-        ]);
+        ], $messages);
     }
 }

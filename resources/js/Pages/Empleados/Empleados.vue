@@ -87,7 +87,25 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-6">
+              <q-item>
+                <q-select
+                  v-model="datosSelect.tipo_documento"
+                  label="Seleccione el tipo de documento:"
+                  :options="tipo_documento"
+                  option-label="name"
+                  option-value="id"
+                  class="full-width"
+                  filled
+                  clearable
+                  :error-message="
+                    errores.tipo_documentos_id && errores.tipo_documentos_id[0]
+                  "
+                  :error="hayError(errores.tipo_documentos_id)"
+                />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-6">
               <q-item>
                 <q-input
                   filled
@@ -102,7 +120,9 @@
                 />
               </q-item>
             </div>
-            <div class="col-12 col-md-3">
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-4">
               <q-item>
                 <q-input
                   filled
@@ -112,10 +132,12 @@
                   label="Nit de el empleado:"
                   :error-message="errores.nit && errores.nit[0]"
                   :error="hayError(errores.nit)"
+                  mask="####-######-###-#"
+                  fill-mask="_"
                 />
               </q-item>
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-4">
               <q-item>
                 <q-input
                   filled
@@ -128,7 +150,7 @@
                 />
               </q-item>
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-4">
               <q-item>
                 <q-input
                   filled
@@ -281,25 +303,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  v-model="datosSelect.tipo_documento"
-                  label="Seleccione el tipo de documento:"
-                  :options="tipo_documento"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="
-                    errores.tipo_documentos_id && errores.tipo_documentos_id[0]
-                  "
-                  :error="hayError(errores.tipo_documentos_id)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
               <q-item>
                 <q-select
                   v-model="datosSelect.direccion"
@@ -317,7 +321,7 @@
                 />
               </q-item>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
               <q-item>
                 <q-select
                   v-model="datosSelect.puesto"
@@ -506,6 +510,7 @@ const columns = [
 
 onMounted(async () => {
   await generarTabla({ pagination: pagination.value, filter: filter.value });
+  await actualizar_selects();
 });
 
 const reiniciarValores = () => {
@@ -576,7 +581,7 @@ const guardar = async () => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el datos, favor revisar los datos.",
         });
       });
   } else {
@@ -595,7 +600,7 @@ const guardar = async () => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el datos, favor revisar los datos.",
         });
       });
   }
@@ -692,8 +697,6 @@ const generarTabla = async (props) => {
       errored.value = true;
     });
   loading.value = false;
-
-  await actualizar_selects();
 };
 
 const obtenerEstadoCivil = async () => {
