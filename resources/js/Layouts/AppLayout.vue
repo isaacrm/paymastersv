@@ -42,12 +42,9 @@
                         <q-item-section>
                             <q-item-label class="text-weight-bold text-black">{{ link.text }}</q-item-label>
                         </q-item-section>
-                        <q-separator class="q-mt-md q-mb-xs" />
                     </q-item>
-
                     <q-item-section v-if="checkAsigPermiso($page.props.auth.user.permissions)">
-                        <q-separator class="q-mt-md q-mb-xs" />
-
+                      <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Roles y Permisos
                         </q-item-label>
@@ -63,11 +60,10 @@
                     </q-item-section>
 
                     <q-item-section v-if="checkAdministrador($page.props.auth.user.permissions)">
-                        <q-separator class="q-mt-md q-mb-xs" />
+                      <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Usuarios
                         </q-item-label>
-
                         <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
@@ -76,11 +72,11 @@
                                 <q-item-label>{{ link.text }}</q-item-label>
                             </q-item-section>
                         </q-item>
-                        <q-separator class="q-mt-md q-mb-xs" />
                     </q-item-section>
                     
-                    <q-item-label v-if="checkRegistro($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
-                        Registro
+                    <q-item-label v-if="checkRegistro($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">  
+                      <q-separator class="q-mt-md q-mb-xs" />
+                      Registro
                     </q-item-label>
                         <q-item v-if="checkRegMovimientos($page.props.auth.user.permissions)" v-for="link in registro_movimientos" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
@@ -91,18 +87,18 @@
                             </q-item-section>
                         </q-item>
 
-                        <q-item v-if="checkRegEmpresa($page.props.auth.user.permissions)" v-for="link in registro_empresa" :key="link.text" v-ripple clickable :href="link.path">
-                            <q-item-section avatar>
-                                <q-icon color="black" :name="link.icon" />
-                            </q-item-section>
-                            <q-item-section>
-                                <q-item-label>{{ link.text }}</q-item-label>
-                            </q-item-section>
+                          <q-item v-if="checkRegEmpresa($page.props.auth.user.permissions)" v-for="link in registro_empresa" :key="link.text" v-ripple clickable :href="link.path">
+                              <q-item-section avatar>
+                                  <q-icon color="black" :name="link.icon" />
+                              </q-item-section>
+                              <q-item-section>
+                                  <q-item-label>{{ link.text }}</q-item-label>
+                              </q-item-section>
                         </q-item>
-                    <q-separator class="q-mt-md q-mb-xs" />
                     
                     <q-item-label v-if="checkEmpLabel($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
-                        Empleados
+                      <q-separator class="q-mt-md q-mb-xs" />      
+                      Empleados
                     </q-item-label>
                         <q-item v-if="checkInfoEmpleados($page.props.auth.user.permissions)" v-for="link in empleados" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
@@ -122,8 +118,7 @@
                         </q-item>
 
                     <q-item-section v-if="checkDireccion($page.props.auth.user.permissions)">
-                        <q-separator class="q-mt-md q-mb-xs" />
-
+                      <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Direcciones
                         </q-item-label>
@@ -138,9 +133,9 @@
                         </q-item>
                     </q-item-section>
 
-                    <q-separator class="q-mt-md q-mb-xs" />
                     <q-item-label v-if="checkConfiguracion($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
-                            Configuracion
+                      <q-separator class="q-mt-md q-mb-xs" />      
+                      Configuracion
                     </q-item-label>
                         <q-item v-if="checkTipoDoc($page.props.auth.user.permissions)" v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
