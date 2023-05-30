@@ -1,70 +1,17 @@
 <template>
-    <AppLayout title="Planillas">
-        <div class="q-pa-md q-gutter-sm"
-            v-show="valoresExistentes.cantidadEmpleados <= 0 || valoresExistentes.cantidadDescuentos <= 0">
-            <q-banner inline-actions class="text-white bg-red" v-show="valoresExistentes.cantidadEmpleados <= 0">
-                No hay empleados registrados.
-            </q-banner>
-            <q-banner inline-actions class="text-white bg-red" v-show="valoresExistentes.cantidadDescuentos <= 0">
-                No hay descuentos obligatorios registrados para aplicar a los salarios.
-            </q-banner>
-        </div>
+    <AppLayout title="Detalle Planillas">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">{{ nombres.mayu }}</div>
-                    <div class="text-subtitle">
-                        Registro de las {{ nombres.minu }} de trabajo de la organizacion.
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-select filled bottom-slots class="full-width" v-model="datos.mes_periodo"
-                                    :options="meses" label="Mes periodo"
-                                    :error-message="errores.mes_periodo && errores.mes_periodo[0]"
-                                    :error="hayError(errores.mes_periodo)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.anyo_periodo" class="full-width"
-                                    label="Año periodo:" mask="####" fill-mask="#" hint="Año:####" :error-message="errores.anyo_periodo && errores.anyo_periodo[0]
-                                        " :error="hayError(errores.anyo_periodo)" />
-                            </q-item>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.fecha_generacion" class="full-width"
-                                    label="Fecha de generacion:" type="date" :error-message="errores.fecha_generacion && errores.fecha_generacion[0]
-                                        " :error="hayError(errores.fecha_generacion)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.dias_laborales" type="number" class="full-width"
-                                    label="Dias laborales:" :error-message="errores.dias_laborales && errores.dias_laborales[0]
-                                        " :error="hayError(errores.dias_laborales)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.horas_laborales" type="number"
-                                    class="full-width" label="Horas laborales:" :error-message="errores.horas_laborales && errores.horas_laborales[0]
-                                        " :error="hayError(errores.horas_laborales)" />
-                            </q-item>
-                        </div>
-                    </div>
+                    <q-btn outline rounded color="primary" label="Añadir Manualmente" icon="add" @click="guardar"></q-btn>
+                    <q-btn outline rounded color="danger" label="Regresar" icon="undo" @click="regresar"></q-btn>
                 </q-card-section>
             </q-card>
         </div>
         <div class="q-pa-md">
-            <q-table flat bordered :rows="detalleTabla" :columns="columns" row-key="id" v-model:pagination="pagination"
-                :loading="loading" :filter="filter" binary-state-sort :rows-per-page-options="[5, 10, 20, 40, 0]"
-                @request="generarTabla">
+            <q-table title="Detalle de planillas" flat bordered :rows="detalleTabla" :columns="columns" row-key="id"
+                v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+                :rows-per-page-options="[5, 10, 20, 40, 0]" @request="generarTabla">
                 <template v-slot:top-right>
                     <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar">
                         <template v-slot:append>
@@ -72,16 +19,57 @@
                         </template>
                     </q-input>
                 </template>
-                <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"
-                        v-show="valoresExistentes.cantidadDescuentos > 0 && valoresExistentes.cantidadEmpleados > 0"></q-btn>
-                    <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                <!-- Nueva plantilla para celdas editables -->
+                <template #body-cell-dias_trabajados="props">
+                    <q-td :props="props">
+                        <template v-if="editableRow === props.index">
+                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
+                                @input="updateCellValue(props.row, props.col.field)" />
+                        </template>
+                        <template v-else>
+                            <div>{{ props.row[props.col.field] }}</div>
+                        </template>
+                    </q-td>
+                </template>
+                <template #body-cell-horas_trabajadas="props">
+                    <q-td :props="props">
+                        <template v-if="editableRow === props.index">
+                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
+                                @input="updateCellValue(props.row, props.col.field)" />
+                        </template>
+                        <template v-else>
+                            <div>{{ props.row[props.col.field] }}</div>
+                        </template>
+                    </q-td>
+                </template>
+                <template #body-cell-horas_adicionales="props">
+                    <q-td :props="props">
+                        <template v-if="editableRow === props.index">
+                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
+                                @input="updateCellValue(props.row, props.col.field)" />
+                        </template>
+                        <template v-else>
+                            <div>{{ props.row[props.col.field] }}</div>
+                        </template>
+                    </q-td>
+                </template>
+                <template #body-cell-horas_ausencia="props">
+                    <q-td :props="props">
+                        <template v-if="editableRow === props.index">
+                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
+                                @input="updateCellValue(props.row, props.col.field)" />
+                        </template>
+                        <template v-else>
+                            <div>{{ props.row[props.col.field] }}</div>
+                        </template>
+                    </q-td>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="secondary" icon="table_view" class="mr-2"
-                            @click="redireccionDetalle(props.row.id)"></q-btn>
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editableRow = props.index"
+                            v-show="editableRow == -1"></q-btn>
+                        <q-btn round color="primary" icon="save" class="mr-2" @click="editableRow = -1"
+                            v-show="editableRow != -1"></q-btn>
                         <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
                     </q-td>
@@ -112,20 +100,29 @@ import { onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import axios from "axios";
-import { meses } from "../../Components/Constantes";
 /* VARIABLES Y CONSTANTES, con camelPascal */
 // De quasar
 const $q = useQuasar(); // Para mensajes de exito o error
+// Parametros mandados desde web.php
+const props = defineProps({
+    idPlanilla: {
+        type: String,
+        required: true
+    }
+})
+
 // De la vista
 const detalleTabla = ref();
 const submitted = ref(false); // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false);
 const valoresExistentes = ref({});
+const editableRow = ref(-1)
+const planillas_id = props.idPlanilla
 
 const datos = ref({}); // El objeto que se enviara mediante el request
 const nombres = {
     minu: "planillas",
-    mayu: "Planillas",
+    mayu: "Detalle Planillas",
 };
 
 const confirmarEliminacion = ref(false); // Para modal de eliminacion
@@ -151,38 +148,66 @@ const pagination = ref({
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
     {
-        name: "fecha_generacion",
+        name: "nombre_completo",
         align: "left",
-        label: "Fecha de generacion:",
-        field: "fecha_generacion",
+        label: "Nombre Completo",
+        field: "nombre_completo",
         sortable: true,
     },
     {
-        name: "mes_periodo",
+        name: "identificacion",
         align: "left",
-        label: "Mes periodo:",
-        field: "mes_periodo",
+        label: "Identificación",
+        field: "identificacion",
         sortable: true,
     },
     {
-        name: "anyo_periodo",
+        name: "dias_trabajados",
         align: "left",
-        label: "Año:",
-        field: "anyo_periodo",
+        label: "Días trabajados",
+        field: "dias_trabajados",
         sortable: true,
     },
     {
-        name: "dias_laborales",
+        name: "horas_trabajadas",
         align: "left",
-        label: "Dias laborales: ",
-        field: "dias_laborales",
+        label: "Horas Trabajadas",
+        field: "horas_trabajadas",
         sortable: true,
     },
     {
-        name: "horas_laborales",
+        name: "horas_adicionales",
         align: "left",
-        label: "Horas laborales:",
-        field: "horas_laborales",
+        label: "Horas Adicionales",
+        field: "horas_adicionales",
+        sortable: true,
+    },
+    {
+        name: "horas_ausencia",
+        align: "left",
+        label: "Horas Ausencia",
+        field: "horas_ausencia",
+        sortable: true,
+    },
+    {
+        name: "salario_base",
+        align: "left",
+        label: "Salario Base",
+        field: "salario_base",
+        sortable: true,
+    },
+    {
+        name: "suma_ingresos",
+        align: "left",
+        label: "Suma de Ingresos",
+        field: "suma_ingresos",
+        sortable: true,
+    },
+    {
+        name: "suma_descuentos",
+        align: "left",
+        label: "Suma Descuentos",
+        field: "suma_descuentos",
         sortable: true,
     },
     { name: "operaciones", align: "center", label: "Operaciones" },
@@ -193,11 +218,6 @@ const columns = [
 onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value });
 });
-
-const redireccionDetalle = async (planillas_id) => {
-    window.location.href = '/detalle_planillas/' + planillas_id;
-};
-
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
     datos.value = {};
@@ -210,14 +230,9 @@ const reiniciarValores = () => {
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value });
 };
-// Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
-const hayError = (valor) => {
-    if (submitted && valor) return true;
-    else return false;
-};
 
-const cancelar = () => {
-    datos.value = {};
+const regresar = () => {
+    window.location.href = '/planillas/';
 };
 
 // Operacion de guardar
@@ -302,19 +317,18 @@ const eliminar = async () => {
 };
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
-    // Verifica siempre si existe Empleado y Descuentos
-    await comprobacionInicial()
     // No se toca
     const { page, rowsPerPage } = props.pagination;
     const filter = props.filter;
     loading.value = true;
     // Obteniendo la tabla de datos
     await axios
-        .get(`/api/${nombres.minu}`, {
+        .get('/api/registros', {
             params: {
                 page,
                 rowsPerPage,
                 filter,
+                planillas_id
             },
         })
         .then((response) => {
@@ -330,18 +344,5 @@ const generarTabla = async (props) => {
     // Apagando el indicador de carga. Este no se toca
     loading.value = false;
 };
-
-// Comprobando que existan Empleados y Descuentos para aplicar en planilla
-const comprobacionInicial = async () => {
-    await axios
-        .get(`/api/${nombres.minu}/comprobacion`)
-        .then((response) => {
-            valoresExistentes.value.cantidadDescuentos = response.data.descuentosExistentes;
-            valoresExistentes.value.cantidadEmpleados = response.data.empleadosExistentes;
-        })
-        .catch((error) => {
-            errored.value = true;
-        });
-}
 
 </script>

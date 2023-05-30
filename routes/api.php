@@ -17,6 +17,7 @@ use App\Http\Controllers\GenerosController;
 use App\Http\Controllers\MovimientosController;
 use App\Http\Controllers\OcupacionesController;
 use App\Http\Controllers\PlanillasController;
+use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\UnidadesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -197,7 +198,9 @@ Route::post('/planillas_actualizar', [PlanillasController::class, 'update']);
 // Eliminar
 Route::post('/planillas_eliminar/{id}', [PlanillasController::class, 'destroy']);
 // Consultar existencia de Empleados y Descuentos. Ingresos extra no porque no son obligatorios.
-Route::get('planillas/comprobacion', [PlanillasController::class, 'CantidadRegistros']);
+Route::get('/planillas/comprobacion', [PlanillasController::class, 'CantidadRegistros']);
+// Guardar ID seleccionado
+Route::post('/planillas/redireccion', [PlanillasController::class, 'Redireccion']);
 
 /* Generos */
 Route::get('/generos', [GenerosController::class, 'index']);
@@ -222,3 +225,9 @@ Route::get('/movimientos', [MovimientosController::class, 'index']);
 Route::post('/movimientos_agregar', [MovimientosController::class, 'store']);
 Route::post('/movimientos_actualizar', [MovimientosController::class, 'update']);
 Route::post('/movimientos_eliminar/{id}', [MovimientosController::class, 'destroy']);
+
+/* Detalle de Planillas / Registros */
+Route::get('/registros', [RegistroController::class, 'index']);
+//Route::post('/registros/agregar', [RegistroController::class, 'store']);
+//Route::post('/registros/actualizar', [RegistroController::class, 'update']);
+//Route::post('/registros/eliminar/{id}', [RegistroController::class, 'destroy']);

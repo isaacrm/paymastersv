@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Planillas;
 use App\Models\Descuento;
+use App\Models\Empleados;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class PlanillasController extends Controller
 {
@@ -73,6 +78,9 @@ class PlanillasController extends Controller
         $datos->dias_laborales = $request->dias_laborales;
         $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
+
+        // Para ejecutar el procedimiento almacenado
+        DB::statement('BEGIN pa_detalle_planillas(:p_planilla_id); END;', ['p_planilla_id' => $datos->id]);
     }
 
     /**
@@ -121,11 +129,21 @@ class PlanillasController extends Controller
 
     public function CantidadRegistros()
     {
-        $cantidadDescuentos = Descuento::where('descuento','=', 'S')->count();
+        $cantidadDescuentos = Descuento::where('descuento', '=', 'S')->count();
+        $cantidadEmpleados = Empleados::count();
         // El json que se manda a la vista para poder visualizar la información
         return response()->json([
             'descuentosExistentes' => $cantidadDescuentos,
+            'empleadosExistentes' => $cantidadEmpleados,
         ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
+    }
+
+    public function Redireccion(Request $request)
+    {
+        $id = $request->planillas_id;
+        return Inertia::render('Planillas/DetallePlanillas', [
+            'idPlanilla' => $id,
+        ]);
     }
 
     private function validacion(Request $request)

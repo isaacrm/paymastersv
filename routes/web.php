@@ -73,6 +73,10 @@ Route::middleware([
         return Inertia::render('Registros/Empresas');
     })->name('empresas');
 
+    Route::get('/detalle_planillas/{idPlanilla}', function ($idPlanilla) {
+        return Inertia::render('Planillas/DetallePlanillas', ['idPlanilla' => $idPlanilla]);
+    })->name('detalle_planillas');
+
     // * Contenedor de rutas
     $rutas = [
         'puesto' => [
@@ -114,7 +118,7 @@ Route::middleware([
             'ruta' => '/movimientos',
             'render' => 'Movimientos/Movimientos',
             'nombre' => 'movimientos'
-        ],        
+        ],
         'Empleados'=>[
             'ruta' => '/empleados',
             'render' => 'Empleados/Empleados',
