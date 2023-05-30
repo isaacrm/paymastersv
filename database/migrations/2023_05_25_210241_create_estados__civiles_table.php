@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('centro_de_costos', function (Blueprint $table) {
+        Schema::create('estados__civiles', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 150);
-            $table->integer('mes_del');
-            $table->integer('mes_al');
-            $table->integer('anyo');
-            $table->decimal('presupuesto_inicial', 9, 2);
-            $table->decimal('presupuesto_restante', 9, 2);
+            $table->string("nombre", 30);
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('centro_de_costos');
+        Schema::dropIfExists('estados__civiles');
     }
 };

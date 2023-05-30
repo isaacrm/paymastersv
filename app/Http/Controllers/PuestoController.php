@@ -22,7 +22,7 @@ class PuestoController extends Controller
         // $query = Puesto::select('id,n')->where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
         $query = DB::table('puestos as p2')
             ->leftJoin('puestos as p1', 'p2.superior_id', '=', 'p1.id')
-            ->select('p2.id', 'p2.nombre', 'p2.nro_plazas', 'p2.salario_desde', 'p2.salario_hasta', 'p2.superior_id', 'p1.nombre as superior_nombre', )
+            ->select('p2.id', 'p2.nombre', 'p2.nro_plazas', 'p2.salario_desde', 'p2.salario_hasta', 'p2.superior_id', 'p1.nombre as superior_nombre',)
             ->where('p2.nombre', 'like', '%' . $filtro . '%')
             ->orderBy('p2.id');
         $tuplas = $query->count();
@@ -132,6 +132,12 @@ class PuestoController extends Controller
         return response()->json(['superiores' => $superiores], 200);
     }
 
+    public function consultar_id_nombre()
+    {
+        $datos = Puesto::select('id', 'nombre as name')->get();
+        return response()->json($datos, 200);
+    }
+
     private function validacion(Request $request)
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
@@ -146,7 +152,7 @@ class PuestoController extends Controller
             'salario_hasta' => [
                 'required',
                 'numeric',
-                'between:'.$request->salario_desde.',5000',
+                'between:' . $request->salario_desde . ',5000',
             ],
         ]);
     }

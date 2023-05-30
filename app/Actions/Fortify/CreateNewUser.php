@@ -9,6 +9,7 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
 use Spatie\Permission\Models\Role;
 
+
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules;

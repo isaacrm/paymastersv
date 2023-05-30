@@ -129,7 +129,7 @@ const pagination = ref({
 const columns = [
     { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
     { name: 'superior_nombre', align: 'left', label: 'Superior', field: 'superior_nombre' },
-    { name: 'centro_costos_año', align: 'left', label: 'Centro de costos', field: 'centro_costos_año' },
+    { name: 'nombre', align: 'left', label: 'Centro de costos', field: 'nombre' },
     { name: 'nivel_organizacional_nombre', align: 'left', label: 'Nivel organizacional', field: 'nivel_organizacional_nombre' },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 
@@ -230,7 +230,7 @@ const editar = (editardatos) => {
     datos.value.id = editardatos.id
     datos.value.nombre = editardatos.nombre
     datosSelect.value.superior_id = { id: editardatos.superior_id, name: editardatos.superior_nombre }
-    datosSelect.value.centro_de_costos = { id: editardatos.centro_costos_id, name: editardatos.centro_costos_año }
+    datosSelect.value.centro_de_costos = { id: editardatos.centro_costos_id, name: editardatos.nombre }
     datosSelect.value.nivel_organizacional = { id: editardatos.nivel_organizacional, name: editardatos.nivel_organizacional_nombre }
 
     submitted.value = false;

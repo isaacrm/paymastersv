@@ -57,7 +57,7 @@ class PermisosController extends Controller
         }
 
         // Buscando el rol Usuario
-        $rolUser = Role::where('name', 'Visitante')->first(); // Obtén el rol correspondiente
+        $rolUser = Role::where('name', 'SuperAdministrador')->first(); // Obtén el rol correspondiente
 
         // Estableciendo el modelo donde se guardara la informacion
         $permiso = Permission::create([

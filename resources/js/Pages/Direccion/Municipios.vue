@@ -224,7 +224,7 @@ const guardar = async () => {
 }
 // Para mostrar los datos en el form
 const editar = (editarMunicipios) => {
-    console.log(editarMunicipios);
+    //console.log(editarMunicipios);
     municipio.value = { ...editarMunicipios }
     submitted.value = false;
     errores.value = {}

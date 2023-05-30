@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('centro_de_costos', function (Blueprint $table) {
+        Schema::create('planillas', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 150);
-            $table->integer('mes_del');
-            $table->integer('mes_al');
-            $table->integer('anyo');
-            $table->decimal('presupuesto_inicial', 9, 2);
-            $table->decimal('presupuesto_restante', 9, 2);
+            $table->integer('mes_periodo');
+            $table->integer('anyo_periodo');
+            $table->date('fecha_generacion');
+            $table->integer('dias_laborales');
+            $table->integer('horas_laborales');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('centro_de_costos');
+        Schema::dropIfExists('planillas');
     }
 };

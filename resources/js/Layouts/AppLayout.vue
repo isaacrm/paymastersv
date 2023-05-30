@@ -1,6 +1,5 @@
 <template>
     <Head :title="title" />
-
     <q-layout view="hHh lpR fFf" class="bg-grey-1">
         <q-header elevated class="bg-gradient-header text-white-8 q-py-xs" height-hint="58">
             <q-toolbar class="bg-gradient-header text-white">
@@ -18,17 +17,13 @@
                             <q-item class="GL__menu-link-signed-in">
                                 <q-item-section>
                                     <div>Usuario: <strong>{{ $page.props.auth.user.name }}</strong></div>
-                                    <div>Roles:</div>
-                                    <div v-for="role in $page.props.auth.user.roles" :key="role.id"><strong>{{ role.name }}</strong></div>
                                 </q-item-section>
-
                             </q-item>
                             <q-separator />
                             <q-item clickable class="GL__menu-link" @click="perfil()">
                                 <q-item-section>Perfil</q-item-section>
                             </q-item>
                             <q-separator />
-
                             <q-item clickable class="GL__menu-link" @click="logout()">
                                 <q-item-section>Cerrar Sesión</q-item-section>
                             </q-item>
@@ -40,35 +35,23 @@
         <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-menu" :width="240">
             <q-scroll-area class="fit">
                 <q-list padding>
-                    <q-item v-for="link in inicio" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-if="Inicio($page.props.auth.user.permissions)" v-for="link in inicio" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="black" :name="link.icon" />
                         </q-item-section>
                         <q-item-section>
                             <q-item-label class="text-weight-bold text-black">{{ link.text }}</q-item-label>
                         </q-item-section>
+                        <q-separator class="q-mt-md q-mb-xs" />
                     </q-item>
 
-                    <q-separator class="q-my-md" />
+                    <q-item-section v-if="checkAsigPermiso($page.props.auth.user.permissions)">
+                        <q-separator class="q-mt-md q-mb-xs" />
 
-                    <q-item v-for="link in rosalio" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="black" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-mt-md q-mb-xs" />
-
-                    <q-item-section v-if="checkSuperAdminRole($page.props.auth.user.roles)">
-                        <q-item-label header class="text-weight-bold text-uppercase">
-                            Administracion
-                        </q-item-label>
-                        <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
+                        <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Roles y Permisos
                         </q-item-label>
+
                         <q-item v-for="link in roles_permisos" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
@@ -79,10 +62,12 @@
                         </q-item>
                     </q-item-section>
 
-                    <q-item-section v-if="checkAdminRole($page.props.auth.user.roles)">
-                        <q-item-label header class="q-mb-none q-text-h6 text-uppercase">
+                    <q-item-section v-if="checkAdministrador($page.props.auth.user.permissions)">
+                        <q-separator class="q-mt-md q-mb-xs" />
+                        <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Usuarios
                         </q-item-label>
+
                         <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
@@ -93,69 +78,87 @@
                         </q-item>
                         <q-separator class="q-mt-md q-mb-xs" />
                     </q-item-section>
-
-                    <q-item-label header class="text-weight-bold text-uppercase">
-                        Direcciones
-                    </q-item-label>
-
-                    <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="black" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-my-md" />
-
-                    <q-item-label header class="text-weight-bold text-uppercase">
-                        Configuración
-                    </q-item-label>
-
-                    <q-item v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="black" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator class="q-my-md" />
-
-                    <q-item-label header class="text-weight-bold text-uppercase">
+                    
+                    <q-item-label v-if="checkRegistro($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
                         Registro
                     </q-item-label>
+                        <q-item v-if="checkRegMovimientos($page.props.auth.user.permissions)" v-for="link in registro_movimientos" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
 
-                    <q-item v-for="link in registro" :key="link.text" v-ripple clickable :href="link.path">
-                        <q-item-section avatar>
-                            <q-icon color="black" :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label class="text-weight-bold">{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
+                        <q-item v-if="checkRegEmpresa($page.props.auth.user.permissions)" v-for="link in registro_empresa" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    <q-separator class="q-mt-md q-mb-xs" />
+                    
+                    <q-item-label v-if="checkEmpLabel($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
+                        Empleados
+                    </q-item-label>
+                        <q-item v-if="checkInfoEmpleados($page.props.auth.user.permissions)" v-for="link in empleados" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item v-if="checkEmpleados($page.props.auth.user.permissions)" v-for="link in empleados_datos" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
 
-                    <q-separator class="q-mt-md q-mb-lg" />
+                    <q-item-section v-if="checkDireccion($page.props.auth.user.permissions)">
+                        <q-separator class="q-mt-md q-mb-xs" />
 
-                    <div class="q-px-md text-grey-9">
-                        <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-                            <a v-for="button in sidebar_footer" :key="button.text" class="YL__drawer-footer-link"
-                                href="javascript:void(0)">
-                                {{ button.text }}
-                            </a>
-                        </div>
-                    </div>
-                    <div class="q-py-md q-px-md text-grey-9">
-                        <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-                            <a v-for="button in buttons2" :key="button.text" class="YL__drawer-footer-link"
-                                href="javascript:void(0)">
-                                {{ button.text }}
-                            </a>
-                        </div>
-                    </div>
-                </q-list>
+                        <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
+                            Direcciones
+                        </q-item-label>
+
+                        <q-item v-for="link in direcciones" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-item-section>
+
+                    <q-separator class="q-mt-md q-mb-xs" />
+                    <q-item-label v-if="checkConfiguracion($page.props.auth.user.permissions)" header class="text-weight-bold text-uppercase text-header-menu">
+                            Configuracion
+                    </q-item-label>
+                        <q-item v-if="checkTipoDoc($page.props.auth.user.permissions)" v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item v-if="checkConfPla($page.props.auth.user.permissions)" v-for="link in configuracion_planilla" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
             </q-scroll-area>
         </q-drawer>
         <q-page-container>
@@ -167,9 +170,9 @@
 
 <script setup>
 /* IMPORTANDO COMPONENTES NECESARIOS */
-import { ref } from 'vue'
-import { fabYoutube } from '@quasar/extras/fontawesome-v6'
-import { Head, router } from '@inertiajs/vue3';
+import { ref } from "vue";
+import { fabYoutube } from "@quasar/extras/fontawesome-v6";
+import { Head, router } from "@inertiajs/vue3";
 
 defineProps({
     title: String,
@@ -177,22 +180,22 @@ defineProps({
 
 /* REDIRECCION */
 const logout = () => {
-    router.post(route('logout'));
+    router.post(route("logout"));
 };
 
 const perfil = () => {
-    location.href = route('profile.show');
+    location.href = route("profile.show");
 };
 
 const dashboard = () => {
-    location.href = route('dashboard');
+    location.href = route("dashboard");
 };
 
 /* Para el menú lateral */
-const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
-    leftDrawerOpen.value = !leftDrawerOpen.value
+    leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
 // En path va la ruta que se especifica en web.php
@@ -200,9 +203,9 @@ const inicio = [
     { icon: 'home', text: 'Dashboard', path: '/dashboard' }
 ]
 const rosalio = [
-    {icon:'whatshot', text: 'Puestos', path:'/puestos'},
-    {icon:'whatshot', text: 'Unidades', path:'/unidades'},
-    {icon:'whatshot', text: 'Centro de costos', path:'/centro_de_costos'},
+    { icon: 'whatshot', text: 'Puestos', path: '/puestos' },
+    { icon: 'whatshot', text: 'Unidades', path: '/unidades' },
+    { icon: 'whatshot', text: 'Centro de costos', path: '/centro_de_costos' },
 ]
 const roles_permisos = [
     { icon: 'lock', text: 'Roles', path: '/roles' },
@@ -221,53 +224,184 @@ const direcciones = [
 ]
 const configuracion = [
     { icon: 'perm_identity', text: 'Tipo de Documentos', path: '/tipo_documentos' },
+]
+
+const configuracion_planilla = [
     { icon: 'table_rows', text: 'Tabla de Renta Mensual', path: '/renta_mensual' },
     { icon: 'roofing', text: 'Techo Laboral', path: '/techo_laboral' },
     { icon: 'money', text: 'Tabla de Aguinaldo', path: '/aguinaldo' }
 ]
-const registro = [
-    { icon: 'perm_identity', text: 'Empleados' },
-    { icon: 'text_snippet', text: 'Ingresos', path: '/ingresos' },
-    { icon: 'query_stats', text: 'Descuentos',path: '/descuentos' },
-    { icon: 'store', text: 'Empresas',path: '/empresas' }
-]
-const sidebar_footer = [
-    { text: 'About' },
-    { text: 'Press' },
-    { text: 'Copyright' },
-    { text: 'Contact us' },
-    { text: 'Creators' },
-    { text: 'Advertise' },
-    { text: 'Developers' }
-]
-const buttons2 = [
-    { text: 'Terms' },
-    { text: 'Privacy' },
-    { text: 'Policy & Safety' },
-    { text: 'Test new features' }
+
+
+const registro_movimientos = [
+    { icon: "text_snippet", text: "Ingresos", path: "/ingresos" },
+    { icon: "query_stats", text: "Descuentos", path: "/descuentos" },
 ]
 
+const registro_empresa = [
+    { icon: "store", text: "Empresas", path: "/empresas" },
+    { icon: "engineering", text: "Puestos", path: "/puestos" },
+    { icon: "domain", text: "Unidades", path: "/unidades" },
+    { icon: "holiday_village", text: "Centro de costos", path: "/centro_de_costos" },
+    { icon: "summarize", text: "Planillas", path: "/planillas" },
+]
+
+const empleados = [
+    { icon: "transgender", text: "Generos", path: "/generos" },
+    { icon: "work", text: "Ocupaciones", path: "/ocupaciones" },
+    { icon: "family_restroom", text: "Estados Civiles", path: "/estados_civiles" },
+]
+
+const empleados_datos = [
+    { icon: "group_add", text: "Empleados", path: "/empleados" },
+]
 /* VERIFICACIÓN DE ROLES */
-// Verificar acceso si es rol Administrador o Super Administrador
-const checkAdminRole = (roles) => {
-  for (let i = 0; i < roles.length; i++) {
-    const roleName = roles[i].name;
-    if (roleName === 'Administrador' || roleName === 'SuperAdministrador') {
-      return true;
+// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
+const checkAsigPermiso = (permissions) => {
+  if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Roles y Permisos') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+
+// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
+const checkAdministrador = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Usuarios') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
+const checkInfoEmpleados = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Información de empleados') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const checkRegMovimientos = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Registro Movimientos') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const checkTipoDoc = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'TipoDoc') {
+        return true;
+      }
     }
   }
   return false;
 }
 
-// Verificar acceso si es rol Super Administrador
-const checkSuperAdminRole = (roles) => {
-    for (let i = 0; i < roles.length; i++) {
-        const roleName = roles[i].name;
-        if (roleName === 'SuperAdministrador') {
-            return true;
-        }
+const checkRegEmpresa = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Registro Empresa') {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
+};
+
+const checkDireccion = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Direccion') {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const checkConfPla = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Configuración') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
+const checkConfiguracion = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Configuración' || permissions[i] === 'TipoDoc') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+const checkRegistro = ( permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Registro Movimientos' || permissions[i] === 'Registro Empresa') {
+        return true;
+      }
+    }
+  }
+  return false;   
+}
+
+const Inicio = ( permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Inicio') {
+        return true;
+      }
+    }
+  }
+  return false;   
+}
+
+const checkEmpleados = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Empleados') {
+        return true;
+      }
+    }
+  }
+  return false;   
+}
+
+const checkEmpLabel = (permissions) => {
+    if (permissions && permissions.length) {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === 'Información de empleados' || permissions[i] === 'Empleados') {
+        return true;
+      }
+    }
+  }
+  return false; 
 }
 </script>
 

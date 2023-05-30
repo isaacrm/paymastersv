@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UsuariosSeeder extends Seeder
 {
@@ -15,7 +17,7 @@ class UsuariosSeeder extends Seeder
     public function run(): void
     {
         // Usuarios Administradores
-        User::create([
+        $superadmin = User::create([
             'name' => 'sadmin@admin.com',
             'email' => 'sadmin@admin.com',
             'email_verified_at' => now(),
@@ -25,9 +27,9 @@ class UsuariosSeeder extends Seeder
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
-        ])->assignRole('SuperAdministrador');
+        ]);
 
-        User::create([
+        $admin = User::create([
             'name' => 'admin@admin.com',
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
@@ -37,11 +39,11 @@ class UsuariosSeeder extends Seeder
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
-        ])->assignRole('Administrador');
+        ]);
 
-        User::create([
-            'name' => 'conta@conta.com',
-            'email' => 'conta@conta.com',
+        $planillero = User::create([
+            'name' => 'planillero@planillero.com',
+            'email' => 'planillero@planillero.com',
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'two_factor_secret' => null,
@@ -49,6 +51,62 @@ class UsuariosSeeder extends Seeder
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
-        ])->assignRole('Contador');
+        ]);
+
+        $empleado = User::create([
+            'name' => 'empleado@empleado.com',
+            'email' => 'empleado@empleado.com',
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'remember_token' => Str::random(10),
+            'profile_photo_path' => null,
+            'current_team_id' => null,
+        ]);
+
+        $visitante = User::create([
+            'name' => 'visitante@visitante.com',
+            'email' => 'visitante@visitante.com',
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'remember_token' => Str::random(10),
+            'profile_photo_path' => null,
+            'current_team_id' => null,
+        ]);
+
+        $role1 = Role::findByName('Planillero');
+        $role2 = Role::findByName('SuperAdministrador');
+        $role3 = Role::findByName('Administrador');
+        $role4 = Role::findByName('Visitante');
+        $role5 = Role::findByName('Empleado');
+
+        $permiso1 = Permission::findByName('Inicio');
+        $permiso2 = Permission::findByName('Direccion');
+        $permiso3 = Permission::findByName('Información de empleados');
+        $permiso4 = Permission::findByName('Registro Empresa');
+        $permiso5 = Permission::findByName('Registro Movimientos');
+        $permiso6 = Permission::findByName('Roles y Permisos');
+        $permiso7 = Permission::findByName('TipoDoc');
+        $permiso8 = Permission::findByName('Usuarios');
+
+
+
+        $superadmin->assignRole($role2);
+        //$superadmin->givePermissionTo($permiso);
+
+        $admin->assignRole($role3);
+        //$admin->givePermissionTo($permiso);
+
+        $visitante->assignRole($role4);
+        //$visitante->givePermissionTo($permiso);
+
+        $empleado->assignRole($role5);
+        //$empleado->givePermissionTo($permiso);
+
+        $planillero->assignRole($role1);
+        //$planillero->givePermissionTo($permiso);
     }
 }
