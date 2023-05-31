@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('apellido_paterno', 30);
             $table->string('apellido_materno', 30);
-            $table->string('apellido_casada', 35);
+            $table->string('apellido_casada', 35)->nullable();
             $table->string('primer_nombre', 25);
             $table->string('segundo_nombre', 25);
             $table->date('fecha_nacimiento');
@@ -25,14 +25,14 @@ return new class extends Migration
             $table->string('nup', 20)->unique();
             $table->string('email_personal', 175)->unique();
             $table->date('fecha_ingreso');
-            $table->string('email_profesional', 175)->unique()->nullable();
+            $table->string('email_profesional', 175)->unique();
             $table->decimal('salario_base', 8, 2);
 
             // * Las foraneas
             $table->unsignedBigInteger('estados_civiles_id');
             $table->unsignedBigInteger('generos_id');
             $table->unsignedBigInteger('ocupaciones_id');
-            $table->unsignedBigInteger('tipo_documentos_id')->nullable();
+            $table->unsignedBigInteger('tipo_documentos_id');
             $table->unsignedBigInteger('direcciones_id');
             $table->unsignedBigInteger('puestos_id');
 

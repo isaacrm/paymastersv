@@ -125,7 +125,7 @@
                   " :error="hayError(errores.direcciones_id)" />
               </q-item>
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
               <q-item>
                 <q-input filled bottom-slots v-model="datos.email_profesional" class="full-width"
                   label="Email profesional de el empleado:" type="email" :error-message="
@@ -315,6 +315,7 @@ const columns = [
 
 onMounted(async () => {
   await generarTabla({ pagination: pagination.value, filter: filter.value });
+  await actualizar_selects();
 });
 
 const reiniciarValores = () => {
@@ -385,7 +386,7 @@ const guardar = async () => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el datos, favor revisar los datos.",
         });
       });
   } else {
@@ -404,7 +405,7 @@ const guardar = async () => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el datos, favor revisar los datos.",
         });
       });
   }
@@ -423,8 +424,8 @@ const editar = (editardatos) => {
   datos.value.nup = editardatos.nup;
   datos.value.email_personal = editardatos.email_personal;
   datos.value.email_profesional = editardatos.email_profesional;
-  datos.value.fecha_nacimiento = editardatos.fecha_nacimiento;
-  datos.value.fecha_ingreso = editardatos.fecha_ingreso;
+  datos.value.fecha_nacimiento = editardatos.fecha_nacimiento.substring(0,10);
+  datos.value.fecha_ingreso = editardatos.fecha_ingreso.substring(0,10);
   datos.value.salario_base = editardatos.salario_base;
   datosSelect.value.estado_civil = {
     id: editardatos.estado_civil_id,
@@ -501,8 +502,6 @@ const generarTabla = async (props) => {
       errored.value = true;
     });
   loading.value = false;
-
-  await actualizar_selects();
 };
 
 const obtenerEstadoCivil = async () => {
