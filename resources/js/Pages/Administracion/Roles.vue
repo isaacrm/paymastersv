@@ -1,35 +1,18 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Roles">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Techo Laboral</div>
-                    <div class="text-subtitle">Según la legislación salvadoreña, es el máximo al cuál se le puede aplicar un
-                        determinado descuento.</div>
+                    <div class="text-h6">Roles</div>
+                    <div class="text-subtitle">Registro de los roles a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-8">
                             <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.anyo" class="full-width" type="number"
-                                    label="Año de vigencia" :error-message="errores.anyo && errores.anyo[0]"
-                                    :error="errores.hasOwnProperty('anyo')" autofocus suffix="año"/>
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.afp" type="number"
-                                    class="full-width" label="Techo AFP"
-                                    :error-message="errores.afp && errores.afp[0]"
-                                    :error="errores.hasOwnProperty('afp')" prefix="$"/>
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.isss" type="number"
-                                    class="full-width" label="Techo ISSS"
-                                    :error-message="errores.isss && errores.isss[0]"
-                                    :error="errores.hasOwnProperty('isss')" prefix="$"/>
+                                <q-input filled bottom-slots v-model="roles.name" class="full-width"
+                                    label="Nombre" :error-message="errores.name && errores.name[0]"
+                                    :error="hayError(errores.name)" autofocus/>
                             </q-item>
                         </div>
                     </div>
@@ -56,9 +39,9 @@
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.anyo)"></q-btn>
+                            <q-btn round color="warning" icon="edit" class="mr-4" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
+                                @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
                         </div>
                     </q-td>
                 </template>
@@ -70,8 +53,7 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar los techos laborales del año {{ nombreRegistroEliminar
-                        }}?.</span>
+                        <span class="q-ml-sm">¿Desea eliminar el rol {{ nombreRegistroEliminar }}?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -88,7 +70,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { format, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import axios from 'axios';
 
@@ -100,7 +82,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const techoLaboral = ref({}) // El objeto que se enviara mediante el request
+const roles = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -112,8 +94,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
-    sortBy: 'anyo', // Se actualiza segun columna de ordenamiento por defecto
-    descending: true, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
+    sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -126,18 +108,9 @@ const pagination = ref({
 })
 // Fin de fijos e imperativos
 
-// Para mostrar en la tabla con dos decimales en valores monetarios
-const formatoDinero = (valor) => {
-    return valor.toFixed(2);
-};
-
 // Definiendo las columnas que contendra la tabla. Esto es customizable
-// name es importante porque mediante ello se hacen los ordenamientos por esa columna
-// field es importante porque es eso lo que permite mostrar los datos en la tabla
 const columns = [
-    { name: 'anyo', align: 'left', label: 'Año de vigencia', field: 'anyo', sortable: true },
-    { name: 'afp', align: 'left', label: 'AFP', field: 'afp', sortable: true, format: formatoDinero },
-    { name: 'isss', align: 'left', label: 'ISSS', field: 'isss', sortable: true, format: formatoDinero },
+    { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: true },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
@@ -149,7 +122,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    techoLaboral.value = {}
+    roles.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -161,7 +134,16 @@ const reiniciarValores = () => {
 }
 
 const cancelar = () => {
-    techoLaboral.value = {}
+    roles.value = {}
+    
+}
+
+// Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
+const hayError = (valor) => {
+    if (submitted && valor)
+        return true
+    else
+        return false
 }
 
 // Operacion de guardar
@@ -170,16 +152,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (techoLaboral.value.id) {
+    if (roles.value.id) {
         await axios
-            .post("/api/techo_laboral/actualizar", techoLaboral.value)
+            .post("/api/roles/actualizar", roles.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Techo laboral guardado.'
+                        message: 'Rol actualizado.'
                     }
                 )
 
@@ -187,28 +169,38 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el rol.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El nombre del rol ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el rol.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el techo laboral.'
-                    }
-                )
             })
     }
     // Guardar
     else {
         await axios
-            .post("/api/techo_laboral/agregar", techoLaboral.value)
+            .post("/api/roles/agregar", roles.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Techo laboral guardado.'
+                        message: 'Rol guardado.'
                     }
                 )
 
@@ -216,29 +208,39 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el rol.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El rol ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el rol.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el techo laboral.'
-                    }
-                )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarTechoLaboral) => {
-    techoLaboral.value = { ...editarTechoLaboral }
+const editar = (editarRoles) => {
+    roles.value = { ...editarRoles }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, anyo) => {
-    techoLaboral.value.id = id
-    nombreRegistroEliminar.value = anyo
+const confirmarEliminar = (id, name) => {
+    roles.value.id = id
+    nombreRegistroEliminar.value = name;
     confirmarEliminacion.value = true
 }
 
@@ -246,26 +248,41 @@ const confirmarEliminar = (id, anyo) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/techo_laboral/eliminar/" + techoLaboral.value.id)
+        .post("/api/roles/eliminar/" + roles.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Techo laboral eliminado.'
+                    message: 'Rol eliminado.'
                 }
             )
 
         })
         .catch((e) => {
             // Mensaje de alerta
-            $q.notify(
-                {
+            // Si es un error de tipo 422, es decir, contenido inprocesable
+            if (e.response.status === 422) {
+                    errores.value = e.response.data.errors
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
                     type: 'negative',
-                    message: 'Error al eliminar el techo laboral.'
+                    message: "Error al eliminar el rol."
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El rol ha sido asignado a un usuario previamente.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al eliminar el rol.'
+                    });
                 }
-            )
         })
 }
 
@@ -275,10 +292,9 @@ const generarTabla = async (props) => {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
-
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/techo_laboral/tabla", {
+        .get("/api/roles/tabla", {
             params: {
                 page,
                 rowsPerPage,

@@ -52,9 +52,9 @@
         class="flex text-white flex-center layout_bg"
       >
         <div style="position: relative">
-          <div class="text-h4 text-center">Le damos la bienvenida</div>
+          <div class="text-h4 text-center">PAYMASTER SV</div>
           <div class="text-subtitle2 q-pt-sm text-center">
-            Estas son las características que ofrece nuestra solución
+            Ofrece las siguientes características
           </div>
         </div>
       </section>
@@ -77,8 +77,8 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Paymaster es una aplicacion con la opcion de registrar
-                  empleados y su informacion personal.
+                  Permite la gestión precisa de empleados y la administración de los datos personales 
+                  como nombres, apellidos, documentos personales, salario, puesto de trabajo, entre otros
                 </div>
               </q-card-section>
             </q-card>
@@ -100,8 +100,8 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Registro de direcciones, departamentos y municipios, generos,
-                  estados civiles, ocupaciones.
+                  Brinda la administración de información compelmentaria como direcciones, departamentos y municipios, generos,
+                  estados civiles y ocupaciones
                 </div>
               </q-card-section>
             </q-card>
@@ -125,8 +125,9 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Registrar puestos, unidades, centro de costos, planillas,
-                  diferentes empresas de la organizacion.
+                  Permite mantener una jerarquía ante el registro de puestos y unidades de una empresa, 
+                  así como el detalle del centro de costos y planillas de
+                  de la organización
                 </div>
               </q-card-section>
             </q-card>
@@ -152,8 +153,8 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Registros especificos de salario, horas trabajas, descuentos,
-                  ingresos, etc por empleado.
+                  Ofrece el registro especificos de salario, horas trabajadas, descuentos aplicados,
+                  ingresos obtenidos, por cada empleado perteneciente a la organización
                 </div>
               </q-card-section>
             </q-card>

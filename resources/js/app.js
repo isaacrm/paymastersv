@@ -8,6 +8,8 @@ import { Quasar, Notify } from 'quasar';
 import langEs from 'quasar/lang/es'
 import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/dist/quasar.css';
+import '/resources/css/paymaster.css'; // Ruta a tu archivo CSS personalizado
+
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 

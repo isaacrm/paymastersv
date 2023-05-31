@@ -12,198 +12,113 @@
                     <div class="row">
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.nombre"
-                                    class="full-width"
-                                    label="Nombre"
+                                <q-input filled bottom-slots v-model="empresa.nombre" class="full-width" label="Nombre"
                                     :error-message="
                                         errores.nombre && errores.nombre[0]
-                                    "
-                                    :error="hayError(errores.nombre)"
-                                />
+                                    " :error="hayError(errores.nombre)" autofocus />
                             </q-item>
-                        </div>   
-                        <div class="col-12 col-md-4"> 
+                        </div>
+                        <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.nit"
-                                    class="full-width"
-                                    label="Número de NIT"
-                                    mask="####-######-###-#"
-                                    fill-mask="_"
-                                    :error-message="
+                                <q-input filled bottom-slots v-model="empresa.nit" class="full-width" label="Número de NIT"
+                                    mask="####-######-###-#" fill-mask="_" :error-message="
                                         errores.nit &&
                                         errores.nit[0]
-                                    "
-                                    :error="hayError(errores.nit)"
-                                />
+                                    " :error="hayError(errores.nit)" />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-4"> 
+                        <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.telefono"
-                                    class="full-width"
-                                    label="Número de teléfono"
-                                    :error-message="
+                                <q-input filled bottom-slots v-model="empresa.telefono" class="full-width"
+                                mask="####-####" fill-mask="_"  
+                                    label="Número de teléfono" :error-message="
                                         errores.telefono &&
                                         errores.telefono[0]
-                                    "
-                                    :error="hayError(errores.telefono)"
-                                />
+                                    " :error="hayError(errores.telefono)" />
                             </q-item>
                         </div>
-                    </div>    
+                    </div>
                     <div class="row">
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input
-                                    filled
-                                    bottom-slots
-                                    v-model="empresa.nrc"
-                                    class="full-width"
-                                    label="Número de NRC"
+                                <q-input filled bottom-slots v-model="empresa.nrc" class="full-width" label="Número de NRC"
+                                mask="####-#####-##-###" fill-mask="_"  
                                     :error-message="
                                         errores.nrc &&
                                         errores.nrc[0]
-                                    "
-                                    :error="hayError(errores.nrc)"
-                                />
-                                </q-item>
-                            </div>
-                            <div class="col-12 col-md-4"> 
-                                <q-item>
-                                    <q-input
-                                        filled
-                                        bottom-slots
-                                        v-model="empresa.email"
-                                        class="full-width"
-                                        label="Correo electrónico"
-                                        :error-message="
-                                            errores.email &&
-                                            errores.email[0]
-                                        "
-                                        :error="hayError(errores.email)"
-                                    />
-                                </q-item>
-                            </div>  
-                            <div class="col-12 col-md-4">   
-                                <q-item>
-                                    <q-input
-                                        filled
-                                        bottom-slots
-                                        v-model="empresa.sitio_web"
-                                        class="full-width"
-                                        label="Sitio web"
-                                        :error-message="
-                                            errores.sitio_web &&
-                                            errores.sitio_web[0]
-                                        "
-                                        :error="hayError(errores.sitio_web)"
-                                    />
-                                </q-item>
-                            </div>  
-                        </div> 
-                        <div class="row">         
-                            <div class="col-12 col-md-6">
-                                <q-item>
-                                    <q-input
-                                        filled
-                                        bottom-slots
-                                        v-model="empresa.numero_patronal"
-                                        class="full-width"
-                                        label="Número patronal"
-                                        :error-message="
-                                            errores.numero_patronal &&
-                                            errores.numero_patronal[0]
-                                        "
-                                        :error="hayError(errores.numero_patronal)"
-                                    />
-                                </q-item>
-                        </div>    
-                            <div class="col-12 col-md-6">
-                                <q-item>
-                                    <q-input
-                                        filled
-                                        bottom-slots
-                                        v-model="empresa.representante_legal"
-                                        class="full-width"
-                                        label="Representante legal"
-                                        :error-message="
-                                            errores.representante_legal &&
-                                            errores.representante_legal[0]
-                                        "
-                                        :error="hayError(errores.representante_legal)"
-                                    />
-                                </q-item>
-                            </div>
+                                    " :error="hayError(errores.nrc)" />
+                            </q-item>
                         </div>
+                        <div class="col-12 col-md-4">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="empresa.email" class="full-width"
+                                    label="Correo electrónico" :error-message="
+                                        errores.email &&
+                                        errores.email[0]
+                                    " :error="hayError(errores.email)" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="empresa.sitio_web" class="full-width"
+                                    label="Sitio web" :error-message="
+                                        errores.sitio_web &&
+                                        errores.sitio_web[0]
+                                    " :error="hayError(errores.sitio_web)" />
+                            </q-item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="empresa.numero_patronal" class="full-width"
+                                    label="Número patronal" :error-message="
+                                        errores.numero_patronal &&
+                                        errores.numero_patronal[0]
+                                    " :error="hayError(errores.numero_patronal)" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="empresa.representante_legal" class="full-width"
+                                    label="Representante legal" :error-message="
+                                        errores.representante_legal &&
+                                        errores.representante_legal[0]
+                                    " :error="hayError(errores.representante_legal)" />
+                            </q-item>
+                        </div>
+                    </div>
                 </q-card-section>
             </q-card>
         </div>
         <div class="q-pa-md">
-            <q-table
-                flat
-                bordered
-                :rows="detalleTabla"
-                :columns="columns"
-                row-key="id"
-                v-model:pagination="pagination"
-                :loading="loading"
-                :filter="filter"
-                binary-state-sort
-                :rows-per-page-options="[5, 10, 20, 40, 0]"
-                @request="generarTabla"
-            >
+            <q-table flat bordered :rows="detalleTabla" :columns="columns" row-key="id" v-model:pagination="pagination"
+                :loading="loading" :filter="filter" binary-state-sort :rows-per-page-options="[5, 10, 20, 40, 0]"
+                @request="generarTabla">
                 <template v-slot:top-right>
-                    <q-input
-                        borderless
-                        dense
-                        debounce="300"
-                        v-model="filter"
-                        placeholder="Buscar"
-                    >
+                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn
-                        outline
-                        rounded
-                        color="primary"
-                        label="Guardar"
-                        icon="add"
-                        @click="guardar"
-                    ></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn
-                            round
-                            color="warning"
-                            icon="edit"
-                            class="q-mr-md"
-                            @click="editar(props.row)"
-                        ></q-btn>
-                        <q-btn
-                            round
-                            color="negative"
-                            icon="delete"
-                            @click="
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="q-mr-md" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete" @click="
                                 confirmarEliminar(
                                     props.row.id,
                                     props.row.nombre
                                 )
-                            "
-                        ></q-btn>
+                            "></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -213,26 +128,14 @@
             <q-dialog v-model="confirmarEliminacion" persistent>
                 <q-card>
                     <q-card-section class="row items-center">
-                        <q-avatar
-                            icon="warning"
-                            color="red"
-                            text-color="white"
-                        />
-                        <span class="q-ml-sm"
-                            >¿Desea eliminar
-                            {{ nombreRegistroEliminar }}?.</span
-                        >
+                        <q-avatar icon="warning" color="red" text-color="white" />
+                        <span class="q-ml-sm">¿Desea eliminar
+                            {{ nombreRegistroEliminar }}?.</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn
-                            flat
-                            label="Sí"
-                            color="primary"
-                            @click="eliminar"
-                            v-close-popup
-                        />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -355,6 +258,10 @@ const reiniciarValores = () => {
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value });
 };
+
+const cancelar = () => {
+    empresa.value = {}
+}
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {

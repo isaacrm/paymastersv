@@ -72,6 +72,7 @@
           </q-input>
         </template>
         <template v-slot:top-left>
+          <div class="q-gutter-sm">
           <q-btn
             outline
             rounded
@@ -88,9 +89,11 @@
             icon="cancel"
             @click="cancelar"
           ></q-btn>
+          </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
+            <div class="q-gutter-sm">
             <q-btn
               round
               color="warning"
@@ -104,6 +107,7 @@
               icon="delete"
               @click="confirmarEliminar(props.row.id, props.row.nombre)"
             ></q-btn>
+            </div>
           </q-td>
         </template>
       </q-table>

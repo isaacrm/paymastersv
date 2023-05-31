@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
+use Spatie\Permission\Models\Role;
+
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -26,10 +28,15 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);
+
+        // Cuando se crea un nuevo usuario se le debe dar el rol de Visitante como predeterminado, esto lo puedo cambair después
+        $role = Role::findByName('Visitante');
+        $user->assignRole($role);
+        return $user;
     }
 }

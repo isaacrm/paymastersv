@@ -20,7 +20,7 @@
                   class="full-width"
                   label="Nombre del centro de costo:"
                   :error-message="errores.nombre && errores.nombre[0]"
-                  :error="hayError(errores.nombre)"
+                  :error="hayError(errores.nombre)" autofocus
                 />
               </q-item>
             </div>
@@ -60,7 +60,6 @@
                   label="Año:"
                   mask="####"
                   fill-mask="#"
-                  hint="Año:####"
                   :error-message="errores.anyo && errores.anyo[0]"
                   :error="hayError(errores.anyo)"
                 />
@@ -136,6 +135,7 @@
           </q-input>
         </template>
         <template v-slot:top-left>
+          <div class="q-gutter-sm">
           <q-btn
             outline
             rounded
@@ -152,9 +152,11 @@
             icon="cancel"
             @click="cancelar"
           ></q-btn>
+          </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
+            <div class="q-gutter-sm">
             <q-btn
               round
               color="warning"
@@ -174,6 +176,7 @@
               icon="list"
               @click="confirmarMovimiento(props.row.id, props.row.nombre)"
             ></q-btn>
+            </div>
           </q-td>
         </template>
       </q-table>

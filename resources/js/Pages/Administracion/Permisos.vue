@@ -1,39 +1,22 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Permisos">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Techo Laboral</div>
-                    <div class="text-subtitle">Según la legislación salvadoreña, es el máximo al cuál se le puede aplicar un
-                        determinado descuento.</div>
+                    <div class="text-h6">Permisos</div>
+                    <div class="text-subtitle">Registro de los permisos a los que el administrador tiene acceso.</div>
                 </q-card-section>
-                <q-card-section>
+                <!----<q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-8">
                             <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.anyo" class="full-width" type="number"
-                                    label="Año de vigencia" :error-message="errores.anyo && errores.anyo[0]"
-                                    :error="errores.hasOwnProperty('anyo')" autofocus suffix="año"/>
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.afp" type="number"
-                                    class="full-width" label="Techo AFP"
-                                    :error-message="errores.afp && errores.afp[0]"
-                                    :error="errores.hasOwnProperty('afp')" prefix="$"/>
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="techoLaboral.isss" type="number"
-                                    class="full-width" label="Techo ISSS"
-                                    :error-message="errores.isss && errores.isss[0]"
-                                    :error="errores.hasOwnProperty('isss')" prefix="$"/>
+                                <q-input filled bottom-slots v-model="permisos.name" class="full-width"
+                                    label="Nombre" :error-message="errores.name && errores.name[0]"
+                                    :error="hayError(errores.name)" />
                             </q-item>
                         </div>
                     </div>
-                </q-card-section>
+                </q-card-section>-->
             </q-card>
         </div>
         <div class="q-pa-md">
@@ -47,21 +30,16 @@
                         </template>
                     </q-input>
                 </template>
-                <template v-slot:top-left>
-                    <div class="q-gutter-sm">
-                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
-                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
-                    </div>
-                </template>
-                <template v-slot:body-cell-operaciones="props">
+                <!---<template v-slot:top-left>
+                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                </template>-->
+                <!----<template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <div class="q-gutter-sm">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.anyo)"></q-btn>
-                        </div>
+                            @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
                     </q-td>
-                </template>
+                </template>-->
             </q-table>
         </div>
 
@@ -70,8 +48,7 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar los techos laborales del año {{ nombreRegistroEliminar
-                        }}?.</span>
+                        <span class="q-ml-sm">¿Desea eliminar el permiso {{ nombreRegistroEliminar }}?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -88,7 +65,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { format, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import axios from 'axios';
 
@@ -100,7 +77,7 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const techoLaboral = ref({}) // El objeto que se enviara mediante el request
+const permisos = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -112,10 +89,10 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
-    sortBy: 'anyo', // Se actualiza segun columna de ordenamiento por defecto
-    descending: true, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
+    sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
-    rowsPerPage: 5,
+    rowsPerPage: 10,
     /* Cuando se usa server side pagination, QTable necesita
     conocer el "rowsNumber" (Numero total de filas).
     Por qué?
@@ -126,19 +103,10 @@ const pagination = ref({
 })
 // Fin de fijos e imperativos
 
-// Para mostrar en la tabla con dos decimales en valores monetarios
-const formatoDinero = (valor) => {
-    return valor.toFixed(2);
-};
-
 // Definiendo las columnas que contendra la tabla. Esto es customizable
-// name es importante porque mediante ello se hacen los ordenamientos por esa columna
-// field es importante porque es eso lo que permite mostrar los datos en la tabla
 const columns = [
-    { name: 'anyo', align: 'left', label: 'Año de vigencia', field: 'anyo', sortable: true },
-    { name: 'afp', align: 'left', label: 'AFP', field: 'afp', sortable: true, format: formatoDinero },
-    { name: 'isss', align: 'left', label: 'ISSS', field: 'isss', sortable: true, format: formatoDinero },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
+    { name: 'name', align: 'center', label: 'Nombre', field: 'name', sortable: true },
+    //{ name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
 /* METODOS */
@@ -149,7 +117,7 @@ onMounted(async () => {
 
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    techoLaboral.value = {}
+    permisos.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
@@ -160,8 +128,12 @@ const reiniciarValores = () => {
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
-const cancelar = () => {
-    techoLaboral.value = {}
+// Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
+const hayError = (valor) => {
+    if (submitted && valor)
+        return true
+    else
+        return false
 }
 
 // Operacion de guardar
@@ -170,16 +142,16 @@ const guardar = async () => {
     errores.value = {}
 
     // Actualizar
-    if (techoLaboral.value.id) {
+    if (permisos.value.id) {
         await axios
-            .post("/api/techo_laboral/actualizar", techoLaboral.value)
+            .post("/api/permisos/actualizar", permisos.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Techo laboral guardado.'
+                        message: 'Permiso actualizado.'
                     }
                 )
 
@@ -187,28 +159,38 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el permiso.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El nombre del permiso ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el permiso.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el techo laboral.'
-                    }
-                )
             })
     }
     // Guardar
     else {
         await axios
-            .post("/api/techo_laboral/agregar", techoLaboral.value)
+            .post("/api/permisos/agregar", permisos.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Techo laboral guardado.'
+                        message: 'Permiso guardado.'
                     }
                 )
 
@@ -216,29 +198,39 @@ const guardar = async () => {
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el permiso.'
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El nombre del permiso ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al guardar el permiso.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el techo laboral.'
-                    }
-                )
             })
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarTechoLaboral) => {
-    techoLaboral.value = { ...editarTechoLaboral }
+const editar = (editarPermisos) => {
+    permisos.value = { ...editarPermisos }
     submitted.value = false;
     errores.value = {}
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, anyo) => {
-    techoLaboral.value.id = id
-    nombreRegistroEliminar.value = anyo
+const confirmarEliminar = (id, name) => {
+    permisos.value.id = id
+    nombreRegistroEliminar.value = name
     confirmarEliminacion.value = true
 }
 
@@ -246,14 +238,14 @@ const confirmarEliminar = (id, anyo) => {
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
     await axios
-        .post("/api/techo_laboral/eliminar/" + techoLaboral.value.id)
+        .post("/api/permisos/eliminar/" + permisos.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Techo laboral eliminado.'
+                    message: 'Rol eliminado.'
                 }
             )
 
@@ -263,7 +255,7 @@ const eliminar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el techo laboral.'
+                    message: 'Error al eliminar el rol.'
                 }
             )
         })
@@ -275,10 +267,9 @@ const generarTabla = async (props) => {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
-
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/techo_laboral/tabla", {
+        .get("/api/permisos/tabla", {
             params: {
                 page,
                 rowsPerPage,
@@ -295,6 +286,7 @@ const generarTabla = async (props) => {
             pagination.value.rowsNumber = response.data.paginacion.tuplas
             pagination.value.sortBy = response.data.paginacion.ordenarPor
             pagination.value.descending = descending
+
         })
         .catch(error => {
             errored.value = true

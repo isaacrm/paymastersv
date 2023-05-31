@@ -1,33 +1,37 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Usuarios">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Aguinaldo</div>
-                    <div class="text-subtitle">Tabla de referencia para el cálculo del aguinaldo.</div>
+                    <div class="text-h6">Usuarios</div>
+                    <div class="text-subtitle">Registro de los usuarios existentes en el sistema a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="aguinaldo.desde" type="number" suffix="año(s)"
-                                    class="full-width" label="Desde" :error-message="errores.desde && errores.desde[0]"
-                                    :error="errores.hasOwnProperty('desde')" autofocus />
+                                <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
+                                    readonly
+                                    label="Usuario"/>
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="aguinaldo.hasta" type="number" suffix="año(s)"
-                                    class="full-width" label="Hasta" :error-message="errores.hasta && errores.hasta[0]"
-                                    :error="errores.hasOwnProperty('hasta')" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="aguinaldo.cantidad_dias" suffix="día(s)" type="number"
-                                    class="full-width" label="Cantidad de días de salario"
-                                    :error-message="errores.cantidad_dias && errores.cantidad_dias[0]"
-                                    :error="errores.hasOwnProperty('cantidad_dias')" />
+                                <q-select filled v-model="selectedRoles" class="full-width"
+                                    multiple
+                                    :options="roles"
+                                    emit-value
+                                    map-options
+                                    option-label="name"
+                                    option-value="id"
+                                    stack-label
+                                    clearable
+                                    :disable="!editing"
+                                    label="Roles" :error-message="errores.selectedRoles && errores.selectedRoles[0]"
+                                    :error="hayError(errores.selectedRoles)"
+                                    transition-show="scale"
+                                    transition-hide="scale"
+                                    />
                             </q-item>
                         </div>
                     </div>
@@ -53,33 +57,11 @@
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <div class="q-gutter-sm">
-                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                            <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.desde, props.row.hasta)"></q-btn>
-                        </div>
+                        <q-btn round color="positive" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
                     </q-td>
                 </template>
             </q-table>
         </div>
-
-        <div class="q-pa-md q-gutter-sm">
-            <q-dialog v-model="confirmarEliminacion" persistent>
-                <q-card>
-                    <q-card-section class="row items-center">
-                        <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar el registro con rango {{ nombreRegistroEliminar }}?.</span>
-                    </q-card-section>
-
-                    <q-card-actions align="right">
-                        <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
-        </div>
-
-
     </AppLayout>
 </template>
 
@@ -97,7 +79,12 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const aguinaldo = ref({}) // El objeto que se enviara mediante el request
+
+const roles = ref([])
+const usuarios = ref({}) // El objeto que se enviara mediante el request
+const selectedRoles = ref([])
+const editing = ref(false);
+
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -109,7 +96,7 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
-    sortBy: 'desde', // Se actualiza segun columna de ordenamiento por defecto
+    sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
     descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
@@ -123,19 +110,19 @@ const pagination = ref({
 })
 // Fin de fijos e imperativos
 
-// Para mostrar en la tabla con la leyenda "años"
-const formatoAnyo = (valor) => {
-    return valor + ' Año(s)';
-};
-
 // Definiendo las columnas que contendra la tabla. Esto es customizable
-// name es importante porque mediante ello se hacen los ordenamientos por esa columna
-// field es importante porque es eso lo que permite mostrar los datos en la tabla
 const columns = [
-    { name: 'desde', align: 'left', label: 'Desde', field: 'desde', sortable: true, format: formatoAnyo },
-    { name: 'hasta', align: 'left', label: 'Hasta', field: 'hasta', sortable: true, format: formatoAnyo },
-    { name: 'cantidad_dias', align: 'left', label: 'Cantidad de días de salario', field: 'cantidad_dias', sortable: true },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
+    { name: 'user_name', align: 'left', label: 'Usuario', field: 'user_name', sortable: false },
+    { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
+    { 
+        name: 'roles', 
+        align: 'left', 
+        label: 'Roles', 
+        field: 'roles', 
+        sortable: false, 
+        format: (value) => value.map((rol) => rol.name).join(', ')
+    },
+    { name: 'operaciones', align: 'center', label: 'Asignación de Roles' }
 ]
 
 /* METODOS */
@@ -144,21 +131,37 @@ onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
 
+onMounted(async() =>{
+    try {
+        const response = await axios.get('/api/roles/select')
+        roles.value = response.data
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 // Para reiniciar los valores luego de realizar alguna operacion
 const reiniciarValores = () => {
-    aguinaldo.value = {}
+    usuarios.value = {}
     errores.value = {}
     submitted.value = false
     errored.value = false
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
+    selectedRoles.value = ''
+
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
 const cancelar = () => {
-    aguinaldo.value = {}
+    usuarios.value = {}
+    selectedRoles.value = ''
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
@@ -174,104 +177,64 @@ const guardar = async () => {
     submitted.value = true
     errores.value = {}
 
-    // Actualizar
-    if (aguinaldo.value.id) {
-        await axios
-            .post("/api/aguinaldo/actualizar", aguinaldo.value)
-            .then((response) => {
-                reiniciarValores()
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'positive',
-                        message: 'Rango de aguinaldo guardado.'
-                    }
-                )
+    usuarios.value.roles=selectedRoles.value
 
-            })
-            .catch((e) => {
-                // Si es un error de tipo 422, es decir, contenido inprocesable
-                if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
-                }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el rango de aguinaldo.'
-                    }
-                )
-            })
+    if (selectedRoles.value.length === 0) {
+        errores.value.selectedRoles = ['El campo roles es requerido'];
+      return; // Detener la ejecución si no se seleccionó ningún rol
     }
-    // Guardar
-    else {
+
+    // Actualizar
+    if (usuarios.value.id) {
         await axios
-            .post("/api/aguinaldo/agregar", aguinaldo.value)
+            .post("/api/usuarios/roles/asignar", usuarios.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Rango de aguinaldo guardado.'
+                        message: 'Roles asignados.'
                     }
                 )
-
             })
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
                     errores.value = e.response.data.errors
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: "Error al actualizar el usuario."
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El nombre del rol ya existe.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el usuario.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el rango de aguinaldo.'
-                    }
-                )
             })
     }
 }
+
 // Para mostrar los datos en el form
-const editar = (editarRangoAguinaldo) => {
-    aguinaldo.value = { ...editarRangoAguinaldo }
+const editar = (editarUsuarioss) => {
+    usuarios.value = { ...editarUsuarioss }
+    const rolesSeleccionados = usuarios.value.roles;
+    selectedRoles.value = rolesSeleccionados;
+
     submitted.value = false;
     errores.value = {}
-}
 
-// Para desplegar el modal
-const confirmarEliminar = (id, desde, hasta) => {
-    aguinaldo.value.id = id
-    nombreRegistroEliminar.value = 'desde ' + desde + ' hasta ' + hasta
-    confirmarEliminacion.value = true
-}
+    editing.value = true; // Establecer editing en true al presionar el botón de editar
 
-
-// Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
-    await axios
-        .post("/api/aguinaldo/eliminar/" + aguinaldo.value.id)
-        .then((response) => {
-            reiniciarValores()
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'positive',
-                    message: 'Rango de aguinaldo eliminado.'
-                }
-            )
-
-        })
-        .catch((e) => {
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'negative',
-                    message: 'Error al eliminar el rango de aguinaldo.'
-                }
-            )
-        })
 }
 
 /* EXCLUSIVO DE TABLA */
@@ -280,10 +243,9 @@ const generarTabla = async (props) => {
     const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
-
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/aguinaldo/tabla", {
+        .get("/api/usuarios/tabla", {
             params: {
                 page,
                 rowsPerPage,
@@ -300,6 +262,7 @@ const generarTabla = async (props) => {
             pagination.value.rowsNumber = response.data.paginacion.tuplas
             pagination.value.sortBy = response.data.paginacion.ordenarPor
             pagination.value.descending = descending
+
         })
         .catch(error => {
             errored.value = true

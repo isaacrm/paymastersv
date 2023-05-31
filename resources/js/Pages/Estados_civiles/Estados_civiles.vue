@@ -19,7 +19,7 @@
                   class="full-width"
                   label="Nombre del estado civil:"
                   :error-message="errores.nombre && errores.nombre[0]"
-                  :error="hayError(errores.nombre)"
+                  :error="hayError(errores.nombre)" autofocus
                 />
               </q-item>
             </div>
@@ -55,6 +55,7 @@
           </q-input>
         </template>
         <template v-slot:top-left>
+          <div class="q-gutter-sm">
           <q-btn
             outline
             rounded
@@ -71,9 +72,11 @@
             icon="cancel"
             @click="cancelar"
           ></q-btn>
+          </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
+            <div class="q-gutter-sm">
             <q-btn
               round
               color="warning"
@@ -87,6 +90,7 @@
               icon="delete"
               @click="confirmarEliminar(props.row.id, props.row.nombre)"
             ></q-btn>
+            </div>
           </q-td>
         </template>
       </q-table>
@@ -194,7 +198,7 @@ const guardar = async () => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos actualizado.",
+          message: "Estado civil actualizado.",
         });
       })
       .catch((e) => {
@@ -203,7 +207,7 @@ const guardar = async () => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el estado civil.",
         });
       });
   } else {
@@ -213,7 +217,7 @@ const guardar = async () => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos guardado.",
+          message: "Estado civil guardado.",
         });
       })
       .catch((e) => {
@@ -247,13 +251,13 @@ const eliminar = async () => {
       reiniciarValores();
       $q.notify({
         type: "positive",
-        message: "datos eliminado.",
+        message: "Estado civil eliminado.",
       });
     })
     .catch((e) => {
       $q.notify({
         type: "negative",
-        message: "Error al eliminar el datos.",
+        message: "Error al eliminar el estado civil.",
       });
     });
 };
