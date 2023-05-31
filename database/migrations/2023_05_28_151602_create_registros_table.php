@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('registros', function (Blueprint $table) {
             $table->id();
             $table->integer('dias_trabajados');
+            $table->integer('dias_ausente');
+            $table->integer('dias_permiso');
             $table->integer('horas_trabajadas');
             $table->integer('horas_adicionales');
             $table->integer('horas_ausencia');

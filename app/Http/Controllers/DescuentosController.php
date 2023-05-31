@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Descuento;
 use Illuminate\Http\Request;
 
@@ -36,8 +37,15 @@ class DescuentosController extends Controller
         $descuentos->nombre = $request->nombre;
         $descuentos->descripcion = $request->descripcion;
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
-        $descuentos->descuento = $request->descuento;
+        $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
+        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
+            $descuentos->tabla_aplicar = 'rentas_mensuales';
+        else if ($request->forma_aplicacion == 'S') {
+            $descuentos->tabla_aplicar = 'registros';
+            $descuentos->campo_aplicar = $request->campo_aplicar;
+        } else
+            $descuentos->tabla_aplicar = null;
         $descuentos->save();
     }
     // La operación de Update CR[U]D
@@ -48,8 +56,15 @@ class DescuentosController extends Controller
         $descuentos->nombre = $request->nombre;
         $descuentos->descripcion = $request->descripcion;
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
-        $descuentos->descuento = $request->descuento;
+        $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
+        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
+            $descuentos->tabla_aplicar = 'rentas_mensuales';
+        else if ($request->forma_aplicacion == 'S') {
+            $descuentos->tabla_aplicar = 'registros';
+            $descuentos->campo_aplicar = $request->campo_aplicar;
+        } else
+            $descuentos->tabla_aplicar = null;
         $descuentos->save();
     }
     // La operación de Delete CR[U]D
@@ -65,8 +80,8 @@ class DescuentosController extends Controller
             'nombre' => 'required|max:30',
             'descripcion' => 'required|max:100',
             'forma_aplicacion' => 'required|max:1',
-            'descuento' => 'required',
-            'valor_porcentaje' => 'between:0,9999',
+            'obligatorio' => 'required',
+            'valor_porcentaje' => 'between:0,100',
         ]);
     }
 }

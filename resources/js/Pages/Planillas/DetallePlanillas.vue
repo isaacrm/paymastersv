@@ -9,7 +9,7 @@
             </q-card>
         </div>
         <div class="q-pa-md">
-            <q-table title="Detalle de planillas" flat bordered :rows="detalleTabla" :columns="columns" row-key="id"
+            <q-table title="Detalle de planillas" flat bordered :rows="detalleTabla" :columns="columns" row-key="name"
                 v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
                 :rows-per-page-options="[5, 10, 20, 40, 0]" @request="generarTabla">
                 <template v-slot:top-right>
@@ -19,60 +19,41 @@
                         </template>
                     </q-input>
                 </template>
-                <!-- Nueva plantilla para celdas editables -->
-                <template #body-cell-dias_trabajados="props">
-                    <q-td :props="props">
-                        <template v-if="editableRow === props.index">
-                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
-                                @input="updateCellValue(props.row, props.col.field)" />
-                        </template>
-                        <template v-else>
-                            <div>{{ props.row[props.col.field] }}</div>
-                        </template>
-                    </q-td>
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th auto-width />
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                            {{ col.label }}
+                        </q-th>
+                        <q-th>
+                            Operaciones
+                        </q-th>
+                    </q-tr>
                 </template>
-                <template #body-cell-horas_trabajadas="props">
-                    <q-td :props="props">
-                        <template v-if="editableRow === props.index">
-                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
-                                @input="updateCellValue(props.row, props.col.field)" />
-                        </template>
-                        <template v-else>
-                            <div>{{ props.row[props.col.field] }}</div>
-                        </template>
-                    </q-td>
-                </template>
-                <template #body-cell-horas_adicionales="props">
-                    <q-td :props="props">
-                        <template v-if="editableRow === props.index">
-                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
-                                @input="updateCellValue(props.row, props.col.field)" />
-                        </template>
-                        <template v-else>
-                            <div>{{ props.row[props.col.field] }}</div>
-                        </template>
-                    </q-td>
-                </template>
-                <template #body-cell-horas_ausencia="props">
-                    <q-td :props="props">
-                        <template v-if="editableRow === props.index">
-                            <q-input v-model="props.row[props.col.field]" dense outlined class="q-pt-none q-pb-none"
-                                @input="updateCellValue(props.row, props.col.field)" />
-                        </template>
-                        <template v-else>
-                            <div>{{ props.row[props.col.field] }}</div>
-                        </template>
-                    </q-td>
-                </template>
-                <template v-slot:body-cell-operaciones="props">
-                    <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editableRow = props.index"
-                            v-show="editableRow == -1"></q-btn>
-                        <q-btn round color="primary" icon="save" class="mr-2" @click="editableRow = -1"
-                            v-show="editableRow != -1"></q-btn>
-                        <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
-                    </q-td>
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td auto-width>
+                            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand"
+                                :icon="props.expand ? 'remove' : 'add'" />
+                        </q-td>
+                        <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                            {{ col.value }}
+                        </q-td>
+                        <q-td>
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editableRow = props.index"
+                                v-show="editableRow == -1"></q-btn>
+                            <q-btn round color="primary" icon="save" class="mr-2" @click="editableRow = -1"
+                                v-show="editableRow != -1"></q-btn>
+                            <q-btn round color="negative" icon="delete"
+                                @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        </q-td>
+                    </q-tr>
+                    <q-tr v-show="props.expand" :props="props">
+                        <q-td colspan="100%">
+                            <div class="text-left">Salario Base: {{ props.row.salario_base }} | Suma de ingresos: {{
+                                props.row.suma_ingresos }} | Suma de descuentos: {{ props.row.suma_descuentos }}</div>
+                        </q-td>
+                    </q-tr>
                 </template>
             </q-table>
         </div>
@@ -188,29 +169,7 @@ const columns = [
         label: "Horas Ausencia",
         field: "horas_ausencia",
         sortable: true,
-    },
-    {
-        name: "salario_base",
-        align: "left",
-        label: "Salario Base",
-        field: "salario_base",
-        sortable: true,
-    },
-    {
-        name: "suma_ingresos",
-        align: "left",
-        label: "Suma de Ingresos",
-        field: "suma_ingresos",
-        sortable: true,
-    },
-    {
-        name: "suma_descuentos",
-        align: "left",
-        label: "Suma Descuentos",
-        field: "suma_descuentos",
-        sortable: true,
-    },
-    { name: "operaciones", align: "center", label: "Operaciones" },
+    }
 ];
 
 /* METODOS */

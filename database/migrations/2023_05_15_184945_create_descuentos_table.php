@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('nombre', 30);
             $table->string('descripcion', 100);
             $table->char('forma_aplicacion', 1);
-            $table->boolean('descuento');
-            $table->decimal('valor_porcentaje', 5, 4);
+            $table->char('obligatorio',1);
+            $table->decimal('valor_porcentaje', 5, 4)->nullable();
+            $table->string('tabla_aplicar',20)->nullable();
+            $table->string('campo_aplicar',30)->nullable();
             $table->timestamps();
         });
     }

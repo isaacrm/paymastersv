@@ -55,8 +55,8 @@
                                     :options="[
                                         { value: 'P', label: 'Porcentaje' },
                                         { value: 'M', label: 'Monto fijo' },
-                                        { value: 'D', label: 'Dias' },
-                                        { value: 'T', label: 'Tablas' },
+                                        { value: 'S', label: 'Sobre campo' },
+                                        { value: 'T', label: 'Base tabla' },
                                     ]"
                                     :error-message="
                                         errores.forma_aplicacion &&
@@ -68,11 +68,11 @@
                                 <br />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-2">
+                        <div class="col-12 col-md-4">
                             <q-item>
                                 <q-select
                                     style="width: 185px"
-                                    v-model="descuento.descuento"
+                                    v-model="descuento.obligatorio"
                                     option-value="value"
                                     option-label="label"
                                     emit-value
@@ -83,20 +83,19 @@
                                         { value: 'N', label: 'No' },
                                     ]"
                                     :error-message="
-                                        errores.descuento &&
-                                        errores.descuento[0]
+                                        errores.obligatorio &&
+                                        errores.obligatorio[0]
                                     "
-                                    :error="hayError(errores.descuento)"
-                                    label="Descuentos"
+                                    :error="hayError(errores.obligatorio)"
+                                    label="¿Es Obligatorio?"
                                 />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-4" v-show="descuento.forma_aplicacion == 'P'">
                             <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
-                                    :class="q-ml-xs"
                                     v-model="descuento.valor_porcentaje"
                                     class="q-pa-sm"
                                     label="Valor porcentaje"
@@ -113,6 +112,32 @@
                                     :decimals="2"
                                     hint="Ingrese solo valores decimales"
                                 />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-4" v-show="descuento.forma_aplicacion == 'S'">
+                            <q-item>
+                                <q-select
+                                    style="width: 185px"
+                                    v-model="descuento.campo_aplicar"
+                                    option-value="value"
+                                    option-label="label"
+                                    emit-value
+                                    map-options
+                                    :optiones-dense="true"
+                                    :options="[
+                                        { value: 'dias_trabajados', label: 'Días trabajados' },
+                                        { value: 'horas_trabajadas', label: 'Horas trabajadas' },
+                                        { value: 'horas_adicionales', label: 'Horas adicionales' },
+                                        { value: 'horas_ausencia', label: 'Horas de ausencia' },
+                                    ]"
+                                    :error-message="
+                                        errores.campo_aplicar &&
+                                        errores.campo_aplicar[0]
+                                    "
+                                    :error="hayError(errores.campo_aplicar)"
+                                    label="Campo a aplicar"
+                                    />
+                                <br />
                             </q-item>
                         </div>
                     </div>
@@ -268,11 +293,11 @@ const columns = [
     },
     //{ name: 'descuento', align: 'left', label: 'descuento', field: 'Descuento', sortable: true },
     {
-        name: "descuento",
+        name: "obligatorio",
         required: true,
-        label: "Descuento",
+        label: "Obligatorio",
         align: "left",
-        field: "descuento",
+        field: "obligatorio",
         sortable: true,
     },
     {
@@ -369,6 +394,7 @@ const guardar = async () => {
 // Para mostrar los datos en el form
 const editar = (editardescuentos) => {
     descuento.value = { ...editardescuentos };
+    console.log(descuento.value)
     submitted.value = false;
     errores.value = {};
 };

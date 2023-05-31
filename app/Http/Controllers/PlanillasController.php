@@ -129,7 +129,7 @@ class PlanillasController extends Controller
 
     public function CantidadRegistros()
     {
-        $cantidadDescuentos = Descuento::where('descuento', '=', 'S')->count();
+        $cantidadDescuentos = Descuento::where('obligatorio', '=', 'S')->count();
         $cantidadEmpleados = Empleados::count();
         // El json que se manda a la vista para poder visualizar la información
         return response()->json([

@@ -38,8 +38,15 @@ class IngresosController extends Controller
         $ingresos->nombre = $request->nombre;
         $ingresos->descripcion = $request->descripcion;
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
-        $ingresos->descuento = $request->descuento;
+        $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
+        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
+            $ingresos->tabla_aplicar = 'rentas_mensuales';
+        else if ($request->forma_aplicacion == 'S') {
+            $ingresos->tabla_aplicar = 'registros';
+            $ingresos->campo_aplicar = $request->campo_aplicar;
+        } else
+            $ingresos->tabla_aplicar = null;
         $ingresos->save();
 
         //echo '<pre>';
@@ -55,8 +62,15 @@ class IngresosController extends Controller
         $ingresos->nombre = $request->nombre;
         $ingresos->descripcion = $request->descripcion;
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
-        $ingresos->descuento = $request->descuento;
+        $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
+        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
+            $ingresos->tabla_aplicar = 'rentas_mensuales';
+        else if ($request->forma_aplicacion == 'S') {
+            $ingresos->tabla_aplicar = 'registros';
+            $ingresos->campo_aplicar = $request->campo_aplicar;
+        } else
+            $ingresos->tabla_aplicar = null;
         $ingresos->save();
     }
     // La operación de Delete CR[U]D
@@ -72,8 +86,8 @@ class IngresosController extends Controller
             'nombre' => 'required|max:30',
             'descripcion' => 'required|max:100',
             'forma_aplicacion' => 'required|max:1',
-            'descuento' => 'required',
-            'valor_porcentaje' => 'between:0,9999',
+            'obligatorio' => 'required',
+            'valor_porcentaje' => 'between:0,100',
         ]);
     }
 }
