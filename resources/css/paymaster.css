@@ -9,8 +9,14 @@
 }
 
 .text-header-menu {
-    color: #5470ce; /* Reemplaza #ff0000 con el color deseado */
+    color: #4d5f98; /* Reemplaza #ff0000 con el color deseado */
   }
+
+.responsive-img-dashboard{
+    max-width: 100%;
+    height: auto;
+  }
+  
 
 
   

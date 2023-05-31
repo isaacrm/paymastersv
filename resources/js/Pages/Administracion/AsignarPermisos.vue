@@ -21,13 +21,17 @@
                                 <q-select filled v-model="selectedPermissions" class="full-width"
                                     multiple
                                     :options="permisos"
-                                    label="Permisos"
                                     emit-value
                                     map-options
                                     option-label="name"
                                     option-value="id"
                                     stack-label
                                     clearable
+                                    :disable="!editing"
+                                    label="Permisos" :error-message="errores.selectedPermissions && errores.selectedPermissions[0]"
+                                    :error="hayError(errores.selectedPermissions)"
+                                    transition-show="scale"
+                                    transition-hide="scale"
                                     />
                             </q-item>
                         </div>
@@ -47,7 +51,10 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
@@ -56,6 +63,7 @@
                 </template>
             </q-table>
         </div>
+        
     </AppLayout>
 </template>
 
@@ -80,7 +88,7 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const permisos = ref([])
 const roles = ref({}) // El objeto que se enviara mediante el request para cargar roles
 const selectedPermissions = ref([])
-
+const editing = ref(false);
 
 
 // Para el q-table con server-rendering
@@ -109,9 +117,10 @@ const columns = [
     label: 'Permisos', 
     field: 'permissions', 
     sortable: false, 
-    format: (value) => value.map((permiso) => permiso.name).join(', ')
+    format: (value) => value.map((permiso) => permiso.name).join(', '),
+    
   },
-  { name: 'operaciones', align: 'center', label: 'Asignación de Permisos' }
+  { name: 'operaciones', align: 'center', label: 'Asignación de Permisos'}
 ];
 
 
@@ -139,8 +148,17 @@ const reiniciarValores = () => {
 
     selectedPermissions.value = ''
 
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    roles.value = {}
+    selectedPermissions.value = ''
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
@@ -155,7 +173,15 @@ const hayError = (valor) => {
 const guardar = async () => {
     submitted.value = true
     errores.value = {}
+
     roles.value.permissions=selectedPermissions.value
+
+    console.log(roles.value)
+
+    if (selectedPermissions.value.length === 0) {
+        errores.value.selectedPermissions = ['El campo permisos es requerido'];
+      return; // Detener la ejecución si no se seleccionó ningún rol
+    }
 
     // Actualizar
     if (roles.value.id) {
@@ -195,6 +221,8 @@ const editar = (editarRoles) => {
 
     submitted.value = false;
     errores.value = {}
+
+    editing.value = true; // Establecer editing en true al presionar el botón de editar
 }
 
 /* EXCLUSIVO DE TABLA */

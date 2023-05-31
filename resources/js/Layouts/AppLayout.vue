@@ -35,7 +35,7 @@
         <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-menu" :width="240">
             <q-scroll-area class="fit">
                 <q-list padding>
-                    <q-item v-if="Inicio($page.props.auth.user.permissions)" v-for="link in inicio" :key="link.text" v-ripple clickable :href="link.path">
+                    <q-item v-if="$page.props.auth.user.permissions.includes('dashboard')" v-for="link in inicio" :key="link.text" v-ripple clickable :href="link.path">
                         <q-item-section avatar>
                             <q-icon color="black" :name="link.icon" />
                         </q-item-section>
@@ -43,7 +43,7 @@
                             <q-item-label class="text-weight-bold text-black">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
-                    <q-item-section v-if="checkAsigPermiso($page.props.auth.user.permissions)">
+                    <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.permisos')">
                       <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Roles y Permisos
@@ -59,7 +59,7 @@
                         </q-item>
                     </q-item-section>
 
-                    <q-item-section v-if="checkAdministrador($page.props.auth.user.permissions)">
+                    <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.usuarios')">
                       <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Usuarios
@@ -78,7 +78,7 @@
                       <q-separator class="q-mt-md q-mb-xs" />
                       Registro
                     </q-item-label>
-                        <q-item v-if="checkRegMovimientos($page.props.auth.user.permissions)" v-for="link in registro_movimientos" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item v-if="$page.props.auth.user.permissions.includes('registro.movimientos')" v-for="link in registro_movimientos" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -87,7 +87,7 @@
                             </q-item-section>
                         </q-item>
 
-                          <q-item v-if="checkRegEmpresa($page.props.auth.user.permissions)" v-for="link in registro_empresa" :key="link.text" v-ripple clickable :href="link.path">
+                          <q-item v-if="$page.props.auth.user.permissions.includes('registro.empresa')" v-for="link in registro_empresa" :key="link.text" v-ripple clickable :href="link.path">
                               <q-item-section avatar>
                                   <q-icon color="black" :name="link.icon" />
                               </q-item-section>
@@ -100,7 +100,7 @@
                       <q-separator class="q-mt-md q-mb-xs" />      
                       Empleados
                     </q-item-label>
-                        <q-item v-if="checkInfoEmpleados($page.props.auth.user.permissions)" v-for="link in empleados" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item v-if="$page.props.auth.user.permissions.includes('empleados.config')" v-for="link in empleados" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -108,7 +108,7 @@
                                 <q-item-label>{{ link.text }}</q-item-label>
                             </q-item-section>
                         </q-item>
-                        <q-item v-if="checkEmpleados($page.props.auth.user.permissions)" v-for="link in empleados_datos" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item v-if="$page.props.auth.user.permissions.includes('empleados.datos')" v-for="link in empleados_datos" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -117,7 +117,7 @@
                             </q-item-section>
                         </q-item>
 
-                    <q-item-section v-if="checkDireccion($page.props.auth.user.permissions)">
+                    <q-item-section v-if="$page.props.auth.user.permissions.includes('direccion')">
                       <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
                             Direcciones
@@ -137,7 +137,7 @@
                       <q-separator class="q-mt-md q-mb-xs" />      
                       Configuracion
                     </q-item-label>
-                        <q-item v-if="checkTipoDoc($page.props.auth.user.permissions)" v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item v-if="$page.props.auth.user.permissions.includes('configuracion.doc')" v-for="link in configuracion" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -145,7 +145,7 @@
                                 <q-item-label>{{ link.text }}</q-item-label>
                             </q-item-section>
                         </q-item>
-                        <q-item v-if="checkConfPla($page.props.auth.user.permissions)" v-for="link in configuracion_planilla" :key="link.text" v-ripple clickable :href="link.path">
+                        <q-item v-if="$page.props.auth.user.permissions.includes('configuracion.desc')" v-for="link in configuracion_planilla" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -218,7 +218,7 @@ const direcciones = [
     { icon: 'home', text: 'Direcciones', path: '/direcciones' }
 ]
 const configuracion = [
-    { icon: 'perm_identity', text: 'Tipo de Documentos', path: '/tipo_documentos' },
+    { icon: 'person', text: 'Tipo de Documentos', path: '/tipo_documentos' },
 ]
 
 const configuracion_planilla = [
@@ -250,100 +250,7 @@ const empleados = [
 const empleados_datos = [
     { icon: "group_add", text: "Empleados", path: "/empleados" },
 ]
-/* VERIFICACIÓN DE ROLES */
-// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
-const checkAsigPermiso = (permissions) => {
-  if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'roles.permisos') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-
-// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
-const checkAdministrador = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'roles.usuarios') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-// Verificar acceso si es rol Super Administrador con roles y permisos, usuarios
-const checkInfoEmpleados = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'empleados.config') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const checkRegMovimientos = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'registro.movimientos') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const checkTipoDoc = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'configuracion.doc') {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-const checkRegEmpresa = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'registro.empresa') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const checkDireccion = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'direccion') {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const checkConfPla = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'configuracion.desc') {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-
+/* VERIFICACIÓN DE PERMISOS */
 const checkConfiguracion = (permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
@@ -359,28 +266,6 @@ const checkRegistro = ( permissions) => {
     if (permissions && permissions.length) {
     for (let i = 0; i < permissions.length; i++) {
       if (permissions[i] === 'registro.movimientos' || permissions[i] === 'registro.empresa') {
-        return true;
-      }
-    }
-  }
-  return false;   
-}
-
-const Inicio = ( permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'dashboard') {
-        return true;
-      }
-    }
-  }
-  return false;   
-}
-
-const checkEmpleados = (permissions) => {
-    if (permissions && permissions.length) {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === 'empleados.datos') {
         return true;
       }
     }

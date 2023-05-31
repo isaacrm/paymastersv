@@ -4,333 +4,186 @@
       <q-card class="my-card">
         <q-card-section class="ml-6">
           <div class="text-h6">{{ nombres.mayus }}</div>
-          <div class="text-subtitle">Registro de las {{ nombres.minus }}.</div>
+          <div class="text-subtitle">Registro de los {{ nombres.minus }}.</div>
         </q-card-section>
         <q-card-section>
+          <div class="text-h7 text-weight-bold">Datos Personales</div>
           <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.primer_nombre"
-                  class="full-width"
-                  label="Primero nombre de el empleado:"
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.primer_nombre" class="full-width"
+                  label="Primer nombre del empleado:" :error-message="
                     errores.primer_nombre && errores.primer_nombre[0]
-                  "
-                  :error="hayError(errores.primer_nombre)"
-                />
+                  " :error="hayError(errores.primer_nombre)" autofocus />
               </q-item>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.segundo_nombre"
-                  class="full-width"
-                  label="Segundo nombre de el empleado:"
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.segundo_nombre" class="full-width"
+                  label="Segundo nombre del empleado:" :error-message="
                     errores.segundo_nombre && errores.segundo_nombre[0]
-                  "
-                  :error="hayError(errores.segundo_nombre)"
-                />
+                  " :error="hayError(errores.segundo_nombre)" />
               </q-item>
             </div>
           </div>
           <div class="row">
             <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.apellido_paterno"
-                  class="full-width"
-                  label="Apellido paterno de el empleado:"
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.apellido_paterno" class="full-width"
+                  label="Apellido paterno del empleado:" :error-message="
                     errores.apellido_paterno && errores.apellido_paterno[0]
-                  "
-                  :error="hayError(errores.apellido_paterno)"
-                />
+                  " :error="hayError(errores.apellido_paterno)" />
               </q-item>
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.apellido_materno"
-                  class="full-width"
-                  label="Apellido materno de el empleado:"
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.apellido_materno" class="full-width"
+                  label="Apellido materno del empleado:" :error-message="
                     errores.apellido_materno && errores.apellido_materno[0]
-                  "
-                  :error="hayError(errores.apellido_materno)"
-                />
+                  " :error="hayError(errores.apellido_materno)" />
               </q-item>
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.apellido_casada"
-                  class="full-width"
-                  label="Apellido de casada de el empleado:"
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.apellido_casada" class="full-width"
+                  label="Apellido de casada del empleado:" :error-message="
                     errores.apellido_casada && errores.apellido_casada[0]
-                  "
-                  :error="hayError(errores.apellido_casada)"
-                />
+                  " :error="hayError(errores.apellido_casada)" />
               </q-item>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 col-md-3">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.identificacion"
-                  class="full-width"
-                  label="Identificacion de el empleado:"
-                  :error-message="
-                    errores.identificacion && errores.identificacion[0]
-                  "
-                  :error="hayError(errores.identificacion)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-3">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.nit"
-                  class="full-width"
-                  label="Nit de el empleado:"
-                  :error-message="errores.nit && errores.nit[0]"
-                  :error="hayError(errores.nit)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-3">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.isss"
-                  class="full-width"
-                  label="Numero del ISSS de el empleado:"
-                  :error-message="errores.isss && errores.isss[0]"
-                  :error="hayError(errores.isss)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-3">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.nup"
-                  class="full-width"
-                  label="Ingrese el nup de el empleado:"
-                  :error-message="errores.nup && errores.nup[0]"
-                  :error="hayError(errores.nup)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.email_personal"
-                  class="full-width"
-                  label="Email personal de el empleado:"
-                  type="email"
-                  :error-message="
-                    errores.email_personal && errores.email_personal[0]
-                  "
-                  :error="hayError(errores.email_personal)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-6">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.email_profesional"
-                  class="full-width"
-                  label="Email profesional de el empleado:"
-                  type="email"
-                  :error-message="
-                    errores.email_profesional && errores.email_profesional[0]
-                  "
-                  :error="hayError(errores.email_profesional)"
-                />
-              </q-item>
-            </div>
-          </div>
+
+          <div class="text-h7 text-weight-bold">Información Personal</div>
           <div class="row">
             <div class="col-12 col-md-4">
               <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.fecha_nacimiento"
-                  class="full-width"
-                  label="Fecha de nacimiento:"
-                  type="date"
-                  :error-message="
-                    errores.fecha_nacimiento && errores.fecha_nacimiento[0]
-                  "
-                  :error="hayError(errores.fecha_nacimiento)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.fecha_ingreso"
-                  class="full-width"
-                  label="Fecha de ingreso:"
-                  type="date"
-                  :error-message="
-                    errores.fecha_ingreso && errores.fecha_ingreso[0]
-                  "
-                  :error="hayError(errores.fecha_ingreso)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-input
-                  filled
-                  bottom-slots
-                  v-model="datos.salario_base"
-                  class="full-width"
-                  label="Salario base del empleado:"
-                  type="number"
-                  :error-message="
-                    errores.salario_base && errores.salario_base[0]
-                  "
-                  :error="hayError(errores.salario_base)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  v-model="datosSelect.estado_civil"
-                  label="Seleccione el estado civil:"
-                  :options="estado_civil"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="
-                    errores.estados_civiles_id && errores.estados_civiles_id[0]
-                  "
-                  :error="hayError(errores.estados_civiles_id)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  v-model="datosSelect.genero"
-                  label="Seleccione el genero:"
-                  :options="genero"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="errores.generos_id && errores.generos_id[0]"
-                  :error="hayError(errores.generos_id)"
-                />
-              </q-item>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  v-model="datosSelect.ocupacion"
-                  label="Seleccione la ocupacion:"
-                  :options="ocupacion"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="
-                    errores.ocupaciones_id && errores.ocupaciones_id[0]
-                  "
-                  :error="hayError(errores.ocupaciones_id)"
-                />
-              </q-item>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-4">
-              <q-item>
-                <q-select
-                  v-model="datosSelect.tipo_documento"
-                  label="Seleccione el tipo de documento:"
-                  :options="tipo_documento"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
+                <q-select v-model="datosSelect.tipo_documento" label="Seleccione el tipo de documento:"
+                  :options="tipo_documento" option-label="name" option-value="id" class="full-width" filled clearable
                   :error-message="
                     errores.tipo_documentos_id && errores.tipo_documentos_id[0]
-                  "
-                  :error="hayError(errores.tipo_documentos_id)"
-                />
+                  " :error="hayError(errores.tipo_documentos_id)" />
               </q-item>
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-select
-                  v-model="datosSelect.direccion"
-                  label="Seleccione la direccion:"
-                  :options="direccion"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="
+                <q-input filled bottom-slots v-model="datos.identificacion" class="full-width"
+                  label="Identificacion del empleado:" :error-message="
+                    errores.identificacion && errores.identificacion[0]
+                  " :error="hayError(errores.identificacion)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.nit" class="full-width" label="Nit del empleado:"
+                  mask="####-######-###-#" fill-mask="_"
+                  :error-message="errores.nit && errores.nit[0]" :error="hayError(errores.nit)" />
+              </q-item>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.fecha_nacimiento" class="full-width"
+                  label="Fecha de nacimiento:" type="date" :error-message="
+                    errores.fecha_nacimiento && errores.fecha_nacimiento[0]
+                  " :error="hayError(errores.fecha_nacimiento)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-select v-model="datosSelect.estado_civil" label="Seleccione el estado civil:" :options="estado_civil"
+                  option-label="name" option-value="id" class="full-width" filled clearable :error-message="
+                    errores.estados_civiles_id && errores.estados_civiles_id[0]
+                  " :error="hayError(errores.estados_civiles_id)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-select v-model="datosSelect.genero" label="Seleccione el genero:" :options="genero" option-label="name"
+                  option-value="id" class="full-width" filled clearable
+                  :error-message="errores.generos_id && errores.generos_id[0]" :error="hayError(errores.generos_id)" />
+              </q-item>
+            </div>
+          </div>
+
+
+          <div class="text-h7 text-weight-bold">Información de contacto</div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.email_personal" class="full-width"
+                  label="Email personal de el empleado:" type="email" :error-message="
+                    errores.email_personal && errores.email_personal[0]
+                  " :error="hayError(errores.email_personal)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-select v-model="datosSelect.direccion" label="Seleccione la direccion:" :options="direccion"
+                  option-label="name" option-value="id" class="full-width" filled clearable :error-message="
                     errores.direcciones_id && errores.direcciones_id[0]
-                  "
-                  :error="hayError(errores.direcciones_id)"
-                />
+                  " :error="hayError(errores.direcciones_id)" />
               </q-item>
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-select
-                  v-model="datosSelect.puesto"
-                  label="Seleccione el puesto:"
-                  :options="puesto"
-                  option-label="name"
-                  option-value="id"
-                  class="full-width"
-                  filled
-                  clearable
-                  :error-message="errores.puestos_id && errores.puestos_id[0]"
-                  :error="hayError(errores.puestos_id)"
-                />
+                <q-input filled bottom-slots v-model="datos.email_profesional" class="full-width"
+                  label="Email profesional de el empleado:" type="email" :error-message="
+                    errores.email_profesional && errores.email_profesional[0]
+                  " :error="hayError(errores.email_profesional)" />
+              </q-item>
+            </div>
+          </div>
+
+          <div class="text-h7 text-weight-bold">Información Laboral</div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-select v-model="datosSelect.ocupacion" label="Seleccione la ocupacion:" :options="ocupacion"
+                  option-label="name" option-value="id" class="full-width" filled clearable :error-message="
+                    errores.ocupaciones_id && errores.ocupaciones_id[0]
+                  " :error="hayError(errores.ocupaciones_id)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-select v-model="datosSelect.puesto" label="Seleccione el puesto:" :options="puesto" option-label="name"
+                  option-value="id" class="full-width" filled clearable
+                  :error-message="errores.puestos_id && errores.puestos_id[0]" :error="hayError(errores.puestos_id)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.fecha_ingreso" class="full-width" label="Fecha de ingreso:"
+                  type="date" :error-message="
+                    errores.fecha_ingreso && errores.fecha_ingreso[0]
+                  " :error="hayError(errores.fecha_ingreso)" />
+              </q-item>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.salario_base" class="full-width"
+                  label="Salario base del empleado:" prefix="$" type="number" :error-message="
+                    errores.salario_base && errores.salario_base[0]
+                  " :error="hayError(errores.salario_base)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.isss" class="full-width"
+                mask="#########" fill-mask="_"  
+                label="Numero del ISSS del empleado:" :error-message="errores.isss && errores.isss[0]"
+                  :error="hayError(errores.isss)" />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input filled bottom-slots v-model="datos.nup" class="full-width"
+                  mask="############" fill-mask="_" 
+                  label="Ingrese el nup de el empleado:"
+                  :error-message="errores.nup && errores.nup[0]" :error="hayError(errores.nup)" />
               </q-item>
             </div>
           </div>
@@ -338,65 +191,29 @@
       </q-card>
     </div>
     <div class="q-pa-md">
-      <q-table
-        flat
-        bordered
-        :rows="detalleTabla"
-        :columns="columns"
-        row-key="id"
-        v-model:pagination="pagination"
-        :loading="loading"
-        :filter="filter"
-        binary-state-sort
-        :rows-per-page-options="[5, 10, 20, 40, 0]"
-        @request="generarTabla"
-      >
+      <q-table flat bordered :rows="detalleTabla" :columns="columns" row-key="id" v-model:pagination="pagination"
+        :loading="loading" :filter="filter" binary-state-sort :rows-per-page-options="[5, 10, 20, 40, 0]"
+        @request="generarTabla">
         <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar"
-          >
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
         </template>
         <template v-slot:top-left>
-          <q-btn
-            outline
-            rounded
-            color="primary"
-            label="Guardar"
-            icon="add"
-            @click="guardar"
-          ></q-btn>
-          <q-btn
-            outline
-            rounded
-            color="danger"
-            label="Cancelar"
-            icon="cancel"
-            @click="cancelar"
-          ></q-btn>
+          <div class="q-gutter-sm">
+            <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+            <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+          </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
-            <q-btn
-              round
-              color="warning"
-              icon="edit"
-              class="mr-2"
-              @click="editar(props.row)"
-            ></q-btn>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="confirmarEliminar(props.row.id, props.row.nombre)"
-            ></q-btn>
+            <div class="q-gutter-sm">
+              <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+              <q-btn round color="negative" icon="delete"
+                @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+            </div>
           </q-td>
         </template>
       </q-table>
@@ -407,20 +224,12 @@
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="warning" color="red" text-color="white" />
-            <span class="q-ml-sm"
-              >¿Desea eliminar {{ nombreRegistroEliminar }}?.</span
-            >
+            <span class="q-ml-sm">¿Desea eliminar {{ nombreRegistroEliminar }}?.</span>
           </q-card-section>
 
           <q-card-actions align="right">
             <q-btn flat label="No" color="primary" v-close-popup />
-            <q-btn
-              flat
-              label="Sí"
-              color="primary"
-              @click="eliminar"
-              v-close-popup
-            />
+            <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>

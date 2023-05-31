@@ -132,7 +132,7 @@ class RolController extends Controller
         }
 
         // Buscando el permiso Visualizar
-        $permisoDashboard = Permission::where('name', 'dasboard')->first(); // Obtén el rol correspondiente
+        $permisoDashboard = Permission::where('name', 'dashboard')->first(); // Obtén el rol correspondiente
 
         // Estableciendo el modelo donde se guardara la informacion
         $rol = Role::create([

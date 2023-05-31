@@ -6,7 +6,7 @@
                     <div class="text-h6">Permisos</div>
                     <div class="text-subtitle">Registro de los permisos a los que el administrador tiene acceso.</div>
                 </q-card-section>
-                <q-card-section>
+                <!----<q-card-section>
                     <div class="row">
                         <div class="col-12 col-md-8">
                             <q-item>
@@ -16,7 +16,7 @@
                             </q-item>
                         </div>
                     </div>
-                </q-card-section>
+                </q-card-section>-->
             </q-card>
         </div>
         <div class="q-pa-md">
@@ -30,16 +30,16 @@
                         </template>
                     </q-input>
                 </template>
-                <template v-slot:top-left>
+                <!---<template v-slot:top-left>
                     <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
-                </template>
-                <template v-slot:body-cell-operaciones="props">
+                </template>-->
+                <!----<template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
                     </q-td>
-                </template>
+                </template>-->
             </q-table>
         </div>
 
@@ -92,7 +92,7 @@ const pagination = ref({
     sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
     descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
-    rowsPerPage: 5,
+    rowsPerPage: 10,
     /* Cuando se usa server side pagination, QTable necesita
     conocer el "rowsNumber" (Numero total de filas).
     Por qué?
@@ -105,8 +105,8 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: true },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
+    { name: 'name', align: 'center', label: 'Nombre', field: 'name', sortable: true },
+    //{ name: 'operaciones', align: 'center', label: 'Operaciones' }
 ]
 
 /* METODOS */

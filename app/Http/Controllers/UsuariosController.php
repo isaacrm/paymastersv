@@ -86,7 +86,5 @@ class UsuariosController extends Controller
             $usuario->syncRoles($selectedRoles); // Asignar o remover permiso
         }
     
-    }
-
-    
+    }    
 }

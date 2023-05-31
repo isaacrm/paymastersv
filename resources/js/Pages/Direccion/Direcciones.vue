@@ -12,7 +12,7 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="direccion.calle" class="full-width"
                                     label="Calle" :error-message="errores.calle && errores.calle[0]"
-                                    :error="hayError(errores.calle)" />
+                                    :error="hayError(errores.calle)" autofocus/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
@@ -80,13 +80,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -204,6 +209,13 @@ const reiniciarValores = () => {
     direccion.departamento_id = null
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    direccion.value = {}
+    direccion.municipio_id = null
+    direccion.departamento_id = null
+
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error

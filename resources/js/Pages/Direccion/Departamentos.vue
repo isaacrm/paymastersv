@@ -12,7 +12,7 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="departamento.nombre" class="full-width"
                                     label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
-                                    :error="hayError(errores.nombre)" />
+                                    :error="hayError(errores.nombre)" autofocus/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
@@ -39,13 +39,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -133,6 +138,11 @@ const reiniciarValores = () => {
 
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    departamento.value = {}
+
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error

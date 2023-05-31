@@ -13,7 +13,7 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="techoLaboral.anyo" class="full-width" type="number"
                                     label="Año de vigencia" :error-message="errores.anyo && errores.anyo[0]"
-                                    :error="errores.hasOwnProperty('anyo')" autofocus />
+                                    :error="errores.hasOwnProperty('anyo')" autofocus suffix="año"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
@@ -21,7 +21,7 @@
                                 <q-input filled bottom-slots v-model="techoLaboral.afp" type="number"
                                     class="full-width" label="Techo AFP"
                                     :error-message="errores.afp && errores.afp[0]"
-                                    :error="errores.hasOwnProperty('afp')" />
+                                    :error="errores.hasOwnProperty('afp')" prefix="$"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
@@ -29,7 +29,7 @@
                                 <q-input filled bottom-slots v-model="techoLaboral.isss" type="number"
                                     class="full-width" label="Techo ISSS"
                                     :error-message="errores.isss && errores.isss[0]"
-                                    :error="errores.hasOwnProperty('isss')" />
+                                    :error="errores.hasOwnProperty('isss')" prefix="$"/>
                             </q-item>
                         </div>
                     </div>
@@ -48,13 +48,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
+                        <div class="q-gutter-sm">
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.anyo)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -153,6 +158,10 @@ const reiniciarValores = () => {
 
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    techoLaboral.value = {}
 }
 
 // Operacion de guardar

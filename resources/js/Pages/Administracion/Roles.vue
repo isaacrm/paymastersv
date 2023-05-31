@@ -12,7 +12,7 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="roles.name" class="full-width"
                                     label="Nombre" :error-message="errores.name && errores.name[0]"
-                                    :error="hayError(errores.name)" />
+                                    :error="hayError(errores.name)" autofocus/>
                             </q-item>
                         </div>
                     </div>
@@ -31,13 +31,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-4" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
+                                @click="confirmarEliminar(props.row.id, props.row.name)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -126,6 +131,11 @@ const reiniciarValores = () => {
 
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    roles.value = {}
+    
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
@@ -252,12 +262,27 @@ const eliminar = async () => {
         })
         .catch((e) => {
             // Mensaje de alerta
-            $q.notify(
-                {
+            // Si es un error de tipo 422, es decir, contenido inprocesable
+            if (e.response.status === 422) {
+                    errores.value = e.response.data.errors
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: "Error al eliminar el rol."
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El rol ha sido asignado a un usuario previamente.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
                     type: 'negative',
                     message: 'Error al eliminar el rol.'
+                    });
                 }
-            )
         })
 }
 

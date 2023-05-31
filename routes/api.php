@@ -50,7 +50,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/usuarios/tabla', [UsuariosController::class, 'TablaUsuarios']);
 // Asignar roles
 Route::post('usuarios/roles/asignar',[UsuariosController::class, 'asignarRoles']);
-
+// Eliminar usuarios
+Route::post('usuarios/eliminar/{id}',[UsuariosController::class, 'EliminarUsuario']);
 
 
 /* ROLES */

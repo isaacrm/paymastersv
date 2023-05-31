@@ -26,7 +26,7 @@
                                     option-value="id"
                                     stack-label
                                     clearable
-                                    :rules="[val => !!val || 'Rol es requerido']"
+                                    :disable="!editing"
                                     label="Roles" :error-message="errores.selectedRoles && errores.selectedRoles[0]"
                                     :error="hayError(errores.selectedRoles)"
                                     transition-show="scale"
@@ -50,7 +50,10 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Asignar Rol" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
@@ -59,24 +62,6 @@
                 </template>
             </q-table>
         </div>
-
-        <div class="q-pa-md q-gutter-sm">
-            <q-dialog v-model="confirmarEliminacion" persistent>
-                <q-card>
-                    <q-card-section class="row items-center">
-                        <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar el permiso {{ nombreRegistroEliminar }}?</span>
-                    </q-card-section>
-
-                    <q-card-actions align="right">
-                        <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
-        </div>
-
-
     </AppLayout>
 </template>
 
@@ -98,6 +83,7 @@ const errored = ref(false)
 const roles = ref([])
 const usuarios = ref({}) // El objeto que se enviara mediante el request
 const selectedRoles = ref([])
+const editing = ref(false);
 
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
@@ -165,8 +151,17 @@ const reiniciarValores = () => {
 
     selectedRoles.value = ''
 
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    usuarios.value = {}
+    selectedRoles.value = ''
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
 }
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
@@ -184,6 +179,11 @@ const guardar = async () => {
 
     usuarios.value.roles=selectedRoles.value
 
+    if (selectedRoles.value.length === 0) {
+        errores.value.selectedRoles = ['El campo roles es requerido'];
+      return; // Detener la ejecución si no se seleccionó ningún rol
+    }
+
     // Actualizar
     if (usuarios.value.id) {
         await axios
@@ -197,7 +197,6 @@ const guardar = async () => {
                         message: 'Roles asignados.'
                     }
                 )
-
             })
             .catch((e) => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
@@ -233,6 +232,9 @@ const editar = (editarUsuarioss) => {
 
     submitted.value = false;
     errores.value = {}
+
+    editing.value = true; // Establecer editing en true al presionar el botón de editar
+
 }
 
 /* EXCLUSIVO DE TABLA */

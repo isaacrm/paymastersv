@@ -20,21 +20,21 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="tramoRenta.desde" type="number" class="full-width"
                                     label="Desde (USD$)" :error-message="errores.desde && errores.desde[0]"
-                                    :error="errores.hasOwnProperty('desde')" />
+                                    :error="errores.hasOwnProperty('desde')" prefix="$"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
                             <q-item>
                                 <q-input filled bottom-slots v-model="tramoRenta.hasta" type="number" class="full-width"
                                     label="Hasta (USD$)" :error-message="errores.hasta && errores.hasta[0]"
-                                    :error="errores.hasOwnProperty('hasta')" />
+                                    :error="errores.hasOwnProperty('hasta')" prefix="$" />
                             </q-item>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 col-md-4">
                             <q-item>
-                                <q-input filled bottom-slots v-model="tramoRenta.porcentaje_aplicar" type="number"
+                                <q-input filled bottom-slots v-model="tramoRenta.porcentaje_aplicar" suffix="%" type="number"
                                     class="full-width" label="Porcentaje a aplicar (%)"
                                     :error-message="errores.porcentaje_aplicar && errores.porcentaje_aplicar[0]"
                                     :error="errores.hasOwnProperty('porcentaje_aplicar')" />
@@ -45,14 +45,14 @@
                                 <q-input filled bottom-slots v-model="tramoRenta.sobre_exceso" type="number"
                                     class="full-width" label="Sobre el exceso de"
                                     :error-message="errores.sobre_exceso && errores.sobre_exceso[0]"
-                                    :error="errores.hasOwnProperty('sobre_exceso')" />
+                                    :error="errores.hasOwnProperty('sobre_exceso')" prefix="$"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
                             <q-item>
                                 <q-input filled bottom-slots v-model="tramoRenta.mas_fija" type="number" class="full-width"
                                     label="Más cuota fija de" :error-message="errores.mas_fija && errores.mas_fija[0]"
-                                    :error="errores.hasOwnProperty('mas_fija')" />
+                                    :error="errores.hasOwnProperty('mas_fija')" prefix="$"/>
                             </q-item>
                         </div>
                     </div>
@@ -71,13 +71,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.tramo)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -178,6 +183,11 @@ const reiniciarValores = () => {
 
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
+}
+
+const cancelar = () => {
+    tramoRenta.value = {}
+    
 }
 
 // Operacion de guardar
