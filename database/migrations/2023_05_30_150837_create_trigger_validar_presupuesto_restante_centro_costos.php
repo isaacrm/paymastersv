@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared('
-            CREATE TRIGGER validar_presupuesto_restante
-            BEFORE INSERT OR UPDATE ON centro_costos
+            CREATE TRIGGER centro_de_costos_validar_presupuesto_restante
+            BEFORE INSERT OR UPDATE ON centro_de_costos
             FOR EACH ROW
             BEGIN
                 IF :NEW.presupuesto_restante < 0 THEN
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER validar_presupuesto_restante');
+        //DB::unprepared('DROP TRIGGER centro_de_costos_validar_presupuesto_restante');
     }
 };

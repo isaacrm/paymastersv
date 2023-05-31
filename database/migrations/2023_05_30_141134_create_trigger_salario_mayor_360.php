@@ -11,8 +11,8 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared("
-        CREATE OR REPLACE TRIGGER salario_desde_mayor_360
-        BEFORE INSERT OR UPDATE ON empleados
+        CREATE OR REPLACE TRIGGER puestos_salario_desde_mayor_360
+        BEFORE INSERT OR UPDATE ON puestos
         FOR EACH ROW
         BEGIN
             IF :NEW.salario_desde <= 360 THEN
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER IF EXISTS salario_desde_mayor_360');
+        //DB::unprepared('DROP TRIGGER salario_desde_mayor_360');
     }
 };

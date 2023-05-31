@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared('
-            CREATE TRIGGER edad_empleado_mayor_18
+            CREATE TRIGGER empleado_edad_mayor_18
             BEFORE INSERT OR UPDATE ON empleados
             FOR EACH ROW
             BEGIN
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER edad_empleado_mayor_18');
+        //DB::unprepared('DROP TRIGGER empleado_edad_mayor_18');
     }
 };

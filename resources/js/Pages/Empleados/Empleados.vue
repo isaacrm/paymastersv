@@ -619,8 +619,8 @@ const editar = (editardatos) => {
   datos.value.nup = editardatos.nup;
   datos.value.email_personal = editardatos.email_personal;
   datos.value.email_profesional = editardatos.email_profesional;
-  datos.value.fecha_nacimiento = editardatos.fecha_nacimiento;
-  datos.value.fecha_ingreso = editardatos.fecha_ingreso;
+  datos.value.fecha_nacimiento = editardatos.fecha_nacimiento.substring(0,10);
+  datos.value.fecha_ingreso = editardatos.fecha_ingreso.substring(0,10);
   datos.value.salario_base = editardatos.salario_base;
   datosSelect.value.estado_civil = {
     id: editardatos.estado_civil_id,
