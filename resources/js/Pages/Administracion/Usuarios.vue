@@ -267,7 +267,7 @@ const activar = async () => {
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'Usuario suspendido.'
+                    message: 'Usuario activado.'
                 }
             )
 
@@ -277,7 +277,7 @@ const activar = async () => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al suspender al usuario.'
+                    message: 'Error al activar al usuario.'
                 }
             )
         })
