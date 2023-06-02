@@ -25,6 +25,7 @@ class UsuariosController extends Controller
             $usuarioID = $usuario->id;
             $usuarioName = $usuario->name;
             $usuarioCorreo = $usuario->email;
+            $usuarioBaneo = $usuario->banned_at;
             $roles = $usuario->roles->map(function ($rol) {
                 return [
                     'id' => $rol->id,
@@ -36,7 +37,8 @@ class UsuariosController extends Controller
                 'id' => $usuarioID,
                 'user_name' => $usuarioName,
                 'email' => $usuarioCorreo,
-                'roles' => $roles
+                'roles' => $roles,
+                'estado' => $usuarioBaneo
             ];
         }
 
@@ -85,6 +87,16 @@ class UsuariosController extends Controller
         if (!empty($selectedRoles)) {
             $usuario->syncRoles($selectedRoles); // Asignar o remover permiso
         }
-    
     }    
+
+    public function SuspenderUsuario(Request $request){
+        $usuario = User::find($request->id);
+        $usuario->ban();
+
+    }
+
+    public function ActivarUsuario(Request $request){
+        $usuario = User::find($request->id);
+        $usuario->unban();
+    }
 }
