@@ -58,15 +58,15 @@
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                            <q-btn round color="positive" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="secondary" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
                         </div>
                     </q-td>
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                            <q-btn round color="negative" icon="block" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
-                            @click="confirmarBan(props.row.id, props.row.user_name)"></q-btn>
-                            <q-btn round color="positive" icon="check_circle" v-if="(props.row.estado)"
-                            @click="confirmarUnban(props.row.id, props.row.user_name)"></q-btn>
+                            <q-btn round color="positive" icon="check_circle" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
+                            @click="confirmarBan(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
+                            <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
+                            @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
                         </div>
                     </q-td>
                 </template>
