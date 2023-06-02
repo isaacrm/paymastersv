@@ -9,7 +9,6 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Cog\Contracts\Ban\Bannable as BannableInterface;
 use Cog\Laravel\Ban\Traits\Bannable;
-use Spatie\ModelStatus\Status;
 
 
 class HandleInertiaRequests extends Middleware
@@ -25,7 +24,7 @@ class HandleInertiaRequests extends Middleware
             'auth.user.roles' => fn () => $request->user()
                 ? $request->user()->getRoleNames()
                 : null,
-            // comparte el estado de ban del usuario
+            // comparte el estado de la sesión del usuario
             'auth.user.loggedIn' => $request->user() ? 1 : null,
 
         ]);

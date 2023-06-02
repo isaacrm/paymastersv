@@ -16,7 +16,7 @@
                         <q-list dense>
                             <q-item class="GL__menu-link-signed-in">
                                 <q-item-section>
-                                    <div>Usuario: <strong>{{ $page.props.auth.user }}</strong></div>
+                                    <div>Usuario: <strong>{{ $page.props.auth.user.name }}</strong></div>
                                 </q-item-section>
                             </q-item>
                             <q-separator />
