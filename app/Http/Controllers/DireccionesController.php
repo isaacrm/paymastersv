@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Models\Direccion;
+use Illuminate\Support\Facades\DB;
+
 
 use Illuminate\Http\Request;
 
@@ -88,7 +90,7 @@ class DireccionesController extends Controller
 
      public function consultar_id_nombre()
      {
-         $datos = Direccion::select('id', 'calle as name')->get();
+        $datos = Direccion::select(DB::raw('id, identificador_casa || \', \' || apto_local || \', \' || calle || \', \' || colonia as name'))->get();
          return response()->json($datos, 200);
      }
 
