@@ -6,17 +6,23 @@
                 <q-btn flat round dense @click="toggleLeftDrawer" aria-label="Menu" icon="menu" />
                 <q-btn flat no-caps no-wrap class="q-ml-xs" v-if="$q.screen.gt.xs">
                     <q-toolbar-title shrink class="text-weight-bold" @click="dashboard()">
-                        Paymaster SV
+                        Paymaster SV -
                     </q-toolbar-title>
+                   <q-item-section>
+                        <div class="text-weight-bold">{{ fechaActual }}</div>
+                   </q-item-section>
                 </q-btn>
                 <q-space />
                 <q-btn flat dense no-wrap>
+                    <q-item-section>
+                        <div>Bienvenido <strong>{{ $page.props.auth.user.name }}</strong></div>
+                     </q-item-section>
                     <q-icon name="more_vert" />
                     <q-menu auto-close>
                         <q-list dense>
                             <q-item class="GL__menu-link-signed-in">
                                 <q-item-section>
-                                    <div>Usuario: <strong>{{ $page.props.auth.user.name }}</strong></div>
+                                    <div>Correo: <strong>{{ $page.props.auth.user.email }}</strong></div>
                                 </q-item-section>
                             </q-item>
                             <q-separator />
@@ -165,9 +171,17 @@
 
 <script setup>
 /* IMPORTANDO COMPONENTES NECESARIOS */
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { fabYoutube } from "@quasar/extras/fontawesome-v6";
 import { Head, router } from "@inertiajs/vue3";
+
+const fechaActual = ref('');
+onMounted(() => {
+  const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+  const formatter = new Intl.DateTimeFormat('es-ES', options);
+  const currentDate = formatter.format(new Date());
+  fechaActual.value = currentDate;
+});
 
 defineProps({
     title: String,

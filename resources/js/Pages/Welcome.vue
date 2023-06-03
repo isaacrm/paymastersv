@@ -91,7 +91,7 @@
               "
             >
               <q-card-section>
-                <div class="text-h6 text-center">Guardar configuracion</div>
+                <div class="text-h6 text-center">Guardar configuración</div>
               </q-card-section>
               <q-card-section>
                 <div class="text-h2 text-weight-bolder text-center">
@@ -100,7 +100,7 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Brinda la administración de información compelmentaria como direcciones, departamentos y municipios, generos,
+                  Brinda la administración de información complementaria como direcciones, departamentos y municipios, géneros,
                   estados civiles y ocupaciones
                 </div>
               </q-card-section>
@@ -115,7 +115,7 @@
             >
               <q-card-section>
                 <div class="text-h6 text-center">
-                  Configuracion de la institucion
+                  Configuración de la institución
                 </div>
               </q-card-section>
               <q-card-section>
@@ -126,8 +126,7 @@
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
                   Permite mantener una jerarquía ante el registro de puestos y unidades de una empresa, 
-                  así como el detalle del centro de costos y planillas de
-                  de la organización
+                  así como el detalle del centro de costos y planillas de la organización
                 </div>
               </q-card-section>
             </q-card>
@@ -153,7 +152,7 @@
               </q-card-section>
               <q-card-section>
                 <div class="text-h6 text-weight-bolder text-center">
-                  Ofrece el registro especificos de salario, horas trabajadas, descuentos aplicados,
+                  Ofrece el registro especifico de salario, horas trabajadas, descuentos aplicados,
                   ingresos obtenidos, por cada empleado perteneciente a la organización
                 </div>
               </q-card-section>
