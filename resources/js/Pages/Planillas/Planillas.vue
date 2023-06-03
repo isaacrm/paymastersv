@@ -18,7 +18,7 @@
                   class="full-width"
                   v-model="datos.mes_periodo"
                   :options="meses"
-                  label="Mes periodo"
+                  label="Mes período"
                   :error-message="errores.mes_periodo && errores.mes_periodo[0]"
                   :error="hayError(errores.mes_periodo)"
                 />
@@ -31,7 +31,7 @@
                   bottom-slots
                   v-model="datos.anyo_periodo"
                   class="full-width"
-                  label="Año periodo:"
+                  label="Año período:"
                   mask="####"
                   fill-mask="#"
                   hint="Año:####"
@@ -51,7 +51,7 @@
                   bottom-slots
                   v-model="datos.fecha_generacion"
                   class="full-width"
-                  label="Fecha de generacion:"
+                  label="Fecha de generación:"
                   type="date"
                   :error-message="
                     errores.fecha_generacion && errores.fecha_generacion[0]
@@ -239,7 +239,7 @@ const columns = [
   {
     name: "mes_periodo",
     align: "left",
-    label: "Mes periodo:",
+    label: "Mes período:",
     field: "mes_periodo",
     sortable: true,
   },

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout title="Generos">
+  <AppLayout title="Géneros">
     <div class="q-pa-md">
       <q-card class="my-card">
         <q-card-section class="ml-6">
@@ -17,7 +17,7 @@
                   bottom-slots
                   v-model="datos.nombre"
                   class="full-width"
-                  label="Nombre del genero:"
+                  label="Nombre del género:"
                   :error-message="errores.nombre && errores.nombre[0]"
                   :error="hayError(errores.nombre)" autofocus
                 />

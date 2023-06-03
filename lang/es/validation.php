@@ -164,6 +164,55 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        // generales
+        'name' => 'nombre',
+        'email' => 'correo electrónico',
+        //direcciones
+        'departamento_id' => 'departamento',
+        'municipio_id' => 'municipio',
+        'identificador_casa' => 'identificador de casa',
+        'apto_local' => 'número de apartamento o local',
+        'codigo_iso' => 'código',
+
+        //ingresos
+        'forma_aplicacion' => 'forma de aplicación',
+
+        //Empresas
+        'nrc' => 'el número de NRC',
+        'nit' => 'NIT',
+        //Puestos
+        'nro_plazas' => 'número de plazas',
+        'salario_desde' => 'salario mínimo',
+        'salario_hasta' => 'salario máximo',
+        // Centro de costos
+        'anyo' => 'año',
+        // Planillas
+        'anyo_periodo' => 'año período',
+        'fecha_generacion' => 'fecha de generación',
+        // Empleados
+        'primer_nombre' => 'primer nombre',
+        'segundo_nombre' => 'segundo nombre',
+        'apellido_paterno' => 'apellido paterno',
+        'apellido_materno' => 'apellido manternos',
+        'tipo_documentos_id' => 'tipo de documento',
+        'identificacion' => 'identifación',
+        'fecha_nacimiento' => 'fecha de nacimiento',
+        'estados_civiles_id' => 'estado civil',
+        'email_personal' => 'correo personal',
+        'direcciones_id' => 'dirección',
+        'email_profesional' => 'correo profesional',
+        'ocupaciones_id' => 'ocupación',
+        'puestos_id' => 'puesto',
+        'isss' => 'número del ISS',
+        'generos_id' => 'género',
+        'fecha_ingreso' => 'fecha de ingreso',
+        'nup' => 'NUP',
+        // Tabla renta mensual
+        'porcentaje_aplicar' => 'porcentaje a aplicar',
+        'mas_fija' => 'más cuto fija',
+        // Techo Laboral
+        'afp' => 'AFP'
+    ],
 
 ];

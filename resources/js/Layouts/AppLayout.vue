@@ -256,7 +256,7 @@ const registro_empresa = [
 ]
 
 const empleados = [
-    { icon: "transgender", text: "Generos", path: "/generos" },
+    { icon: "transgender", text: "Géneros", path: "/generos" },
     { icon: "work", text: "Ocupaciones", path: "/ocupaciones" },
     { icon: "family_restroom", text: "Estados Civiles", path: "/estados_civiles" },
 ]

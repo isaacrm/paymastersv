@@ -99,7 +99,7 @@
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-select v-model="datosSelect.genero" label="Seleccione el genero:" :options="genero" option-label="name"
+                <q-select v-model="datosSelect.genero" label="Seleccione el género:" :options="genero" option-label="name"
                   option-value="id" class="full-width" filled clearable
                   :error-message="errores.generos_id && errores.generos_id[0]" :error="hayError(errores.generos_id)" />
               </q-item>
@@ -119,7 +119,7 @@
             </div>
             <div class="col-12 col-md-4">
               <q-item>
-                <q-select v-model="datosSelect.direccion" label="Seleccione la direccion:" :options="direccion"
+                <q-select v-model="datosSelect.direccion" label="Seleccione la dirección:" :options="direccion"
                   option-label="name" option-value="id" class="full-width" filled clearable :error-message="
                     errores.direcciones_id && errores.direcciones_id[0]
                   " :error="hayError(errores.direcciones_id)" />
@@ -139,7 +139,7 @@
           <div class="row">
             <div class="col-12 col-md-4">
               <q-item>
-                <q-select v-model="datosSelect.ocupacion" label="Seleccione la ocupacion:" :options="ocupacion"
+                <q-select v-model="datosSelect.ocupacion" label="Seleccione la ocupación:" :options="ocupacion"
                   option-label="name" option-value="id" class="full-width" filled clearable :error-message="
                     errores.ocupaciones_id && errores.ocupaciones_id[0]
                   " :error="hayError(errores.ocupaciones_id)" />
@@ -182,7 +182,7 @@
               <q-item>
                 <q-input filled bottom-slots v-model="datos.nup" class="full-width"
                   mask="############" fill-mask="_" 
-                  label="Ingrese el nup de el empleado:"
+                  label="Ingrese el nup del empleado:"
                   :error-message="errores.nup && errores.nup[0]" :error="hayError(errores.nup)" />
               </q-item>
             </div>
