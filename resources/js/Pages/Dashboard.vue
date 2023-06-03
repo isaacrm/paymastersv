@@ -17,7 +17,7 @@
                         para la empresa como para los trabajadores. 
                     </div>
                     <div class="text-h7 text-center">Permite gestionar roles y permisos,
-                        así como la información necesaria para mantener al día la información fiscal y contable 
+                        así como los datos necesarios para mantener al día la información fiscal y contable 
                         de la empresa, y así aplicar los descuentos vigentes.
                     </div>
                 </q-card-section>

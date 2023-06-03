@@ -41,6 +41,5 @@ class CreateNewUser implements CreatesNewUsers
         $user->assignRole($role);
         $user->notify(new UsuarioCreado());
         return $user;
-
     }
 }

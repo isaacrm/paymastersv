@@ -47,15 +47,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Administración
 /* USUARIOS */
 // Ver
-Route::get('/usuarios/tabla', [UsuariosController::class, 'TablaUsuarios']);
+Route::get('/roles_estados/tabla', [UsuariosController::class, 'TablaUsuarios']);
 // Asignar roles
-Route::post('usuarios/roles/asignar',[UsuariosController::class, 'asignarRoles']);
+Route::post('roles_estados/roles/asignar',[UsuariosController::class, 'asignarRoles']);
 // Eliminar usuarios
-Route::post('usuarios/eliminar/{id}',[UsuariosController::class, 'EliminarUsuario']);
+Route::post('roles_estados/eliminar/{id}',[UsuariosController::class, 'EliminarUsuario']);
 // Suspender usuarios
-Route::post('usuarios/suspender/{id}',[UsuariosController::class, 'SuspenderUsuario']);
+Route::post('roles_estados/suspender/{id}',[UsuariosController::class, 'SuspenderUsuario']);
 // Activar usuarios
-Route::post('usuarios/activar/{id}',[UsuariosController::class, 'ActivarUsuario']);
+Route::post('roles_estados/activar/{id}',[UsuariosController::class, 'ActivarUsuario']);
 
 
 /* ROLES */

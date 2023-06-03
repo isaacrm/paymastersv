@@ -1,10 +1,10 @@
 <template>
-    <AppLayout title="Usuarios">
+    <AppLayout title="Usuarios - Roles y Estados">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Usuarios</div>
-                    <div class="text-subtitle">Registro de los usuarios existentes en el sistema a los que el administrador tiene acceso.</div>
+                    <div class="text-h6">Usuarios - Roles y Estados</div>
+                    <div class="text-subtitle">Asignación de los roles y estados a los usuarios en el sistema a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
@@ -230,7 +230,7 @@ const confirmarUnban = (id, user_name) => {
 
 const suspender = async () => {
     await axios
-        .post("/api/usuarios/suspender/" + usuarios.value.id)
+        .post("/api/roles_estados/suspender/" + usuarios.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
@@ -256,7 +256,7 @@ const suspender = async () => {
 
 const activar = async () => {
     await axios
-        .post("/api/usuarios/activar/" + usuarios.value.id)
+        .post("/api/roles_estados/activar/" + usuarios.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
@@ -303,7 +303,7 @@ const guardar = async () => {
     // Actualizar
     if (usuarios.value.id) {
         await axios
-            .post("/api/usuarios/roles/asignar", usuarios.value)
+            .post("/api/roles_estados/roles/asignar", usuarios.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
@@ -361,7 +361,7 @@ const generarTabla = async (props) => {
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/usuarios/tabla", {
+        .get("/api/roles_estados/tabla", {
             params: {
                 page,
                 rowsPerPage,
