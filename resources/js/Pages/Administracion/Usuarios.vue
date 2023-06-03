@@ -57,11 +57,55 @@
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="positive" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
+                        <div class="q-gutter-sm">
+                            <q-btn round color="secondary" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
+                        </div>
+                    </q-td>
+                    <q-td :props="props">
+                        <div class="q-gutter-sm">
+                            <q-btn round color="positive" icon="check_circle" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
+                            @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
+                            <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
+                            @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
         </div>
+
+        <div class="q-pa-md q-gutter-sm">
+            <q-dialog v-model="confirmarBaneo" persistent>
+                <q-card>
+                    <q-card-section class="row items-center">
+                        <q-avatar icon="warning" color="red" text-color="white" />
+                        <span class="q-ml-sm">¿Desea suspender al usuario {{ nombreRegistroBan }}?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                        <q-btn flat label="No" color="primary" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="suspender" v-close-popup />
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
+        </div>
+
+
+        <div class="q-pa-md q-gutter-sm">
+            <q-dialog v-model="confirmarDesbaneo" persistent>
+                <q-card>
+                    <q-card-section class="row items-center">
+                        <q-avatar icon="warning" color="red" text-color="white" />
+                        <span class="q-ml-sm">¿Desea activar al usuario {{ nombreRegistroBan }}?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                        <q-btn flat label="No" color="primary" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="activar" v-close-popup />
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
+        </div>
+
     </AppLayout>
 </template>
 
@@ -88,6 +132,11 @@ const editing = ref(false);
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
+const confirmarBaneo = ref(false) // Para modal de ban
+const nombreRegistroBan = ref('') // Para que se muestre el nombre en el modal de ban
+
+const confirmarDesbaneo = ref(false)
+const nombreRegistroDesban = ref('')
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -122,7 +171,8 @@ const columns = [
         sortable: false, 
         format: (value) => value.map((rol) => rol.name).join(', ')
     },
-    { name: 'operaciones', align: 'center', label: 'Asignación de Roles' }
+    { name: 'operaciones', align: 'center', label: 'Asignación de Roles' },
+    { name: 'Estado', align: 'center', label: 'Estado' }
 ]
 
 /* METODOS */
@@ -163,6 +213,79 @@ const cancelar = () => {
     editing.value = false; // Establecer editing en true al presionar el botón de editar
 
 }
+
+const confirmarBan = (id, user_name, user_active_id) => {
+    if(user_active_id == id){
+        $q.notify(
+            {
+                type: 'negative',
+                message: 'No te puedes banear a ti mismo.'
+            }
+        )
+        return;
+    }
+    usuarios.value.id = id
+    nombreRegistroBan.value = user_name
+    confirmarBaneo.value = true
+}
+
+const confirmarUnban = (id, user_name) => {
+    usuarios.value.id = id
+    nombreRegistroDesban.value = user_name
+    confirmarDesbaneo.value = true
+}
+
+const suspender = async () => {
+    await axios
+        .post("/api/usuarios/suspender/" + usuarios.value.id)
+        .then((response) => {
+            reiniciarValores()
+            // Mensaje de alerta
+            $q.notify(
+                {
+                    type: 'positive',
+                    message: 'Usuario suspendido.'
+                }
+            )
+
+        })
+        .catch((e) => {
+            // Mensaje de alerta
+            $q.notify(
+                {
+                    type: 'negative',
+                    message: 'Error al suspender al usuario.'
+                }
+            )
+        })
+}
+
+
+const activar = async () => {
+    await axios
+        .post("/api/usuarios/activar/" + usuarios.value.id)
+        .then((response) => {
+            reiniciarValores()
+            // Mensaje de alerta
+            $q.notify(
+                {
+                    type: 'positive',
+                    message: 'Usuario activado.'
+                }
+            )
+
+        })
+        .catch((e) => {
+            // Mensaje de alerta
+            $q.notify(
+                {
+                    type: 'negative',
+                    message: 'Error al activar al usuario.'
+                }
+            )
+        })
+}
+
 
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {

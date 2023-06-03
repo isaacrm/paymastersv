@@ -173,6 +173,10 @@ return [
         
         //!Spatie
         Spatie\Permission\PermissionServiceProvider::class,
+
+        //!Ban
+        Cog\Laravel\Ban\Providers\BanServiceProvider::class,
+
     ])->toArray(),
 
     /*
