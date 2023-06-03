@@ -209,7 +209,7 @@ const roles_permisos = [
 ]
 
 const usuarios_roles = [
-    { icon: 'manage_accounts', text: 'Asignación de Roles', path: '/usuarios' }
+    { icon: 'manage_accounts', text: 'Administrar Usuarios', path: '/usuarios' }
 ]
 
 const direcciones = [

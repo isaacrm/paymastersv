@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use App\Notifications\UsuarioBaneado;
+use App\Notifications\UsuarioActivado;
 
 
 use Illuminate\Http\Request;
@@ -92,11 +94,14 @@ class UsuariosController extends Controller
     public function SuspenderUsuario(Request $request){
         $usuario = User::find($request->id);
         $usuario->ban();
-
+        $usuario->notify(new UsuarioBaneado());
+        return $usuario;
     }
 
     public function ActivarUsuario(Request $request){
         $usuario = User::find($request->id);
         $usuario->unban();
+        $usuario->notify(new UsuarioActivado());
+        return $usuario;
     }
 }

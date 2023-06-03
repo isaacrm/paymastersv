@@ -216,18 +216,14 @@ const cancelar = () => {
 
 const confirmarBan = (id, user_name) => {
     usuarios.value.id = id
-    console.log(usuarios.value.id)
     nombreRegistroBan.value = user_name
-    console.log(nombreRegistroBan)
     confirmarBaneo.value = true
 
 }
 
 const confirmarUnban = (id, user_name) => {
     usuarios.value.id = id
-    console.log(usuarios.value.id)
     nombreRegistroDesban.value = user_name
-    console.log(nombreRegistroDesban)
     confirmarDesbaneo.value = true
 
 }

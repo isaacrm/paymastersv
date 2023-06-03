@@ -15,6 +15,7 @@ use Cog\Laravel\Ban\Traits\Bannable;
 
 
 
+
 // Verificacion por correo es lo que hace implements MustVerifyEmail
 class User extends Authenticatable implements MustVerifyEmail, BannableInterface
 {
