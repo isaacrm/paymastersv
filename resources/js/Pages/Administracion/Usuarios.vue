@@ -64,7 +64,7 @@
                     <q-td :props="props">
                         <div class="q-gutter-sm">
                             <q-btn round color="positive" icon="check_circle" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
-                            @click="confirmarBan(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
+                            @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
                             <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
                             @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
                         </div>
@@ -214,22 +214,25 @@ const cancelar = () => {
 
 }
 
-const confirmarBan = (id, user_name) => {
+const confirmarBan = (id, user_name, user_active_id) => {
+    if(user_active_id == id){
+        $q.notify(
+            {
+                type: 'negative',
+                message: 'No te puedes banear a ti mismo.'
+            }
+        )
+        return;
+    }
     usuarios.value.id = id
-    console.log(usuarios.value.id)
     nombreRegistroBan.value = user_name
-    console.log(nombreRegistroBan)
     confirmarBaneo.value = true
-
 }
 
 const confirmarUnban = (id, user_name) => {
     usuarios.value.id = id
-    console.log(usuarios.value.id)
     nombreRegistroDesban.value = user_name
-    console.log(nombreRegistroDesban)
     confirmarDesbaneo.value = true
-
 }
 
 const suspender = async () => {
