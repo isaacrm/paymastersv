@@ -121,7 +121,7 @@ return [
     'required_with_all' => 'The :attribute field is required when :values are present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
-    'same' => 'The :attribute and :other must match.',
+    'same' => 'El campo :attribute y el campo :other deben conincidir.',
     'size' => [
         'array' => 'The :attribute must contain :size items.',
         'file' => 'The :attribute must be :size kilobytes.',
@@ -168,6 +168,7 @@ return [
         // generales
         'name' => 'nombre',
         'email' => 'correo electrónico',
+        'password' => 'contraseña',
         //direcciones
         'departamento_id' => 'departamento',
         'municipio_id' => 'municipio',

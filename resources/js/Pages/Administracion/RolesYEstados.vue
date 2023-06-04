@@ -58,7 +58,7 @@
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                            <q-btn round color="secondary" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="secondary" icon="account_box" class="mr-2" @click="editar(props.row)"></q-btn>
                         </div>
                     </q-td>
                     <q-td :props="props">
@@ -361,7 +361,7 @@ const generarTabla = async (props) => {
     loading.value = true
     // Obteniendo la tabla de datos
     await axios
-        .get("/api/roles_estados/tabla", {
+        .get("/api/usuarios/tabla", {
             params: {
                 page,
                 rowsPerPage,

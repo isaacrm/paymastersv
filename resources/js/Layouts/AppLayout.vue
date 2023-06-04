@@ -22,7 +22,7 @@
                         <q-list dense>
                             <q-item class="GL__menu-link-signed-in">
                                 <q-item-section>
-                                    <div>Correo: <strong>{{ $page.props.auth.user.password }}</strong></div>
+                                    <div>Correo: <strong>{{ $page.props.auth.user.email }}</strong></div>
                                 </q-item-section>
                             </q-item>
                             <q-separator />
@@ -223,7 +223,8 @@ const roles_permisos = [
 ]
 
 const usuarios_roles = [
-    { icon: 'manage_accounts', text: 'Roles y Estados', path: '/roles_estados' }
+    { icon: 'manage_accounts', text: 'Administrar Usuarios', path: '/usuarios'},
+    { icon: 'admin_panel_settings', text: 'Roles y Estados', path: '/roles_estados' }
 ]
 
 const direcciones = [

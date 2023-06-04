@@ -7,12 +7,20 @@ use App\Models\User;
 use Spatie\Permission\Models\Role;
 use App\Notifications\UsuarioBaneado;
 use App\Notifications\UsuarioActivado;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
+use App\Notifications\UsuarioCreadoAdmVerificar;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Validation\Rule;
+use Laravel\Jetstream\Contracts\DeletesUsers;
 
 
 use Illuminate\Http\Request;
 
 class UsuariosController extends Controller
 {
+
     public function TablaUsuarios(Request $request)
     {
         $pagina = $request->page;
@@ -91,6 +99,7 @@ class UsuariosController extends Controller
         }
     }    
 
+    // La operación de suspender al usuario
     public function SuspenderUsuario(Request $request){
         $usuario = User::find($request->id);
         $usuario->ban();
@@ -98,10 +107,98 @@ class UsuariosController extends Controller
         return $usuario;
     }
 
+    // La operación de activar al usuario
     public function ActivarUsuario(Request $request){
         $usuario = User::find($request->id);
         $usuario->unban();
         $usuario->notify(new UsuarioActivado());
         return $usuario;
+    }
+    // 
+    public function CrearUsuario(Request $request){
+        // Comprobando que los campos se hayan ingresado correctamente
+        $this->validacion($request);
+        
+        $input = $request->all();
+        $user = User::create([
+            'name' => $input['user_name'],
+            'email' => $input['email'],
+            'password' => Hash::make($input['password']),
+        ]);
+
+        // Cuando se crea un nuevo usuario se le debe dar el rol de Visitante como predeterminado, esto lo puedo cambair después
+        $role = Role::findByName('Visitante');
+        $user->assignRole($role);
+        $user->notify(new UsuarioCreadoAdmVerificar());
+        $user->sendEmailVerificationNotification();
+        //$token = Password::getRepository()->create($user);
+
+        //$user->sendPasswordResetNotification($token);
+        return $user;
+    }
+
+    // La operación de Update CR[U]D
+    public function ActualizarUsuario(Request $request)
+    {
+        $user = User::find($request->id);
+
+        $this->validate($request, [
+            'user_name' => 'required|max:255',
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'password' => 'same:confirmarContraseña|min:8', // Nueva regla para la contraseña
+        ]);
+    
+        $input = $request->all();
+    
+        if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
+            $this->updateVerifiedUser($user, $input);
+        } else {
+            $user->forceFill([
+                'name' => $input['user_name'],
+                'email' => $input['email'],
+            ]);
+
+            if (!empty($input['password'])) {
+                $user->password = Hash::make($input['password']);
+            }
+            $user->save();
+        }
+    }
+
+    // La operación de Delete CR[U]D
+    public function EliminarUsuario(Request $request)
+    {
+        $user = User::find($request->id);
+        $user->tokens->each->delete();
+        $user->delete();
+    }
+
+
+
+    /**
+     * Update the given verified user's profile information.
+     *
+     * @param  array<string, string>  $input
+     */
+    protected function updateVerifiedUser(User $user, array $input): void
+    {
+        $user->forceFill([
+            'name' => $input['user_name'],
+            'email' => $input['email'],
+            'email_verified_at' => null,
+        ])->save();
+
+        $user->sendEmailVerificationNotification();
+    }
+    /* METODOS INTERNOS con camelPascal */
+    // Validacion de campos con Laravel
+    private function validacion(Request $request)
+    {
+        // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
+        $request->validate([
+            'user_name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|same:confirmarContraseña',
+        ]);
     }
 }

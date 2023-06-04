@@ -60,6 +60,10 @@ Route::middleware([
         Route::get('/roles_estados', function(){
             return Inertia::render('Administracion/RolesYEstados');
         })->name('roles_estados')->middleware(RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador');
+
+        Route::get('/usuarios', function(){
+            return Inertia::render('Administracion/Usuarios');
+        })->name('usuarios')->middleware(RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador');
 });
 
 // Rutas de registro
