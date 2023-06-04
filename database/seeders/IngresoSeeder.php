@@ -15,13 +15,47 @@ class IngresoSeeder extends Seeder
     {
         $ingresos = [
             [
-                'nombre' => 'Aguinaldo',
-                'descripcion' => 'Aguinaldo fin de año',
-                'forma_aplicacion' => 'T',
+                'nombre' => 'Horas Extra',
+                'descripcion' => 'Son las horas extra que se le pagan al empleado',
+                'forma_aplicacion' => 'F',
                 'obligatorio' => 'S',
-                'tabla_aplicar' => 'aguinaldos',
+                'valor_porcentaje' => null,
             ],
-            // Puedes agregar más usuarios aquí
+            [
+                'nombre' => 'Aguinaldo',
+                'descripcion' => 'Lo que se paga a final de año',
+                'forma_aplicacion' => 'T',
+                'obligatorio' => 'N',
+                'valor_porcentaje' => null,
+            ],
+            [
+                'nombre' => 'Comision por ventas',
+                'descripcion' => 'Lo que se da por ventas',
+                'forma_aplicacion' => 'P',
+                'obligatorio' => 'N',
+                'valor_porcentaje' => 0.20,
+            ],
+            [
+                'nombre' => 'Bonos',
+                'descripcion' => 'Bonificaciones que se le dan al empleado',
+                'forma_aplicacion' => 'M',
+                'obligatorio' => 'N',
+                'valor_porcentaje' => null,
+            ],
+            [
+                'nombre' => 'Vacaciones',
+                'descripcion' => 'Vacaciones remuneradas',
+                'forma_aplicacion' => 'P',
+                'obligatorio' => 'N',
+                'valor_porcentaje' => 0.30,
+            ],
+            [
+                'nombre' => 'Vacacion proporcional',
+                'descripcion' => 'Vacaciones remuneradas a nivel proporcional',
+                'forma_aplicacion' => 'F',
+                'obligatorio' => 'N',
+                'valor_porcentaje' => null,
+            ],
         ];
 
         // Crea registros de ejemplo en la tabla de usuarios
@@ -31,7 +65,7 @@ class IngresoSeeder extends Seeder
             $ingreso->descripcion = $item['descripcion'];
             $ingreso->forma_aplicacion = $item['forma_aplicacion'];
             $ingreso->obligatorio = $item['obligatorio'];
-            $ingreso->tabla_aplicar = $item['tabla_aplicar'];
+            $ingreso->valor_porcentaje = $item['valor_porcentaje'];
             $ingreso->save();
         }
     }

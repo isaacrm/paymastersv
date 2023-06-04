@@ -39,13 +39,6 @@ class DescuentosController extends Controller
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
         $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
-        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
-            $descuentos->tabla_aplicar = 'rentas_mensuales';
-        else if ($request->forma_aplicacion == 'S') {
-            $descuentos->tabla_aplicar = 'registros';
-            $descuentos->campo_aplicar = $request->campo_aplicar;
-        } else
-            $descuentos->tabla_aplicar = null;
         $descuentos->save();
     }
     // La operación de Update CR[U]D
@@ -58,13 +51,6 @@ class DescuentosController extends Controller
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
         $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
-        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
-            $descuentos->tabla_aplicar = 'rentas_mensuales';
-        else if ($request->forma_aplicacion == 'S') {
-            $descuentos->tabla_aplicar = 'registros';
-            $descuentos->campo_aplicar = $request->campo_aplicar;
-        } else
-            $descuentos->tabla_aplicar = null;
         $descuentos->save();
     }
     // La operación de Delete CR[U]D

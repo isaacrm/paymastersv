@@ -55,8 +55,6 @@
                                     :options="[
                                         { value: 'P', label: 'Porcentaje' },
                                         { value: 'M', label: 'Monto fijo' },
-                                        { value: 'S', label: 'Sobre campo' },
-                                        { value: 'T', label: 'Base tabla' },
                                     ]"
                                     :error-message="
                                         errores.forma_aplicacion &&
@@ -114,32 +112,6 @@
                                 />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-4" v-show="ingreso.forma_aplicacion == 'S'">
-                            <q-item>
-                                <q-select
-                                    style="width: 185px"
-                                    v-model="ingreso.campo_aplicar"
-                                    option-value="value"
-                                    option-label="label"
-                                    emit-value
-                                    map-options
-                                    :optiones-dense="true"
-                                    :options="[
-                                        { value: 'dias_trabajados', label: 'Días trabajados' },
-                                        { value: 'horas_trabajadas', label: 'Horas trabajadas' },
-                                        { value: 'horas_adicionales', label: 'Horas adicionales' },
-                                        { value: 'horas_ausencia', label: 'Horas de ausencia' },
-                                    ]"
-                                    :error-message="
-                                        errores.campo_aplicar &&
-                                        errores.campo_aplicar[0]
-                                    "
-                                    :error="hayError(errores.campo_aplicar)"
-                                    label="Campo a aplicar"
-                                    />
-                                <br />
-                            </q-item>
-                        </div>
                     </div>
                 </q-card-section>
             </q-card>
@@ -181,7 +153,7 @@
                         @click="guardar"
                     ></q-btn>
                 </template>
-                <template v-slot:body-cell-operaciones="props">
+                <!--template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <q-btn
                             round
@@ -202,7 +174,7 @@
                             "
                         ></q-btn>
                     </q-td>
-                </template>
+                </template-->
             </q-table>
         </div>
 
@@ -308,7 +280,7 @@ const columns = [
         field: "valor_porcentaje",
         sortable: true,
     },
-    { name: "operaciones", align: "center", label: "Operaciones" },
+   // { name: "operaciones", align: "center", label: "Operaciones" },
 ];
 
 /* METODOS */

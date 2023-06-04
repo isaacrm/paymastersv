@@ -4,6 +4,8 @@
             <q-card class="my-card">
                 <q-card-section class="ml-6">
                     <q-btn outline rounded color="primary" label="Añadir Manualmente" icon="add" @click="guardar"></q-btn>
+                    <q-btn outline rounded color="secondary" label="Planilla General" icon="picture_as_pdf"
+                        @click="generarPlanillaGeneral"></q-btn>
                     <q-btn outline rounded color="danger" label="Regresar" icon="undo" @click="regresar"></q-btn>
                 </q-card-section>
             </q-card>
@@ -40,10 +42,8 @@
                             {{ col.value }}
                         </q-td>
                         <q-td>
-                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editableRow = props.index"
-                                v-show="editableRow == -1"></q-btn>
-                            <q-btn round color="primary" icon="save" class="mr-2" @click="editableRow = -1"
-                                v-show="editableRow != -1"></q-btn>
+                            <q-btn round color="black" icon="picture_as_pdf" class="mr-2" @click="generarPagoIndividual(props.row.id)"></q-btn>
+                            <q-btn round color="warning" icon="edit" class="mr-2"></q-btn>
                             <q-btn round color="negative" icon="delete"
                                 @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
                         </q-td>
@@ -51,7 +51,8 @@
                     <q-tr v-show="props.expand" :props="props">
                         <q-td colspan="100%">
                             <div class="text-left">Salario Base: {{ props.row.salario_base }} | Suma de ingresos: {{
-                                props.row.suma_ingresos }} | Suma de descuentos: {{ props.row.suma_descuentos }}</div>
+                                props.row.total_ingresos }} | Salario Total: {{ props.row.salario_total }} | Suma de
+                                descuentos: {{ props.row.total_descuentos }} | Líquido a recibir: {{ props.row.salario_liquido }} |</div>
                         </q-td>
                     </q-tr>
                 </template>
@@ -96,8 +97,8 @@ const props = defineProps({
 const detalleTabla = ref();
 const submitted = ref(false); // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false);
+const generar = ref({})
 const valoresExistentes = ref({});
-const editableRow = ref(-1)
 const planillas_id = props.idPlanilla
 
 const datos = ref({}); // El objeto que se enviara mediante el request
@@ -150,6 +151,20 @@ const columns = [
         sortable: true,
     },
     {
+        name: "dias_ausente",
+        align: "left",
+        label: "Días Ausente",
+        field: "dias_ausente",
+        sortable: true,
+    },
+    {
+        name: "dias_permiso",
+        align: "left",
+        label: "Días permiso",
+        field: "dias_permiso",
+        sortable: true,
+    },
+    {
         name: "horas_trabajadas",
         align: "left",
         label: "Horas Trabajadas",
@@ -186,6 +201,7 @@ const reiniciarValores = () => {
     confirmarEliminacion.value = false;
     nombreRegistroEliminar.value = "";
     valoresExistentes.value = {};
+    generar.value = {};
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value });
 };
@@ -274,6 +290,46 @@ const eliminar = async () => {
             });
         });
 };
+
+const generarPlanillaGeneral = async () => {
+    generar.value.planillas_id = planillas_id
+    await axios
+        .post('/api/pdf_planilla_general', generar.value, { responseType: 'blob' })
+        .then(response => {
+            const blob = new Blob([response.data], {
+                type: 'application/pdf'
+            })
+            const url = window.URL.createObjectURL(blob)
+            window.open(url)
+        })
+        .catch(error => {
+            $q.notify({
+                type: "negative",
+                message: "Error al generar el archivo.",
+            });
+        })
+}
+
+const generarPagoIndividual = async (registroId) => {
+    generar.value.planillas_id = planillas_id
+    generar.value.registro_id = registroId
+    await axios
+        .post('/api/pdf_pago_personal', generar.value, { responseType: 'blob' })
+        .then(response => {
+            const blob = new Blob([response.data], {
+                type: 'application/pdf'
+            })
+            const url = window.URL.createObjectURL(blob)
+            window.open(url)
+        })
+        .catch(error => {
+            $q.notify({
+                type: "negative",
+                message: "Error al generar el archivo.",
+            });
+        })
+}
+
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca

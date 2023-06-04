@@ -40,13 +40,6 @@ class IngresosController extends Controller
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
         $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
-        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
-            $ingresos->tabla_aplicar = 'rentas_mensuales';
-        else if ($request->forma_aplicacion == 'S') {
-            $ingresos->tabla_aplicar = 'registros';
-            $ingresos->campo_aplicar = $request->campo_aplicar;
-        } else
-            $ingresos->tabla_aplicar = null;
         $ingresos->save();
 
         //echo '<pre>';
@@ -64,13 +57,6 @@ class IngresosController extends Controller
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
         $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
-        if ($request->forma_aplicacion == 'T' && $request->tabla_aplicar == 'rentas_mensuales')
-            $ingresos->tabla_aplicar = 'rentas_mensuales';
-        else if ($request->forma_aplicacion == 'S') {
-            $ingresos->tabla_aplicar = 'registros';
-            $ingresos->campo_aplicar = $request->campo_aplicar;
-        } else
-            $ingresos->tabla_aplicar = null;
         $ingresos->save();
     }
     // La operación de Delete CR[U]D

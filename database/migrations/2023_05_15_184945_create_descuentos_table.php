@@ -19,8 +19,6 @@ return new class extends Migration
             $table->char('forma_aplicacion', 1);
             $table->char('obligatorio',1);
             $table->decimal('valor_porcentaje', 5, 4)->nullable();
-            $table->string('tabla_aplicar',20)->nullable();
-            $table->string('campo_aplicar',30)->nullable();
             $table->timestamps();
         });
     }

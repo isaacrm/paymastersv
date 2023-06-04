@@ -284,6 +284,8 @@ Route::get('/registros', [RegistroController::class, 'index']);
 //Route::post('/registros/agregar', [RegistroController::class, 'store']);
 //Route::post('/registros/actualizar', [RegistroController::class, 'update']);
 //Route::post('/registros/eliminar/{id}', [RegistroController::class, 'destroy']);
+Route::post('/pdf_planilla_general', [RegistroController::class, 'pdf']);
+Route::post('/pdf_pago_personal', [RegistroController::class, 'pdfIndividual']);
 /* Empleados */
 Route::get('/empleados', [EmpleadosController::class, 'index']);
 Route::post('/empleados/agregar', [EmpleadosController::class, 'store']);
