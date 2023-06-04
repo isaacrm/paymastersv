@@ -53,6 +53,10 @@ Route::get('/usuarios/tabla', [UsuariosController::class, 'TablaUsuarios']);
 Route::post('usuarios/roles/asignar',[UsuariosController::class, 'asignarRoles']);
 // Eliminar usuarios
 Route::post('usuarios/eliminar/{id}',[UsuariosController::class, 'EliminarUsuario']);
+// Suspender usuarios
+Route::post('usuarios/suspender/{id}',[UsuariosController::class, 'SuspenderUsuario']);
+// Activar usuarios
+Route::post('usuarios/activar/{id}',[UsuariosController::class, 'ActivarUsuario']);
 
 
 /* ROLES */
