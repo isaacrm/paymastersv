@@ -40,15 +40,17 @@ class JetstreamServiceProvider extends ServiceProvider
             $user = User::where('email', $request->email)->first();
 
             if ($user && Hash::check($request->password, $user->password)) {
+                if($user->banned_at){
+                    throw new TooManyRequestsHttpException(429, 'Too many login attempts. Please try again later.');
+                }
+                $user->failed_login_attempts = 0;
+                $user->save();
                 return $user;
             } else {
-                if ($user && $user->failed_login_attempts >= 2) {
+                if ($user->email != 'sadmin@admin.com' && $user->failed_login_attempts >= 2) {
                     $user->ban();
                     throw new TooManyRequestsHttpException(429, 'Too many login attempts. Please try again later.');
-                    $user->notify(new UsuarioBaneado());
-                    return $user;
                 }
-        
                 if ($user) {
                     $currentDateTime = Carbon::now();
                     $user->date_failed_login_attempts = $currentDateTime;

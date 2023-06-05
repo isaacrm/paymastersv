@@ -174,12 +174,29 @@ const guardar = async () => {
     submitted.value = true
     errores.value = {}
 
-    const usuario = usuarios.value
+    // Verificar si los datos son iguales al usuario seleccionado
+    if (usuarios.value.id) {
+        const usuarioSeleccionado = detalleTabla.value.find(user => user.id === usuarios.value.id)
+        if (usuarioSeleccionado) {
+            if (usuarioSeleccionado.user_name === usuarios.value.user_name &&
+                usuarioSeleccionado.email === usuarios.value.email &&
+                usuarioSeleccionado.password === usuarios.value.password &&
+                usuarioSeleccionado.confirmarContraseña === usuarios.value.confirmarContraseña) {
+                $q.notify({
+                    type: 'info',
+                    message: 'No se realizaron cambios en los datos del usuario.',
+                    color: 'secondary'
+                })
+                return;
+            }
+        }
+    }
+
 
     // Actualizar
     if (usuarios.value.id) {
         await axios
-            .post("/api/usuarios/actualizar",usuarios.value)
+            .post("/api/usuarios/actualizar", usuarios.value)
             .then((response) => {
                 reiniciarValores()
                 if (response.data.message === 'El usuario no sufrió cambios') {

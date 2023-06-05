@@ -55,11 +55,25 @@ class Handler extends ExceptionHandler
             //$seconds = $retryAfter % 60; // Obtener los segundos
 
             
-            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso
-            por tratar de ingresar 3 veces de manera incorrecta. Por favor, comunícate con la administración.';
+            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso. 
+            Por favor, comunícate con la administración.';
 
             // Renderizar la vista con Inertia.js y pasar los datos a la vista
             return Inertia::render('Errores/429', [
+                'message' => $message,
+                //'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
+                ])->toResponse($request)->setStatusCode(429);
+        }
+        if ($exception instanceof ThrottleRequestsException) {
+            $retryAfter = $exception->getHeaders()['Retry-After'];
+            $minutes = floor($retryAfter / 60); // Obtener los minutos
+            $seconds = $retryAfter % 60; // Obtener los segundos
+
+            
+            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso.';
+
+            // Renderizar la vista con Inertia.js y pasar los datos a la vista
+            return Inertia::render('Errores/429b', [
                 'message' => $message,
                 //'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
                 ])->toResponse($request)->setStatusCode(429);

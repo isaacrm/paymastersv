@@ -117,8 +117,13 @@ class UsuariosController extends Controller
     // La operación de activar al usuario
     public function ActivarUsuario(Request $request){
         $usuario = User::find($request->id);
-        $usuario->failed_login_attempts = 0;
-        $usuario->save();
+
+        if($usuario->failed_login_attempts == 2){
+            $usuario->failed_login_attempts = 0;
+            $usuario->save();
+            $usuario->unban();
+            $usuario->notify(new UsuarioActivado());
+        }
         $usuario->unban();
         $usuario->notify(new UsuarioActivado());
         return $usuario;
