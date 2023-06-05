@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 
 
@@ -48,18 +49,19 @@ class Handler extends ExceptionHandler
             return Inertia::render('Errores/404')->toResponse($request)->setStatusCode(404);
         }
 
-        if ($exception instanceof ThrottleRequestsException) {
+        if ($exception instanceof TooManyRequestsHttpException) {
             $retryAfter = $exception->getHeaders()['Retry-After'];
-            $minutes = floor($retryAfter / 60); // Obtener los minutos
-            $seconds = $retryAfter % 60; // Obtener los segundos
+            //$minutes = floor($retryAfter / 60); // Obtener los minutos
+            //$seconds = $retryAfter % 60; // Obtener los segundos
 
             
-            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso.';
+            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso
+            por tratar de ingresar 3 veces de manera incorrecta. Por favor, comunícate con la administración.';
 
             // Renderizar la vista con Inertia.js y pasar los datos a la vista
             return Inertia::render('Errores/429', [
                 'message' => $message,
-                'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
+                //'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
                 ])->toResponse($request)->setStatusCode(429);
         }
         return parent::render($request, $exception);

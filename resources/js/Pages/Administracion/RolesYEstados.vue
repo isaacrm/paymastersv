@@ -64,7 +64,7 @@
                     <q-td :props="props">
                         <div class="q-gutter-sm">
                             <q-btn round color="positive" icon="check_circle" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
-                            @click="confirmarBan(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
+                            @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
                             <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
                             @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
                         </div>
@@ -214,7 +214,16 @@ const cancelar = () => {
 
 }
 
-const confirmarBan = (id, user_name) => {
+const confirmarBan = (id, user_name, user_active_id) => {
+    if(user_active_id == id){
+        $q.notify(
+            {
+                type: 'negative',
+                message: 'No te puedes banear a ti mismo.'
+            }
+        )
+        return;
+    }
     usuarios.value.id = id
     nombreRegistroBan.value = user_name
     confirmarBaneo.value = true
@@ -293,12 +302,21 @@ const guardar = async () => {
     submitted.value = true
     errores.value = {}
 
-    usuarios.value.roles=selectedRoles.value
-
     if (selectedRoles.value.length === 0) {
         errores.value.selectedRoles = ['El campo roles es requerido'];
       return; // Detener la ejecución si no se seleccionó ningún rol
     }
+
+    if( usuarios.value.roles === selectedRoles.value){
+        $q.notify({
+            type: 'info',
+            message: 'Para actualizar debe asignar nuevos roles.',
+            color: 'secondary' // Cambiar el color de la notificación
+        });
+        return;
+    }
+
+    usuarios.value.roles=selectedRoles.value
 
     // Actualizar
     if (usuarios.value.id) {
@@ -310,7 +328,7 @@ const guardar = async () => {
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'Roles asignados.'
+                        message: 'Roles actualizados.'
                     }
                 )
             })
@@ -321,19 +339,19 @@ const guardar = async () => {
                     // Mensaje de alerta para error 422 - Datos improsesables
                     $q.notify({
                     type: 'negative',
-                    message: "Error al actualizar el usuario."
+                    message: "Error al actualizar los roles del usuario."
                     });
                 } else if (e.response.status === 409) {
                     // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
                     $q.notify({
                     type: 'negative',
-                    message: 'El nombre del rol ya existe.'
+                    message: 'El rol ya fue asignado.'
                     });
                 } else {
                     // Mensaje de alerta genérico en caso de otros errores
                     $q.notify({
                     type: 'negative',
-                    message: 'Error al actualizar el usuario.'
+                    message: 'Error al actualizar los roles del usuario.'
                     });
                 }
             })

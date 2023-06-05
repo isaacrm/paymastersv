@@ -17,7 +17,7 @@
                       {{ message }}
                     </div>
                     <div class="text-h6 text-center text-white">
-                        Podrás intentarlo nuevamente en {{ retry_after }}.
+                        Podrás intentarlo nuevamente en hasta que el administrador active tu cuenta.
                     </div>
                   </div>
                 </div>
@@ -34,7 +34,7 @@
     name: "Error429",
     props: {
       message: String,
-      retry_after: String
+      //retry_after: String
     }
   };
   </script>

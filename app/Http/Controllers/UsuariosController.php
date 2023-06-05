@@ -7,6 +7,8 @@ use App\Models\User;
 use Spatie\Permission\Models\Role;
 use App\Notifications\UsuarioBaneado;
 use App\Notifications\UsuarioActivado;
+use App\Notifications\PasswordActualizadaAdm; 
+use App\Notifications\CorreoPasswordActualizadaAdm; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use App\Notifications\UsuarioCreadoAdmVerificar;
@@ -14,6 +16,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Contracts\DeletesUsers;
+use Laravel\Fortify\Rules\Password as PasswordRules;
+
 
 
 use Illuminate\Http\Request;
@@ -56,6 +60,7 @@ class UsuariosController extends Controller
         if ($filtro) {
             $detalle = array_filter($detalle, function ($item) use ($filtro) {
                 $userMatches = str_contains($item['user_name'], $filtro);
+                $userMatches = str_contains($item['email'], $filtro);
                 $roleMatches = str_contains($item['roles'], $filtro); // Agregar esta línea para filtrar por el campo "role"
 
                 return $userMatches || $roleMatches; // Devolver true si alguna de las condiciones se cumple
@@ -90,7 +95,9 @@ class UsuariosController extends Controller
         ]);
         // Obtener el rol del ID enviado
         $usuario = User::findOrFail($request->id);
+        
         // Obtener los IDs de los permisos seleccionados
+        
         $selectedRoles =  $request->roles;
 
         //Verificar que el array de permisos no este vacio
@@ -110,6 +117,8 @@ class UsuariosController extends Controller
     // La operación de activar al usuario
     public function ActivarUsuario(Request $request){
         $usuario = User::find($request->id);
+        $usuario->failed_login_attempts = 0;
+        $usuario->save();
         $usuario->unban();
         $usuario->notify(new UsuarioActivado());
         return $usuario;
@@ -142,34 +151,54 @@ class UsuariosController extends Controller
     {
         $user = User::find($request->id);
 
+        // Validar los datos
         $this->validate($request, [
             'user_name' => 'required|max:255',
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => 'same:confirmarContraseña|min:8', // Nueva regla para la contraseña
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)], // el correo puede no ser único si es para ese usuario 
+            'password' => 'same:confirmarContraseña|min:8', // Nueva regla para la contraseña, no pedimos que sea obligatoria mientras se edita
         ]);
     
-        $input = $request->all();
+        $input = $request->all(); // le agrega todos los campos evniados desde la vista
     
-        if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
-            $this->updateVerifiedUser($user, $input);
-        } else {
+        if ($input['email'] !== $user->email && !empty($input['password'])) {
+            // Notificar al usuario sobre el cambio de contraseña
+            $newEmail = $input['email'];
+            $user->email = $newEmail;
+            $user->notify(new CorreoPasswordActualizadaAdm($input['password']));
+            $user->password = Hash::make($input['password']); // Encriptar la nueva contraseña
+    
+            if ($user instanceof MustVerifyEmail) {
+                // Actualizar el usuario y enviar el correo de verificación
+                $this->updateVerifiedUser($user, $input);
+            }
+        } elseif ($input['email'] !== $user->email) {
+            // Actualizar el correo y enviar la notificación de verificación de correo
             $user->forceFill([
                 'name' => $input['user_name'],
                 'email' => $input['email'],
             ]);
-
-            if (!empty($input['password'])) {
-                $user->password = Hash::make($input['password']);
+    
+            if ($user instanceof MustVerifyEmail) {
+                $this->updateVerifiedUser($user, $input);
             }
-            $user->save();
+        } elseif (!empty($input['password'])) {
+            // Notificar al usuario sobre el cambio de contraseña
+            $user->notify(new PasswordActualizadaAdm($input['password']));
+            $user->password = Hash::make($input['password']); // Encriptar la nueva contraseña
+        } else {
+            // Si no se cambia el correo ni la contraseña, simplemente actualizar el nombre
+            $user->forceFill([
+                'name' => $input['user_name'],
+            ]);
         }
+        $user->save();
     }
 
     // La operación de Delete CR[U]D
     public function EliminarUsuario(Request $request)
     {
         $user = User::find($request->id);
-        $user->tokens->each->delete();
+        $user->tokens->each->delete(); // elimina todos los tokens relacionados al usuario mientras existía
         $user->delete();
     }
 
@@ -197,8 +226,8 @@ class UsuariosController extends Controller
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
             'user_name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|same:confirmarContraseña',
+            'email' => 'required|email|max:255|unique:users|same:password',// el adm pone de contra el correo del usuario
+            'password' => 'required|same:confirmarContraseña', //lo coloque así porque necesito que sea requerido e igual al campo de confirmar contraseña
         ]);
     }
 }

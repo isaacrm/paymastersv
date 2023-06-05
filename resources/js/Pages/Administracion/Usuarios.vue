@@ -8,29 +8,35 @@
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
                                     label="Nombre" :error-message="errores.user_name && errores.user_name[0]"
                                     :error="hayError(errores.user_name)" autofocus/>
                             </q-item>
-                            <q-item>
-                                <q-input type="password" filled bottom-slots v-model="usuarios.password" class="full-width"
-                                    label="Contraseña" :error-message="errores.password && errores.password[0]"
-                                    :error="hayError(errores.password)"/>
-                            </q-item>
-                            <q-item>
-                                <q-input type="password" filled bottom-slots v-model="usuarios.confirmarContraseña" class="full-width"
-                                    label="Confirmar Contraseña" :error-message="errores.confirmarContraseña && errores.confirmarContraseña[0]"
-                                    :error="hayError(errores.confirmarContraseña)"/>
-                            </q-item>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="usuarios.email"
                                     class="full-width" label="Correo electrónico"
                                     :error-message="errores.email && errores.email[0]"
                                     :error="hayError(errores.email)" />
+                            </q-item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input type="password" filled bottom-slots v-model="usuarios.password" class="full-width"
+                                    label="Contraseña" :error-message="errores.password && errores.password[0]"
+                                    :error="hayError(errores.password)"/>
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <q-item>
+                                <q-input type="password" filled bottom-slots v-model="usuarios.confirmarContraseña" class="full-width"
+                                label="Confirmar Contraseña" :error-message="errores.confirmarContraseña && errores.confirmarContraseña[0]"
+                                :error="hayError(errores.confirmarContraseña)"/>
                             </q-item>
                         </div>
                     </div>
@@ -57,9 +63,9 @@
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row, $page.props.auth.user.id)"></q-btn>
                             <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.user_name)"></q-btn>
+                            @click="confirmarEliminar(props.row.id, props.row.user_name, $page.props.auth.user.id)"></q-btn>
                         </div>
                     </q-td>
                 </template>
@@ -176,7 +182,14 @@ const guardar = async () => {
             .post("/api/usuarios/actualizar",usuarios.value)
             .then((response) => {
                 reiniciarValores()
-                // Mensaje de alerta
+                if (response.data.message === 'El usuario no sufrió cambios') {
+                    $q.notify({
+                    type: 'info',
+                    message: 'El usuario no sufrió cambios',
+                    color: 'secondary' // Cambiar el color de la notificación
+                })
+                return;
+            }
                 $q.notify(
                     {
                         type: 'positive',
@@ -204,7 +217,6 @@ const guardar = async () => {
         await axios
             .post("/api/usuarios/agregar", usuarios.value)
             .then((response) => {
-                console.log(usuarios.value)
                 reiniciarValores()
                 // Mensaje de alerta
                 $q.notify(
@@ -219,7 +231,6 @@ const guardar = async () => {
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
                     errores.value = e.response.data.errors
-                    console.log(errores.value)
                 }
                 // Mensaje de alerta
                 $q.notify(
@@ -232,14 +243,32 @@ const guardar = async () => {
     }
 }
 // Para mostrar los datos en el form
-const editar = (editarUsuarios) => {
+const editar = (editarUsuarios, user_active_id) => {
+    if(user_active_id == editarUsuarios.id){
+        $q.notify(
+            {
+                type: 'negative',
+                message: 'No te puedes editar a ti mismo.'
+            }
+        )
+        return;
+    }
     usuarios.value = { ...editarUsuarios }
     submitted.value = false;
-    errores.value = {}
+    errores.value = {};
 }
 
 // Para desplegar el modal
-const confirmarEliminar = (id, user_name) => {
+const confirmarEliminar = (id, user_name, user_active_id) => {
+    if(user_active_id == id){
+        $q.notify(
+            {
+                type: 'negative',
+                message: 'No te puedes eliminar a ti mismo.'
+            }
+        )
+        return;
+    }
     usuarios.value.id = id
     nombreRegistroEliminar.value = user_name
     confirmarEliminacion.value = true
