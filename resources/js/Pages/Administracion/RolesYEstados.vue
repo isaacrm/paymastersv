@@ -1,42 +1,37 @@
 <template>
-    <AppLayout title="Usuarios">
+    <AppLayout title="Usuarios - Roles y Estados">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Usuarios</div>
-                    <div class="text-subtitle">Registro de los usuarios en el sistema a los que el administrador tiene acceso.</div>
+                    <div class="text-h6">Usuarios - Roles y Estados</div>
+                    <div class="text-subtitle">Asignación de los roles y estados a los usuarios en el sistema a los que el administrador tiene acceso.</div>
                 </q-card-section>
                 <q-card-section>
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
-                                    label="Nombre" :error-message="errores.user_name && errores.user_name[0]"
-                                    :error="hayError(errores.user_name)" autofocus/>
+                                    readonly
+                                    label="Usuario"/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="usuarios.email"
-                                    class="full-width" label="Correo electrónico"
-                                    :error-message="errores.email && errores.email[0]"
-                                    :error="hayError(errores.email)" />
-                            </q-item>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-input type="password" filled bottom-slots v-model="usuarios.password" class="full-width"
-                                    label="Contraseña" :error-message="errores.password && errores.password[0]"
-                                    :error="hayError(errores.password)"/>
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-input type="password" filled bottom-slots v-model="usuarios.confirmarContraseña" class="full-width"
-                                label="Confirmar Contraseña" :error-message="errores.confirmarContraseña && errores.confirmarContraseña[0]"
-                                :error="hayError(errores.confirmarContraseña)"/>
+                                <q-select filled v-model="selectedRoles" class="full-width"
+                                    multiple
+                                    :options="roles"
+                                    emit-value
+                                    map-options
+                                    option-label="name"
+                                    option-value="id"
+                                    stack-label
+                                    clearable
+                                    :disable="!editing"
+                                    label="Roles" :error-message="errores.selectedRoles && errores.selectedRoles[0]"
+                                    :error="hayError(errores.selectedRoles)"
+                                    transition-show="scale"
+                                    transition-hide="scale"
+                                    />
                             </q-item>
                         </div>
                     </div>
@@ -63,7 +58,7 @@
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <div class="q-gutter-sm">
-                            <q-btn round color="secondary" icon="manage_accounts" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="secondary" icon="account_box" class="mr-2" @click="editar(props.row)"></q-btn>
                         </div>
                     </q-td>
                     <q-td :props="props">
@@ -72,9 +67,6 @@
                             @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
                             <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
                             @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
-                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row, $page.props.auth.user.id)"></q-btn>
-                            <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.user_name, $page.props.auth.user.id)"></q-btn>
                         </div>
                     </q-td>
                 </template>
@@ -82,21 +74,37 @@
         </div>
 
         <div class="q-pa-md q-gutter-sm">
-            <q-dialog v-model="confirmarEliminacion" persistent>
+            <q-dialog v-model="confirmarBaneo" persistent>
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar al usuario {{ nombreRegistroEliminar }}?</span>
+                        <span class="q-ml-sm">¿Desea suspender al usuario {{ nombreRegistroBan }}?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="suspender" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
         </div>
 
+
+        <div class="q-pa-md q-gutter-sm">
+            <q-dialog v-model="confirmarDesbaneo" persistent>
+                <q-card>
+                    <q-card-section class="row items-center">
+                        <q-avatar icon="warning" color="red" text-color="white" />
+                        <span class="q-ml-sm">¿Desea activar al usuario {{ nombreRegistroBan }}?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                        <q-btn flat label="No" color="primary" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="activar" v-close-popup />
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
+        </div>
 
     </AppLayout>
 </template>
@@ -115,10 +123,20 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
+
+const roles = ref([])
 const usuarios = ref({}) // El objeto que se enviara mediante el request
+const selectedRoles = ref([])
+const editing = ref(false);
+
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
+const confirmarBaneo = ref(false) // Para modal de ban
+const nombreRegistroBan = ref('') // Para que se muestre el nombre en el modal de ban
+
+const confirmarDesbaneo = ref(false)
+const nombreRegistroDesban = ref('')
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}) // Para almacenar el array de errores que viene desde Laravel
 
@@ -127,6 +145,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
+    sortBy: 'name', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -141,15 +161,33 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'user_name', align: 'left', label: 'Nombre', field: 'user_name', sortable: true },
-    { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: true },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
+    { name: 'user_name', align: 'left', label: 'Usuario', field: 'user_name', sortable: false },
+    { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
+    { 
+        name: 'roles', 
+        align: 'left', 
+        label: 'Roles', 
+        field: 'roles', 
+        sortable: false, 
+        format: (value) => value.map((rol) => rol.name).join(', ')
+    },
+    { name: 'operaciones', align: 'center', label: 'Asignación de Roles' },
+    { name: 'Estado', align: 'center', label: 'Estado' }
 ]
 
 /* METODOS */
 // Lo que sucede al cargar por primera vez la vista
 onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
+})
+
+onMounted(async() =>{
+    try {
+        const response = await axios.get('/api/roles/select')
+        roles.value = response.data
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 // Para reiniciar los valores luego de realizar alguna operacion
@@ -161,12 +199,18 @@ const reiniciarValores = () => {
     confirmarEliminacion.value = false
     nombreRegistroEliminar.value = ''
 
+    selectedRoles.value = ''
+
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
+
     // Actualiza la tabla
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
 const cancelar = () => {
     usuarios.value = {}
+    selectedRoles.value = ''
+    editing.value = false; // Establecer editing en true al presionar el botón de editar
 
 }
 
@@ -183,17 +227,19 @@ const confirmarBan = (id, user_name, user_active_id) => {
     usuarios.value.id = id
     nombreRegistroBan.value = user_name
     confirmarBaneo.value = true
+
 }
 
 const confirmarUnban = (id, user_name) => {
     usuarios.value.id = id
     nombreRegistroDesban.value = user_name
     confirmarDesbaneo.value = true
+
 }
 
 const suspender = async () => {
     await axios
-        .post("/api/usuarios/suspender/" + usuarios.value.id)
+        .post("/api/roles_estados/suspender/" + usuarios.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
@@ -219,7 +265,7 @@ const suspender = async () => {
 
 const activar = async () => {
     await axios
-        .post("/api/usuarios/activar/" + usuarios.value.id)
+        .post("/api/roles_estados/activar/" + usuarios.value.id)
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
@@ -256,154 +302,79 @@ const guardar = async () => {
     submitted.value = true
     errores.value = {}
 
-    // Verificar si los datos son iguales al usuario seleccionado
-    if (usuarios.value.id) {
-        const usuarioSeleccionado = detalleTabla.value.find(user => user.id === usuarios.value.id)
-        if (usuarioSeleccionado) {
-            if (usuarioSeleccionado.user_name === usuarios.value.user_name &&
-                usuarioSeleccionado.email === usuarios.value.email &&
-                usuarioSeleccionado.password === usuarios.value.password &&
-                usuarioSeleccionado.confirmarContraseña === usuarios.value.confirmarContraseña) {
-                $q.notify({
-                    type: 'info',
-                    message: 'No se realizaron cambios en los datos del usuario.',
-                    color: 'secondary'
-                })
-                return;
-            }
-        }
+    if (selectedRoles.value.length === 0) {
+        errores.value.selectedRoles = ['El campo roles es requerido'];
+      return; // Detener la ejecución si no se seleccionó ningún rol
     }
 
+    if( usuarios.value.roles === selectedRoles.value){
+        $q.notify({
+            type: 'info',
+            message: 'Para actualizar debe asignar nuevos roles.',
+            color: 'secondary' // Cambiar el color de la notificación
+        });
+        return;
+    }
+
+    usuarios.value.roles=selectedRoles.value
 
     // Actualizar
     if (usuarios.value.id) {
         await axios
-            .post("/api/usuarios/actualizar", usuarios.value)
+            .post("/api/roles_estados/roles/asignar", usuarios.value)
             .then((response) => {
                 reiniciarValores()
-                if (response.data.message === 'El usuario no sufrió cambios') {
+                // Mensaje de alerta
+                $q.notify(
+                    {
+                        type: 'positive',
+                        message: 'Roles actualizados.'
+                    }
+                )
+            })
+            .catch((e) => {
+                // Si es un error de tipo 422, es decir, contenido inprocesable
+                if (e.response.status === 422) {
+                    errores.value = e.response.data.errors
+                    // Mensaje de alerta para error 422 - Datos improsesables
                     $q.notify({
-                    type: 'info',
-                    message: 'El usuario no sufrió cambios',
-                    color: 'secondary' // Cambiar el color de la notificación
-                })
-                return;
-            }
-                $q.notify(
-                    {
-                        type: 'positive',
-                        message: 'Usuario actualizado.'
-                    }
-                )
-
-            })
-            .catch((e) => {
-                // Si es un error de tipo 422, es decir, contenido inprocesable
-                if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
-                }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al actualizar el usuario.'
-                    }
-                )
-            })
-    }
-    // Guardar
-    else {
-        await axios
-            .post("/api/usuarios/agregar", usuarios.value)
-            .then((response) => {
-                reiniciarValores()
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'positive',
-                        message: 'Usuario guardado.'
-                    }
-                )
-
-            })
-            .catch((e) => {
-                // Si es un error de tipo 422, es decir, contenido inprocesable
-                if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
-                }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al agregar el usuario.'
-                    }
-                )
-            })
-    }
-}
-// Para mostrar los datos en el form
-const editar = (editarUsuarios, user_active_id) => {
-    if(user_active_id == editarUsuarios.id){
-        $q.notify(
-            {
-                type: 'negative',
-                message: 'No te puedes editar a ti mismo.'
-            }
-        )
-        return;
-    }
-    usuarios.value = { ...editarUsuarios }
-    submitted.value = false;
-    errores.value = {};
-}
-
-// Para desplegar el modal
-const confirmarEliminar = (id, user_name, user_active_id) => {
-    if(user_active_id == id){
-        $q.notify(
-            {
-                type: 'negative',
-                message: 'No te puedes eliminar a ti mismo.'
-            }
-        )
-        return;
-    }
-    usuarios.value.id = id
-    nombreRegistroEliminar.value = user_name
-    confirmarEliminacion.value = true
-}
-
-
-// Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
-    await axios
-        .post("/api/usuarios/eliminar/" + usuarios.value.id)
-        .then((response) => {
-            reiniciarValores()
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'positive',
-                    message: 'Usuario eliminado.'
-                }
-            )
-
-        })
-        .catch((e) => {
-            // Mensaje de alerta
-            $q.notify(
-                {
                     type: 'negative',
-                    message: 'Error al eliminar el usuario.'
+                    message: "Error al actualizar los roles del usuario."
+                    });
+                } else if (e.response.status === 409) {
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'El rol ya fue asignado.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar los roles del usuario.'
+                    });
                 }
-            )
-        })
+            })
+    }
+}
+
+// Para mostrar los datos en el form
+const editar = (editarUsuarioss) => {
+    usuarios.value = { ...editarUsuarioss }
+    const rolesSeleccionados = usuarios.value.roles;
+    selectedRoles.value = rolesSeleccionados;
+
+    submitted.value = false;
+    errores.value = {}
+
+    editing.value = true; // Establecer editing en true al presionar el botón de editar
+
 }
 
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca
-    const { page, rowsPerPage } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
     // Obteniendo la tabla de datos
@@ -412,7 +383,9 @@ const generarTabla = async (props) => {
             params: {
                 page,
                 rowsPerPage,
-                filter
+                filter,
+                sortBy,
+                descending: descending ? 0 : 1
             }
         })
         .then(response => {
@@ -421,6 +394,9 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+            pagination.value.sortBy = response.data.paginacion.ordenarPor
+            pagination.value.descending = descending
+
         })
         .catch(error => {
             errored.value = true

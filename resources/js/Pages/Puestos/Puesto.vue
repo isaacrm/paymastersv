@@ -27,7 +27,7 @@
                         <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="puesto.salario_desde" type="number" class="full-width"
-                                    label="Salario minimo:"
+                                    label="Salario mínimo:"
                                     :error-message="errores.salario_desde && errores.salario_desde[0]"
                                     :error="hayError(errores.salario_desde)" prefix="$" />
                             </q-item>
@@ -35,7 +35,7 @@
                         <div class="col-12 col-md-6">
                             <q-item>
                                 <q-input filled bottom-slots v-model="puesto.salario_hasta" type="number" class="full-width"
-                                    label="Salario maximo:"
+                                    label="Salario máximo:"
                                     :error-message="errores.salario_hasta && errores.salario_hasta[0]"
                                     :error="hayError(errores.salario_hasta)" prefix="$" />
                             </q-item>

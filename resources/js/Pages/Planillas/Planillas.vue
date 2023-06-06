@@ -1,93 +1,165 @@
 <template>
-    <AppLayout title="Planillas">
-        <div class="q-pa-md q-gutter-sm"
-            v-show="valoresExistentes.cantidadEmpleados <= 0 || valoresExistentes.cantidadDescuentos <= 0">
-            <q-banner inline-actions class="text-white bg-red" v-show="valoresExistentes.cantidadEmpleados <= 0">
-                No hay empleados registrados.
-            </q-banner>
-            <q-banner inline-actions class="text-white bg-red" v-show="valoresExistentes.cantidadDescuentos <= 0">
-                No hay descuentos obligatorios registrados para aplicar a los salarios.
-            </q-banner>
-        </div>
-        <div class="q-pa-md">
-            <q-card class="my-card">
-                <q-card-section class="ml-6">
-                    <div class="text-h6">{{ nombres.mayu }}</div>
-                    <div class="text-subtitle">
-                        Registro de las {{ nombres.minu }} de trabajo de la organizacion.
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-select filled bottom-slots class="full-width" v-model="datos.mes_periodo"
-                                    :options="meses" label="Mes periodo"
-                                    :error-message="errores.mes_periodo && errores.mes_periodo[0]"
-                                    :error="hayError(errores.mes_periodo)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.anyo_periodo" class="full-width"
-                                    label="Año periodo:" mask="####" fill-mask="#" hint="Año:####" :error-message="errores.anyo_periodo && errores.anyo_periodo[0]
-                                        " :error="hayError(errores.anyo_periodo)" />
-                            </q-item>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.fecha_generacion" class="full-width"
-                                    label="Fecha de generacion:" type="date" :error-message="errores.fecha_generacion && errores.fecha_generacion[0]
-                                        " :error="hayError(errores.fecha_generacion)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.dias_laborales" type="number" class="full-width"
-                                    label="Dias laborales:" :error-message="errores.dias_laborales && errores.dias_laborales[0]
-                                        " :error="hayError(errores.dias_laborales)" />
-                            </q-item>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <q-item>
-                                <q-input filled bottom-slots v-model="datos.horas_laborales" type="number"
-                                    class="full-width" label="Horas laborales:" :error-message="errores.horas_laborales && errores.horas_laborales[0]
-                                        " :error="hayError(errores.horas_laborales)" />
-                            </q-item>
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </div>
-        <div class="q-pa-md">
-            <q-table flat bordered :rows="detalleTabla" :columns="columns" row-key="id" v-model:pagination="pagination"
-                :loading="loading" :filter="filter" binary-state-sort :rows-per-page-options="[5, 10, 20, 40, 0]"
-                @request="generarTabla">
-                <template v-slot:top-right>
-                    <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar">
-                        <template v-slot:append>
-                            <q-icon name="search" />
-                        </template>
-                    </q-input>
-                </template>
-                <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"
-                        v-show="valoresExistentes.cantidadDescuentos > 0 && valoresExistentes.cantidadEmpleados > 0"></q-btn>
-                    <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
-                </template>
-                <template v-slot:body-cell-operaciones="props">
-                    <q-td :props="props">
-                        <q-btn round color="secondary" icon="table_view" class="mr-2"
-                            @click="redireccionDetalle(props.row.id)"></q-btn>
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
-                    </q-td>
-                </template>
-            </q-table>
-        </div>
+  <AppLayout title="Planillas">
+    <div class="q-pa-md">
+      <q-card class="my-card">
+        <q-card-section class="ml-6">
+          <div class="text-h6">{{ nombres.mayu }}</div>
+          <div class="text-subtitle">
+            Registro de las {{ nombres.minu }} de trabajo de la organizacion.
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <div class="row">
+            <div class="col-12 col-md-6">
+              <q-item>
+                <q-select
+                  filled
+                  bottom-slots
+                  class="full-width"
+                  v-model="datos.mes_periodo"
+                  :options="meses"
+                  label="Mes período"
+                  :error-message="errores.mes_periodo && errores.mes_periodo[0]"
+                  :error="hayError(errores.mes_periodo)"
+                />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-6">
+              <q-item>
+                <q-input
+                  filled
+                  bottom-slots
+                  v-model="datos.anyo_periodo"
+                  class="full-width"
+                  label="Año período:"
+                  mask="####"
+                  fill-mask="#"
+                  hint="Año:####"
+                  :error-message="
+                    errores.anyo_periodo && errores.anyo_periodo[0]
+                  "
+                  :error="hayError(errores.anyo_periodo)"
+                />
+              </q-item>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input
+                  filled
+                  bottom-slots
+                  v-model="datos.fecha_generacion"
+                  class="full-width"
+                  label="Fecha de generación:"
+                  type="date"
+                  :error-message="
+                    errores.fecha_generacion && errores.fecha_generacion[0]
+                  "
+                  :error="hayError(errores.fecha_generacion)"
+                />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input
+                  filled
+                  bottom-slots
+                  v-model="datos.dias_laborales"
+                  type="number"
+                  class="full-width"
+                  label="Dias laborales:"
+                  :error-message="
+                    errores.dias_laborales && errores.dias_laborales[0]
+                  "
+                  :error="hayError(errores.dias_laborales)"
+                />
+              </q-item>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-item>
+                <q-input
+                  filled
+                  bottom-slots
+                  v-model="datos.horas_laborales"
+                  type="number"
+                  class="full-width"
+                  label="Horas laborales:"
+                  :error-message="
+                    errores.horas_laborales && errores.horas_laborales[0]
+                  "
+                  :error="hayError(errores.horas_laborales)"
+                />
+              </q-item>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+    <div class="q-pa-md">
+      <q-table
+        flat
+        bordered
+        :rows="detalleTabla"
+        :columns="columns"
+        row-key="id"
+        v-model:pagination="pagination"
+        :loading="loading"
+        :filter="filter"
+        binary-state-sort
+        :rows-per-page-options="[5, 10, 20, 40, 0]"
+        @request="generarTabla"
+      >
+        <template v-slot:top-right>
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Buscar"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:top-left>
+          <q-btn
+            outline
+            rounded
+            color="primary"
+            label="Guardar"
+            icon="add"
+            @click="guardar"
+          ></q-btn>
+          <q-btn
+            outline
+            rounded
+            color="danger"
+            label="Cancelar"
+            icon="cancel"
+            @click="cancelar"
+          ></q-btn>
+        </template>
+        <template v-slot:body-cell-operaciones="props">
+          <q-td :props="props">
+            <q-btn
+              round
+              color="warning"
+              icon="edit"
+              class="mr-2"
+              @click="editar(props.row)"
+            ></q-btn>
+            <q-btn
+              round
+              color="negative"
+              icon="delete"
+              @click="confirmarEliminar(props.row.id, props.row.nombre)"
+            ></q-btn>
+          </q-td>
+        </template>
+      </q-table>
+    </div>
 
         <div class="q-pa-md q-gutter-sm">
             <q-dialog v-model="confirmarEliminacion" persistent>
@@ -150,42 +222,42 @@ const pagination = ref({
 // Fin de fijos e imperativos
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    {
-        name: "fecha_generacion",
-        align: "left",
-        label: "Fecha de generacion:",
-        field: "fecha_generacion",
-        sortable: true,
-    },
-    {
-        name: "mes_periodo",
-        align: "left",
-        label: "Mes periodo:",
-        field: "mes_periodo",
-        sortable: true,
-    },
-    {
-        name: "anyo_periodo",
-        align: "left",
-        label: "Año:",
-        field: "anyo_periodo",
-        sortable: true,
-    },
-    {
-        name: "dias_laborales",
-        align: "left",
-        label: "Dias laborales: ",
-        field: "dias_laborales",
-        sortable: true,
-    },
-    {
-        name: "horas_laborales",
-        align: "left",
-        label: "Horas laborales:",
-        field: "horas_laborales",
-        sortable: true,
-    },
-    { name: "operaciones", align: "center", label: "Operaciones" },
+  {
+    name: "fecha_generacion",
+    align: "left",
+    label: "Fecha de generacion:",
+    field: "fecha_generacion",
+    sortable: true,
+  },
+  {
+    name: "mes_periodo",
+    align: "left",
+    label: "Mes período:",
+    field: "mes_periodo",
+    sortable: true,
+  },
+  {
+    name: "anyo_periodo",
+    align: "left",
+    label: "Año:",
+    field: "anyo_periodo",
+    sortable: true,
+  },
+  {
+    name: "dias_laborales",
+    align: "left",
+    label: "Dias laborales: ",
+    field: "dias_laborales",
+    sortable: true,
+  },
+  {
+    name: "horas_laborales",
+    align: "left",
+    label: "Horas laborales:",
+    field: "horas_laborales",
+    sortable: true,
+  },
+  { name: "operaciones", align: "center", label: "Operaciones" },
 ];
 
 /* METODOS */

@@ -33,7 +33,7 @@
                                     bottom-slots
                                     v-model="ingreso.descripcion"
                                     class="full-width"
-                                    label="Descripcion"
+                                    label="Descripción"
                                     :error-message="
                                         errores.descripcion &&
                                         errores.descripcion[0]

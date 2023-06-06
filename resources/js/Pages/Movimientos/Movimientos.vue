@@ -179,7 +179,7 @@ const columns = [
   {
     name: "descripcion",
     align: "left",
-    label: "Descripcion",
+    label: "Descripción",
     field: "descripcion",
     sortable: true,
   },

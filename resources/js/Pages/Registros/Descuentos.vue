@@ -3,7 +3,7 @@
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Tipo de decuentos</div>
+                    <div class="text-h6">Tipo de descuentos</div>
                     <div class="text-subtitle">
                         Registro de los descuentos aplicados al empleado.
                     </div>
@@ -33,7 +33,7 @@
                                     bottom-slots
                                     v-model="descuento.descripcion"
                                     class="full-width"
-                                    label="Descripcion"
+                                    label="Descripción"
                                     :error-message="
                                         errores.descripcion &&
                                         errores.descripcion[0]

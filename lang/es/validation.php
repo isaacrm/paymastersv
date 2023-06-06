@@ -121,7 +121,7 @@ return [
     'required_with_all' => 'The :attribute field is required when :values are present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
-    'same' => 'The :attribute and :other must match.',
+    'same' => 'El campo :attribute y el campo :other deben conincidir.',
     'size' => [
         'array' => 'The :attribute must contain :size items.',
         'file' => 'The :attribute must be :size kilobytes.',
@@ -164,6 +164,56 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        // generales
+        'name' => 'nombre',
+        'email' => 'correo electrónico',
+        'password' => 'contraseña',
+        //direcciones
+        'departamento_id' => 'departamento',
+        'municipio_id' => 'municipio',
+        'identificador_casa' => 'identificador de casa',
+        'apto_local' => 'número de apartamento o local',
+        'codigo_iso' => 'código',
+
+        //ingresos
+        'forma_aplicacion' => 'forma de aplicación',
+
+        //Empresas
+        'nrc' => 'el número de NRC',
+        'nit' => 'NIT',
+        //Puestos
+        'nro_plazas' => 'número de plazas',
+        'salario_desde' => 'salario mínimo',
+        'salario_hasta' => 'salario máximo',
+        // Centro de costos
+        'anyo' => 'año',
+        // Planillas
+        'anyo_periodo' => 'año período',
+        'fecha_generacion' => 'fecha de generación',
+        // Empleados
+        'primer_nombre' => 'primer nombre',
+        'segundo_nombre' => 'segundo nombre',
+        'apellido_paterno' => 'apellido paterno',
+        'apellido_materno' => 'apellido manternos',
+        'tipo_documentos_id' => 'tipo de documento',
+        'identificacion' => 'identifación',
+        'fecha_nacimiento' => 'fecha de nacimiento',
+        'estados_civiles_id' => 'estado civil',
+        'email_personal' => 'correo personal',
+        'direcciones_id' => 'dirección',
+        'email_profesional' => 'correo profesional',
+        'ocupaciones_id' => 'ocupación',
+        'puestos_id' => 'puesto',
+        'isss' => 'número del ISS',
+        'generos_id' => 'género',
+        'fecha_ingreso' => 'fecha de ingreso',
+        'nup' => 'NUP',
+        // Tabla renta mensual
+        'porcentaje_aplicar' => 'porcentaje a aplicar',
+        'mas_fija' => 'más cuto fija',
+        // Techo Laboral
+        'afp' => 'AFP'
+    ],
 
 ];

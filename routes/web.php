@@ -24,7 +24,6 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'message' => session('logout_message'), // Agrega esta línea
     ]);
 });
 
@@ -57,6 +56,10 @@ Route::middleware([
         Route::get('/permisos', function (){
             return Inertia::render('Administracion/Permisos');
         })->name('permisos')->middleware(RoleMiddleware::class . ':' . 'SuperAdministrador');
+
+        Route::get('/roles_estados', function(){
+            return Inertia::render('Administracion/RolesYEstados');
+        })->name('roles_estados')->middleware(RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador');
 
         Route::get('/usuarios', function(){
             return Inertia::render('Administracion/Usuarios');
