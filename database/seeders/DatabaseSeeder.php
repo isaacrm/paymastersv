@@ -29,5 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoDocumentosSeeder::class);
         $this->call(PuestosSeeder::class);
         $this->call(DireccionesSeeder::class);
+        $this->call(DescuentoSeeder::class);
+        $this->call(IngresoSeeder::class);
+        $this->call(RentaSeeder::class);
     }
 }
