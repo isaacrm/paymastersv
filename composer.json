@@ -6,8 +6,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-snappy": "^1.0",
         "cybercog/laravel-ban": "^4.8",
         "guzzlehttp/guzzle": "^7.2",
+        "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "illuminate/log": "*",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.8",

@@ -38,7 +38,7 @@ class IngresosController extends Controller
         $ingresos->nombre = $request->nombre;
         $ingresos->descripcion = $request->descripcion;
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
-        $ingresos->descuento = $request->descuento;
+        $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
         $ingresos->save();
 
@@ -55,7 +55,7 @@ class IngresosController extends Controller
         $ingresos->nombre = $request->nombre;
         $ingresos->descripcion = $request->descripcion;
         $ingresos->forma_aplicacion = $request->forma_aplicacion;
-        $ingresos->descuento = $request->descuento;
+        $ingresos->obligatorio = $request->obligatorio;
         $ingresos->valor_porcentaje = $request->valor_porcentaje;
         $ingresos->save();
     }
@@ -72,8 +72,8 @@ class IngresosController extends Controller
             'nombre' => 'required|max:30',
             'descripcion' => 'required|max:100',
             'forma_aplicacion' => 'required|max:1',
-            'descuento' => 'required',
-            'valor_porcentaje' => 'between:0,9999',
+            'obligatorio' => 'required',
+            'valor_porcentaje' => 'between:0,100',
         ]);
     }
 }

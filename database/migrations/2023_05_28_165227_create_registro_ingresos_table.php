@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('descuentos', function (Blueprint $table) {
-
+        Schema::create('registro_ingresos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 30);
-            $table->string('descripcion', 100);
-            $table->char('forma_aplicacion', 1);
-            $table->char('obligatorio',1);
-            $table->decimal('valor_porcentaje', 5, 4)->nullable();
+            $table->foreignId('registros_id')->constrained('registros');
+            $table->foreignId('ingresos_id')->constrained('ingresos');
+            $table->decimal('monto', 7, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('descuentos');
+        Schema::dropIfExists('registro_ingresos');
     }
 };

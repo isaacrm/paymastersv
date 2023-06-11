@@ -116,7 +116,7 @@ Route::middleware([
             'render' => 'Movimientos/Movimientos',
             'nombre' => 'movimientos',
             'permiso' => 'registro.empresa'
-        ],        
+        ],
         'Planillas'=>[
             'ruta' => '/planillas',
             'render' => 'Planillas/Planillas',
@@ -196,6 +196,12 @@ Route::middleware([
         Route::get($ruta['ruta'], function () use ($ruta) {
             return Inertia::render($ruta['render']);
         })->name($ruta['nombre'])->middleware($middleware);
+
+        // Temporalmente asi, hay que adaptar lo de arriba para poderlo usar en forma de array tambien
+        Route::get('/detalle_planillas/{idPlanilla}', function ($idPlanilla) {
+            return Inertia::render('Planillas/DetallePlanillas', ['idPlanilla' => $idPlanilla]);
+        })->name('detalle_planillas')->middleware($middleware);
     }
-    
+
+
 });

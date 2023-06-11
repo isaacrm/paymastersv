@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Descuento;
 use Illuminate\Http\Request;
 
@@ -36,7 +37,7 @@ class DescuentosController extends Controller
         $descuentos->nombre = $request->nombre;
         $descuentos->descripcion = $request->descripcion;
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
-        $descuentos->descuento = $request->descuento;
+        $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
         $descuentos->save();
     }
@@ -48,7 +49,7 @@ class DescuentosController extends Controller
         $descuentos->nombre = $request->nombre;
         $descuentos->descripcion = $request->descripcion;
         $descuentos->forma_aplicacion = $request->forma_aplicacion;
-        $descuentos->descuento = $request->descuento;
+        $descuentos->obligatorio = $request->obligatorio;
         $descuentos->valor_porcentaje = $request->valor_porcentaje;
         $descuentos->save();
     }
@@ -65,8 +66,8 @@ class DescuentosController extends Controller
             'nombre' => 'required|max:30',
             'descripcion' => 'required|max:100',
             'forma_aplicacion' => 'required|max:1',
-            'descuento' => 'required',
-            'valor_porcentaje' => 'between:0,9999',
+            'obligatorio' => 'required',
+            'valor_porcentaje' => 'between:0,100',
         ]);
     }
 }

@@ -26,12 +26,6 @@ class EmpleadosController extends Controller
             ->orderBy('id'); */
 
         $query = DB::table('empleados as e')
-            ->leftJoin('estados__civiles as ec', 'e.estados_civiles_id', '=', 'ec.id')
-            ->leftJoin('generos as g', 'e.generos_id', '=', 'g.id')
-            ->leftJoin('ocupaciones as o', 'e.ocupaciones_id', '=', 'o.id')
-            ->leftJoin('tipo_documentos as td', 'e.tipo_documentos_id', '=', 'td.id')
-            ->leftJoin('direccions as d', 'e.direcciones_id', '=', 'd.id')
-            ->leftJoin('puestos as p', 'e.puestos_id', '=', 'p.id')
             ->select([
                 'e.id', 'e.primer_nombre', 'e.segundo_nombre', 'e.apellido_paterno', 'e.apellido_materno', 'e.apellido_casada', 'e.identificacion', 'e.nit', 'e.isss', 'e.nup', 'e.email_personal', 'e.email_profesional', 'e.fecha_nacimiento', 'e.fecha_ingreso', 'e.salario_base',
                 'ec.id as estado_civil_id', 'ec.nombre as estado_civil_nombre',
@@ -41,18 +35,29 @@ class EmpleadosController extends Controller
                 'd.id as direccion_id', 'd.calle  as direccion_nombre',
                 'p.id as puesto_id', 'p.nombre as puesto_nombre',
             ])
-            ->orWhere('e.primer_nombre', 'like', '%', $filtro, '%')
-            ->orWhere('e.segundo_nombre', 'like', '%', $filtro, '%')
-            ->orWhere('e.apellido_paterno', 'like', '%', $filtro, '%')
-            ->orWhere('e.apellido_materno', 'like', '%', $filtro, '%')
-            ->orWhere('e.apellido_casada', 'like', '%', $filtro, '%')
-            ->orWhere('e.identificacion', 'like', '%', $filtro, '%')
-            ->orWhere('e.nit', 'like', '%', $filtro, '%')
-            ->orWhere('e.nup', 'like', '%', $filtro, '%')
-            ->orWhere('e.fecha_nacimiento', 'like', '%', $filtro, '%')
-            ->orWhere('e.email_personal', 'like', '%', $filtro, '%')
-            ->orWhere('e.email_profesional', 'like', '%', $filtro, '%')
+            ->leftJoin('estados__civiles as ec', 'e.estados_civiles_id', '=', 'ec.id')
+            ->leftJoin('generos as g', 'e.generos_id', '=', 'g.id')
+            ->leftJoin('ocupaciones as o', 'e.ocupaciones_id', '=', 'o.id')
+            ->leftJoin('tipo_documentos as td', 'e.tipo_documentos_id', '=', 'td.id')
+            ->leftJoin('direccions as d', 'e.direcciones_id', '=', 'd.id')
+            ->leftJoin('puestos as p', 'e.puestos_id', '=', 'p.id')
+            ->where(function ($query) use ($filtro) {
+                $query->where('e.primer_nombre', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.segundo_nombre', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.apellido_paterno', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.apellido_materno', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.apellido_casada', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.identificacion', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.nit', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.nup', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.fecha_nacimiento', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.email_personal', 'like', '%' . $filtro . '%')
+                    ->orWhere('e.email_profesional', 'like', '%' . $filtro . '%');
+            })
             ->orderBy('e.id');
+
+        $result = $query->get();
+
 
         $tuplas = $query->count();
 

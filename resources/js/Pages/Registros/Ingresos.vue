@@ -55,8 +55,6 @@
                                     :options="[
                                         { value: 'P', label: 'Porcentaje' },
                                         { value: 'M', label: 'Monto fijo' },
-                                        { value: 'D', label: 'Dias' },
-                                        { value: 'T', label: 'Tablas' },
                                     ]"
                                     :error-message="
                                         errores.forma_aplicacion &&
@@ -72,7 +70,7 @@
                             <q-item>
                                 <q-select
                                     style="width: 185px"
-                                    v-model="ingreso.descuento"
+                                    v-model="ingreso.obligatorio"
                                     option-value="value"
                                     option-label="label"
                                     emit-value
@@ -83,20 +81,19 @@
                                         { value: 'N', label: 'No' },
                                     ]"
                                     :error-message="
-                                        errores.descuento &&
-                                        errores.descuento[0]
+                                        errores.obligatorio &&
+                                        errores.obligatorio[0]
                                     "
-                                    :error="hayError(errores.descuento)"
-                                    label="Descuentos"
+                                    :error="hayError(errores.obligatorio)"
+                                    label="¿Es Obligatorio?"
                                 />
                             </q-item>
                         </div>
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-8" v-show="ingreso.forma_aplicacion == 'P'">
                             <q-item>
                                 <q-input
                                     filled
                                     bottom-slots
-                                    :class="q-ml-xs"
                                     v-model="ingreso.valor_porcentaje"
                                     class="q-pa-sm"
                                     label="Valor porcentaje"
@@ -156,7 +153,7 @@
                         @click="guardar"
                     ></q-btn>
                 </template>
-                <template v-slot:body-cell-operaciones="props">
+                <!--template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
                         <q-btn
                             round
@@ -177,7 +174,7 @@
                             "
                         ></q-btn>
                     </q-td>
-                </template>
+                </template-->
             </q-table>
         </div>
 
@@ -268,11 +265,11 @@ const columns = [
     },
     //{ name: 'descuento', align: 'left', label: 'descuento', field: 'Descuento', sortable: true },
     {
-        name: "descuento",
+        name: "obligatorio",
         required: true,
-        label: "Descuento",
+        label: "Obligatorio",
         align: "left",
-        field: "descuento",
+        field: "obligatorio",
         sortable: true,
     },
     {
@@ -283,7 +280,7 @@ const columns = [
         field: "valor_porcentaje",
         sortable: true,
     },
-    { name: "operaciones", align: "center", label: "Operaciones" },
+   // { name: "operaciones", align: "center", label: "Operaciones" },
 ];
 
 /* METODOS */
