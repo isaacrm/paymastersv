@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CentroDeCostos;
 use App\Models\Movimientos;
 use Illuminate\Http\Request;
 
@@ -66,6 +67,13 @@ class MovimientosController extends Controller
         $datos->centro_costos_id = $request->centro_costos_id;
         $datos->planillas_id = $request->planillas_id;
         $datos->operacion = '+';
+
+        //Actualizamos el monto de movimientos
+        $centro_de_costo_foraneo = CentroDeCostos::find($request->centro_costos_id);
+        $centro_de_costo_foraneo->presupuesto_restante = $centro_de_costo_foraneo->presupuesto_restante + $datos->monto;
+
+        // Guardamos
+        $centro_de_costo_foraneo->save();
         $datos->save();
     }
 
@@ -90,17 +98,34 @@ class MovimientosController extends Controller
      */
     public function update(Request $request)
     {
+
+        //Obtemos el centro de costo padre del movimiento
+        $centro_de_costo_foraneo = CentroDeCostos::find($request->centro_costos_id);
+        
         $this->validacion($request);
         $datos = Movimientos::find($request->id);
+
+        //Actualizamos el monto del centro de costo
+        $centro_de_costo_foraneo->presupuesto_restante -= $datos->monto;
+        $centro_de_costo_foraneo->presupuesto_restante += $request->monto;
+
+        //Actualizamos los campos del movimiento
         $datos->descripcion = $request->descripcion;
-        $datos->monto = $request->monto;
         $datos->centro_costos_id = $request->centro_costos_id;
+        $datos->operacion = '+';
         
-        if($request->planillas_id){
+        // Ajustamos el presupuesto
+
+        // * Asignamos el nuevo monto de movimiento
+        $datos->monto = $request->monto;
+
+
+        if ($request->planillas_id) {
             $datos->planillas_id = $request->planillas_id;
         }
 
-        $datos->operacion = '+';
+        // Guardamos
+        $centro_de_costo_foraneo->save();
         $datos->save();
     }
 
@@ -110,6 +135,11 @@ class MovimientosController extends Controller
     public function destroy(Request $request)
     {
         $datos = Movimientos::find($request->id);
+
+        //Actualizamos el monto de movimientos
+        $centro_de_costo_foraneo = CentroDeCostos::find($datos->centro_costos_id);
+        $centro_de_costo_foraneo->presupuesto_restante = $centro_de_costo_foraneo->presupuesto_restante - $datos->monto;
+
         $datos->delete();
     }
 
@@ -117,7 +147,7 @@ class MovimientosController extends Controller
     {
         $request->validate([
             'descripcion' => 'required|max:150',
-            'monto' => 'required|min:0',
+            'monto' => 'required|integer|min:0',
             'centro_costos_id' => 'required'
         ]);
     }

@@ -174,7 +174,7 @@
               round
               color="secondary"
               icon="list"
-              @click="confirmarMovimiento(props.row.id, props.row.nombre)"
+              @click="confirmarMovimiento(props.row.id)"
             ></q-btn>
             </div>
           </q-td>
@@ -206,30 +206,6 @@
       </q-dialog>
     </div>
 
-    <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="confirmarRealizacionMovimiento" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="warning" color="red" text-color="white" />
-            <span class="q-ml-sm"
-              >¿Desea gestionar los movimientos de
-              {{ movimientos.nombre }}?.</span
-            >
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="No" color="primary" v-close-popup />
-            <q-btn
-              flat
-              label="Sí"
-              color="primary"
-              @click="gestionarMovimiento"
-              v-close-popup
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
   </AppLayout>
 </template>
 
@@ -257,7 +233,6 @@ const nombres = {
 
 const confirmarEliminacion = ref(false); // Para modal de eliminacion
 const confirmarRealizacionMovimiento = ref(false);
-const nombreRegistroAGestionarMovimientos = ref("");
 const nombreRegistroEliminar = ref(""); // Para que se muestre el nombre en el modal de eliminacion
 // Capturar los errores desde laravel. Ademas los componentes necesitan un valor inicial para no generar errores inesperados
 const errores = ref({}); // Para almacenar el array de errores que viene desde Laravel
@@ -425,10 +400,8 @@ const confirmarEliminar = (id, nombre) => {
   confirmarEliminacion.value = true;
 };
 
-const confirmarMovimiento = (id, nombre) => {
-  confirmarRealizacionMovimiento.value = true;
-  movimientos.value.id = id;
-  movimientos.value.nombre = nombre;
+const confirmarMovimiento = (id) => {
+  window.location.href = `/movimientos?ccid=${id}`;
 };
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
@@ -450,11 +423,6 @@ const eliminar = async () => {
     });
 };
 
-const gestionarMovimiento = () => {
-  if (movimientos.value.id) {
-    window.location.href = `/movimientos?ccid=${movimientos.value.id}`;
-  }
-};
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
   // No se toca

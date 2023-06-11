@@ -72,6 +72,9 @@
                             @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
                             <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
                             @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row, $page.props.auth.user.id)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
+                            @click="confirmarEliminar(props.row.id, props.row.user_name, $page.props.auth.user.id)"></q-btn>
                         </div>
                     </q-td>
                 </template>

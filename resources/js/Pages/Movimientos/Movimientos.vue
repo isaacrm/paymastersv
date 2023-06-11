@@ -32,6 +32,7 @@
                   filled
                   bottom-slots
                   v-model="datos.monto"
+                  prefix="$"
                   type="number"
                   class="full-width"
                   label="Asigne el monto de la operacion:"
