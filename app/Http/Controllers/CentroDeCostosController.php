@@ -133,7 +133,8 @@ class CentroDeCostosController extends Controller
             'mes_al' => 'required',
             'anyo' => 'required|integer|min:1999|max:2099',
             'presupuesto_inicial' => 'required|integer|min:1000|max:9999999',
-            'presupuesto_restante' => 'required|integer|min:0|max:' . $request->presupuesto_inicial,
+            //'presupuesto_restante' => 'required|integer|min:0|max:' . $request->presupuesto_inicial,
+            'presupuesto_restante' => 'required|integer|min:0',
             'nombre' => 'required|max:150'
         ]);
     }
