@@ -11,6 +11,8 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
+     /*
     public function up(): void
     {
         DB::unprepared("
@@ -157,13 +159,14 @@ return new class extends Migration
             );
         END
     ;");
-    }
+    }*/
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+
+    /*public function down(): void
     {
         DB::unprepared("DROP PROCEDURE pa_detalle_registros");
-    }
+    }*/
 };
