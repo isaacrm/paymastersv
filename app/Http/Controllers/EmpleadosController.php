@@ -158,7 +158,7 @@ class EmpleadosController extends Controller
             ];
             $datos->primer_nombre = $request->primer_nombre;
         }
-    
+
         $datos->primer_nombre = $request->primer_nombre;
         $datos->segundo_nombre = $request->segundo_nombre;
         $datos->apellido_paterno = $request->apellido_paterno;
@@ -183,28 +183,30 @@ class EmpleadosController extends Controller
         $datos->save();
 
 
-        foreach ($atributosCambiados as $atributo => $valores) {
-            $valorAnterior = $valores['anterior'];
-            $valorActual = $valores['actual'];
-    
-            activity()
-                ->causedBy($user)
-                ->performedOn($datos)
-                ->withProperties([
-                    'atributo' => $atributo,
-                    'valor_anterior' => $valorAnterior,
-                    'valor_actual' => $valorActual,
-                ])
-                ->log("Actualización");
+        if ($datos->primer_nombre != $request->primer_nombre) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
                 //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
         }
-    
-        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
-        $lastActivity->causer; // Retorna el modelo que causó la actividad
-    
-        $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
-        $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
-        $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
     }
 
     /**
