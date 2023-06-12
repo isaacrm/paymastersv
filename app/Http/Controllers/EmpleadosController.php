@@ -195,7 +195,7 @@ class EmpleadosController extends Controller
                     'valor_anterior' => $valorAnterior,
                     'valor_actual' => $valorActual,
                 ])
-                ->log("Empleado Editado");
+                ->log("Actualización");
                 //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
         }
     

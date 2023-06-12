@@ -1,10 +1,10 @@
 <template>
-    <AppLayout title="Departamentos">
+    <AppLayout title="Bitácora">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
-                    <div class="text-h6">Bitacora</div>
-                    <div class="text-subtitle">Registro de los departamentos que el empleado puede agregar a su dirección.</div>
+                    <div class="text-h6">Bitácora Empleados</div>
+                    <div class="text-subtitle">Registro de los cambios efectuados a los empleados.</div>
                 </q-card-section>
             </q-card>
         </div>
@@ -65,7 +65,8 @@ const pagination = ref({
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
     { name: 'description', align: 'left', label: 'Nombre de Actividad', field: 'description', sortable: true },
-    { name: 'causer_id', align: 'left', label: 'causer_id', field: 'causer_name', sortable: true },
+    { name: 'subject_id', align: 'left', label: 'Nombre Empleado', field: 'empleado_name', sortable: true},
+    { name: 'causer_id', align: 'left', label: 'Actualizado Por', field: 'causer_name', sortable: true },
     { 
         name: 'properties', 
         align: 'left', 

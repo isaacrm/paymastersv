@@ -17,14 +17,17 @@ class BitacoraController extends Controller
         $filtro = $request->filter;
 
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Activity::select('ACTIVITY_LOG.*', 'users.name as causer_name',
-        //DB::raw("TO_CHAR(ACTIVITY_LOG.updated_at, 'DD-MM-YYYY HH24:MI:SS') as formatted_updated_at"),
-        DB::raw(" 'El día ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'DD') || ' del ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'MM') || ' del ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'YYYY') || ' a las ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'HH24:MI:SS') as formatted_updated_at")
-
-        )
+        $query = Activity::select('ACTIVITY_LOG.*', 'users.name as causer_name', 'empleados.primer_nombre as empleado_name',
+                    DB::raw(" 'El día ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'DD') || ' del ' || 
+                    TO_CHAR(ACTIVITY_LOG.updated_at, 'MM') || ' del ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'YYYY') || 
+                    ' a las ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'HH24:MI:SS') as formatted_updated_at"))
                 ->join('users', 'ACTIVITY_LOG.causer_id', '=', 'users.id')
+                ->join('empleados', 'ACTIVITY_LOG.subject_id', '=', 'empleados.id')
                 ->where(function ($query) use ($filtro) {
                     $query->where('ACTIVITY_LOG.description', 'like', '%' . $filtro . '%')
+                    ->orWhere('ACTIVITY_LOG.properties', 'like', '%' . $filtro . '%')
+                    ->orWhere('ACTIVITY_LOG.updated_at', 'like', '%' . $filtro . '%')                                        
+                    ->orWhere('empleados.primer_nombre', 'like', '%' . $filtro . '%')                    
                     ->orWhere('users.name', 'like', '%' . $filtro . '%');
                    })
             ->orderBy('ACTIVITY_LOG.id');
