@@ -210,7 +210,7 @@
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
             <div class="q-gutter-sm">
-              <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+              <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row, $page.props.auth.user.id)"></q-btn>
               <q-btn round color="negative" icon="delete"
                 @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
             </div>
@@ -411,7 +411,7 @@ const guardar = async () => {
   }
 };
 
-const editar = (editardatos) => {
+const editar = (editardatos, user_id) => {
   datos.value.id = editardatos.id;
   datos.value.primer_nombre = editardatos.primer_nombre;
   datos.value.segundo_nombre = editardatos.segundo_nombre;
@@ -452,6 +452,7 @@ const editar = (editardatos) => {
     name: editardatos.puesto_nombre,
   };
 
+  datos.value.user_id = user_id
   submitted.value = false;
   errores.value = {};
 };

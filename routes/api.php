@@ -23,6 +23,7 @@ use App\Http\Controllers\UnidadesController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\BitacoraController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /* CUSTOM */
 // Lo que esta en comillas, lo primero es la ruta que se llama en Vue, lo segundo el nombre de la funcion dentro del controlador indicado
+
+/* BITACORA */
+// Ver
+Route::get('/bitacora/tabla', [BitacoraController::class, 'TablaBitacora']);
 
 //Administración
 /* USUARIOS */
