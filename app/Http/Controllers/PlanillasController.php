@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class PlanillasController extends Controller
 {
@@ -79,6 +81,17 @@ class PlanillasController extends Controller
         $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
 
+        
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+        ->causedBy($user)
+        ->performedOn($datos)
+        ->log("Creación");
+        
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
+        
         // Para ejecutar el procedimiento almacenado
         DB::statement('BEGIN pa_detalle_planillas(:p_planilla_id); END;', ['p_planilla_id' => $datos->id]);
     }
@@ -110,12 +123,59 @@ class PlanillasController extends Controller
         // Estableciendo el modelo donde se guardara la informacion
         $datos = Planillas::find($request->id);
         // Determinando que valor tendra cada atributo del modelo con lo que se obtiene con el request
+
+        $atributos = [
+            'mes_periodo',
+            'anyo_periodo',
+            'fecha_generacion',
+            'dias_laborales',
+            'horas_laborales',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($datos->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $datos->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
         $datos->mes_periodo = array_search($request->mes_periodo, $meses);
         $datos->anyo_periodo = $request->anyo_periodo;
         $datos->fecha_generacion = $request->fecha_generacion;
         $datos->dias_laborales = $request->dias_laborales;
         $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
+
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -125,6 +185,16 @@ class PlanillasController extends Controller
     {
         $datos = Planillas::find($request->id);
         $datos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function CantidadRegistros()

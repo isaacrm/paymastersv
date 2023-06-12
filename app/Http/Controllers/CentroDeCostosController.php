@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\CentroDeCostos;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class CentroDeCostosController extends Controller
 {
@@ -74,6 +77,16 @@ class CentroDeCostosController extends Controller
         $datos->presupuesto_inicial = $request->presupuesto_inicial;
         $datos->presupuesto_restante = $request->presupuesto_restante;
         $datos->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /**
@@ -101,6 +114,49 @@ class CentroDeCostosController extends Controller
 
         $this->validacion($request);
         $datos = CentroDeCostos::find($request->id);
+        $user = User::find($request->user_id);
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        // Verificar cada atributo y guardar el valor anterior si ha cambiado
+        if ($datos->nombre != $request->nombre) {
+            $atributosCambiados['nombre'] = [
+                'anterior' => $datos->nombre,
+                'actual' => $request->nombre,
+            ];
+        }
+        if ($datos->anyo != $request->anyo) {
+            $atributosCambiados['anyo'] = [
+                'anterior' => $datos->anyo,
+                'actual' => $request->anyo,
+            ];
+        }
+        if ($datos->presupuesto_inicial != $request->presupuesto_inicial) {
+            $atributosCambiados['presupuesto_inicial'] = [
+                'anterior' => $datos->presupuesto_inicial,
+                'actual' => $request->presupuesto_inicial,
+            ];
+        }
+        if ($datos->presupuesto_restante != $request->presupuesto_restante) {
+            $atributosCambiados['presupuesto_restante'] = [
+                'anterior' => $datos->presupuesto_restante,
+                'actual' => $request->presupuesto_restante,
+            ];
+        }
+        if ($datos->mes_del != $request->mes_del) {
+            $atributosCambiados['mes_del'] = [
+                'anterior' => $datos->mes_del,
+                'actual' => $request->mes_del,
+            ];
+        }
+        if ($datos->mes_al != $request->mes_al) {
+            $atributosCambiados['mes_al'] = [
+                'anterior' => $datos->mes_al,
+                'actual' => $request->mes_al,
+            ];
+        }
+
+
         $datos->mes_del = array_search($request->mes_del, $meses);
         $datos->mes_al = array_search($request->mes_al, $meses);
         $datos->nombre = $request->nombre;
@@ -108,6 +164,31 @@ class CentroDeCostosController extends Controller
         $datos->presupuesto_inicial = $request->presupuesto_inicial;
         $datos->presupuesto_restante = $request->presupuesto_restante;
         $datos->save();
+
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -117,6 +198,16 @@ class CentroDeCostosController extends Controller
     {
         $datos = CentroDeCostos::find($request->id);
         $datos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function centro_de_costos()

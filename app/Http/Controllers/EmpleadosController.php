@@ -119,6 +119,16 @@ class EmpleadosController extends Controller
         $datos->puestos_id = $request->puestos_id;
 
         $datos->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /**
@@ -145,18 +155,41 @@ class EmpleadosController extends Controller
         $this->validacion($request);
 
         $datos = Empleados::find($request->id);
-        $user = User::find($request->user_id);
-
 
         $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
 
-        // Verificar cada atributo y guardar el valor anterior si ha cambiado
-        if ($datos->primer_nombre != $request->primer_nombre) {
-            $atributosCambiados['primer_nombre'] = [
-                'anterior' => $datos->primer_nombre,
-                'actual' => $request->primer_nombre,
-            ];
-            $datos->primer_nombre = $request->primer_nombre;
+        $atributos = [
+            'primer_nombre',
+            'segundo_nombre',
+            'apellido_paterno',
+            'apellido_materno',
+            'apellido_casada',
+            'fecha_nacimiento',
+            'fecha_ingreso',
+            'identificacion',
+            'nit',
+            'isss',
+            'nup',
+            'email_personal',
+            'email_profesional',
+            'salario_base',
+            'estados_civiles_id',
+            'generos_id',
+            'ocupaciones_id',
+            'tipo_documentos_id',
+            'direcciones_id',
+            'puestos_id',
+        ];
+        
+        $atributosCambiados = [];
+        
+        foreach ($atributos as $atributo) {
+            if ($datos->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $datos->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
         }
 
         $datos->primer_nombre = $request->primer_nombre;
@@ -183,6 +216,7 @@ class EmpleadosController extends Controller
         $datos->save();
 
 
+        $user = User::find($request->user_id);
         if ($atributosCambiados != []) {
             foreach ($atributosCambiados as $atributo => $valores) {
                 $valorAnterior = $valores['anterior'];
@@ -216,6 +250,16 @@ class EmpleadosController extends Controller
     {
         $datos = Empleados::find($request->id);
         $datos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     private function validacion(Request $request)

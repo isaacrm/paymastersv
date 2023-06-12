@@ -150,7 +150,7 @@
                         color="primary"
                         label="Guardar"
                         icon="add"
-                        @click="guardar"
+                        @click="guardar($page.props.auth.user.id)"
                     ></q-btn>
                 </template>
                 <!--template v-slot:body-cell-operaciones="props">
@@ -199,7 +199,7 @@
                             flat
                             label="Sí"
                             color="primary"
-                            @click="eliminar"
+                            @click="eliminar($props.auth.user.id)"
                             v-close-popup
                         />
                     </q-card-actions>
@@ -309,7 +309,8 @@ const hayError = (valor) => {
 };
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
+    ingreso.value.user_id = user_id;
     submitted.value = true;
     errores.value = {};
 
@@ -378,9 +379,10 @@ const confirmarEliminar = (id, nombre) => {
 };
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    ingreso.value.user_id = user_id;
     await axios
-        .post("/api/eliminar_registro/" + ingreso.value.id)
+        .post("/api/eliminar_registro/" + ingreso.value.id, ingreso.value)
         .then((response) => {
             reiniciarValores();
             // Mensaje de alerta

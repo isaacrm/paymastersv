@@ -73,7 +73,7 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"
+                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"
                         v-show="valoresExistentes.cantidadDescuentos > 0 && valoresExistentes.cantidadEmpleados > 0"></q-btn>
                     <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                 </template>
@@ -99,7 +99,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -221,9 +221,10 @@ const cancelar = () => {
 };
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true;
     errores.value = {};
+    datos.value.user_id = user_id;
     // Actualizar
     if (datos.value.id) {
         await axios
@@ -283,9 +284,10 @@ const confirmarEliminar = (id, nombre) => {
     confirmarEliminacion.value = true;
 };
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    datos.value.user_id = user_id;
     await axios
-        .post(`/api/${nombres.minu}_eliminar/` + datos.value.id)
+        .post(`/api/${nombres.minu}_eliminar/` + datos.value.id, datos.value)
         .then((response) => {
             reiniciarValores();
             $q.notify({

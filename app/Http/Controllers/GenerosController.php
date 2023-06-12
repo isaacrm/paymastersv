@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Generos;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class GenerosController extends Controller
 {
@@ -56,6 +58,16 @@ class GenerosController extends Controller
         $objeto = new Generos();
         $objeto->nombre = $request->nombre;
         $objeto->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($objeto)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /**
@@ -80,9 +92,53 @@ class GenerosController extends Controller
     public function update(Request $request)
     {
         $this->validacion($request);
-        $objeto = Generos::find($request->id);
-        $objeto->nombre = $request->nombre;
-        $objeto->save();
+        $datos = Generos::find($request->id);
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'nombre',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($datos->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $datos->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+        $datos->nombre = $request->nombre;
+        $datos->save();
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -90,8 +146,18 @@ class GenerosController extends Controller
      */
     public function destroy(Request $request)
     {
-        $objeto = Generos::find($request->id);
-        $objeto->delete();
+        $datos = Generos::find($request->id);
+        $datos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function consultar_id_nombre()

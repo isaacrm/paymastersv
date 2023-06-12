@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CentroDeCostos;
 use App\Models\Movimientos;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class MovimientosController extends Controller
 {
