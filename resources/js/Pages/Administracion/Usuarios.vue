@@ -185,7 +185,7 @@ const guardar = async () => {
                 usuarioSeleccionado.confirmarContraseña === usuarios.value.confirmarContraseña) {
                 $q.notify({
                     type: 'info',
-                    message: 'No se realizaron cambios en los datos del usuario.',
+                    message: 'No se realizaron cambios en los datos del usuario prueba.',
                     color: 'secondary'
                 })
                 return;
