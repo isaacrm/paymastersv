@@ -183,7 +183,7 @@ class EmpleadosController extends Controller
         $datos->save();
 
 
-        if ($datos->primer_nombre != $request->primer_nombre) {
+        if ($atributosCambiados != []) {
             foreach ($atributosCambiados as $atributo => $valores) {
                 $valorAnterior = $valores['anterior'];
                 $valorActual = $valores['actual'];

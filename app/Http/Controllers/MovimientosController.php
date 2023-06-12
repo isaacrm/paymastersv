@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CentroDeCostos;
 use App\Models\Movimientos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class MovimientosController extends Controller
 {
@@ -104,6 +107,21 @@ class MovimientosController extends Controller
         
         $this->validacion($request);
         $datos = Movimientos::find($request->id);
+        //$user = User::find($request->user_id);
+        $user = User::find(1);
+        
+        
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+        
+        // Verificar cada atributo y guardar el valor anterior si ha cambiado
+        if ($datos->monto != $request->monto) {
+            $atributosCambiados['monto'] = [
+                'anterior' => $datos->monto,
+                'actual' => $request->monto,
+            ];
+            $datos->monto = $request->monto;
+        }
+
 
         //Actualizamos el monto del centro de costo
         $centro_de_costo_foraneo->presupuesto_restante -= $datos->monto;
@@ -127,6 +145,33 @@ class MovimientosController extends Controller
         // Guardamos
         $centro_de_costo_foraneo->save();
         $datos->save();
+
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+
+                echo "somon";
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
