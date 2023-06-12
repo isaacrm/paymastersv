@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Facades\DB;
 
 class BitacoraController extends Controller
 {
@@ -14,9 +15,13 @@ class BitacoraController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
-        
+
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Activity::select('ACTIVITY_LOG.*', 'users.name as causer_name')
+        $query = Activity::select('ACTIVITY_LOG.*', 'users.name as causer_name',
+        //DB::raw("TO_CHAR(ACTIVITY_LOG.updated_at, 'DD-MM-YYYY HH24:MI:SS') as formatted_updated_at"),
+        DB::raw(" 'El día ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'DD') || ' del ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'MM') || ' del ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'YYYY') || ' a las ' || TO_CHAR(ACTIVITY_LOG.updated_at, 'HH24:MI:SS') as formatted_updated_at")
+
+        )
                 ->join('users', 'ACTIVITY_LOG.causer_id', '=', 'users.id')
                 ->where(function ($query) use ($filtro) {
                     $query->where('ACTIVITY_LOG.description', 'like', '%' . $filtro . '%')

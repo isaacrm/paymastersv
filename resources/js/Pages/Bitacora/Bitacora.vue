@@ -66,9 +66,40 @@ const pagination = ref({
 const columns = [
     { name: 'description', align: 'left', label: 'Nombre de Actividad', field: 'description', sortable: true },
     { name: 'causer_id', align: 'left', label: 'causer_id', field: 'causer_name', sortable: true },
-    { name: 'properties', align: 'left', label: 'properties', field: 'detalle.properties.atributo', sortable: true },
-    { name: 'created_at', align: 'left', label: 'created_at', field: 'created_at', sortable: true },
-    { name: 'updated_at', align: 'left', label: 'updated_at', field: 'updated_at', sortable: true }
+    { 
+        name: 'properties', 
+        align: 'left', 
+        label: 'Atributo', 
+        field: 'properties', 
+        sortable: true,
+        format: (value) => {
+            const { atributo } = value;
+            return `${atributo}`;
+        }
+    },
+    { 
+        name: 'properties', 
+        align: 'left', 
+        label: 'Antes', 
+        field: 'properties', 
+        sortable: true,
+        format: (value) => {
+            const { valor_anterior } = value;
+            return `${valor_anterior}`;
+        }
+    },
+    { 
+        name: 'properties', 
+        align: 'left', 
+        label: 'Después', 
+        field: 'properties', 
+        sortable: true,
+        format: (value) => {
+            const { valor_actual } = value;
+            return `${valor_actual}`;
+        }
+    },
+    { name: 'formatted_updated_at', align: 'left', label: 'Actualizado', field: 'formatted_updated_at', sortable: true },
 ]
 
 /* METODOS */
