@@ -32,5 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DescuentoSeeder::class);
         $this->call(IngresoSeeder::class);
         $this->call(RentaSeeder::class);
+        $this->call(EmpleadoSeeder::class);
     }
 }

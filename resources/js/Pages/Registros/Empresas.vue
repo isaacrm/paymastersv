@@ -30,7 +30,6 @@
                         <div class="col-12 col-md-4">
                             <q-item>
                                 <q-input filled bottom-slots v-model="empresa.telefono" class="full-width"
-                                mask="####-####" fill-mask="_"  
                                     label="Número de teléfono" :error-message="
                                         errores.telefono &&
                                         errores.telefono[0]
@@ -42,7 +41,6 @@
                         <div class="col-12 col-md-4">
                             <q-item>
                                 <q-input filled bottom-slots v-model="empresa.nrc" class="full-width" label="Número de NRC"
-                                mask="####-#####-##-###" fill-mask="_"  
                                     :error-message="
                                         errores.nrc &&
                                         errores.nrc[0]
@@ -104,7 +102,7 @@
                 </template>
                 <template v-slot:top-left>
                     <div class="q-gutter-sm">
-                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
                         <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                     </div>
                 </template>
@@ -135,7 +133,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -270,9 +268,10 @@ const hayError = (valor) => {
 };
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true;
     errores.value = {};
+    empresa.value.user_id = user_id;
 
     // Actualizar
     if (empresa.value.id) {
@@ -339,9 +338,10 @@ const confirmarEliminar = (id, nombre) => {
 };
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    empresa.value.user_id = user_id;
     await axios
-        .post("/api/eliminar_empresa/" + empresa.value.id)
+        .post("/api/eliminar_empresa/" + empresa.value.id, empresa.value)
         .then((response) => {
             reiniciarValores();
             // Mensaje de alerta

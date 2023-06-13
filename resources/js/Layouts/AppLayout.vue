@@ -243,7 +243,8 @@ const usuarios_roles = [
 ]
 
 const bitacora = [
-    { icon: 'update', text: 'Bitácora Empleados', path: '/bitacora'}
+    { icon: 'update', text: 'Bitácora Empleados', path: '/bitacora'},
+    { icon: 'history', text: 'Bitácora General', path: '/bitacora_general'}
 ]
 
 const direcciones = [

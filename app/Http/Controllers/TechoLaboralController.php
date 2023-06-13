@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TechosLaborale;
 use Carbon\Carbon;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class TechoLaboralController extends Controller
 {
-/* FUNCIONES PUBLICAS con PascalCase. Todas las variables con kebab_style */
+    /* FUNCIONES PUBLICAS con PascalCase. Todas las variables con kebab_style */
     // Lo que se usara en la llamada asincrona para mostrar los datos en la tabla de la vista C[R]UD
     public function TablaTechoLaboral(Request $request)
     {
@@ -57,16 +59,76 @@ class TechoLaboralController extends Controller
         $techo_laboral->anyo = $request->anyo;
         // Guardando la informacion
         $techo_laboral->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($techo_laboral)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
+        exit();
     }
     // La operación de Update CR[U]D
     public function ActualizarTechoLaboral(Request $request)
     {
         $this->validacion($request);
         $techo_laboral = TechosLaborale::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'afp',
+            'isss',
+            'anyo',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($techo_laboral->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $techo_laboral->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $techo_laboral->afp = $request->afp;
         $techo_laboral->isss = $request->isss;
         $techo_laboral->anyo = $request->anyo;
         $techo_laboral->save();
+
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($techo_laboral)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
@@ -74,6 +136,16 @@ class TechoLaboralController extends Controller
     {
         $techo_laboral = TechosLaborale::find($request->id);
         $techo_laboral->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($techo_laboral)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /* METODOS INTERNOS con camelPascal */

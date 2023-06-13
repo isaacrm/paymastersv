@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\RentasMensuale;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
-
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class RentaMensualController extends Controller
 {
@@ -64,12 +65,48 @@ class RentaMensualController extends Controller
         $renta_mensual->mas_fija = $request->mas_fija;
         // Guardando la informacion
         $renta_mensual->save();
+
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($renta_mensual)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
     // La operación de Update CR[U]D
     public function ActualizarRentaMensual(Request $request)
     {
         $this->validacion($request);
         $renta_mensual = RentasMensuale::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'tramo',
+            'desde',
+            'hasta',
+            'porcentaje_aplicar',
+            'sobre_exceso',
+            'mas_fija',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($renta_mensual->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $renta_mensual->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $renta_mensual->tramo = $request->tramo;
         $renta_mensual->desde = $request->desde;
         $renta_mensual->hasta = $request->hasta;
@@ -78,6 +115,33 @@ class RentaMensualController extends Controller
         $renta_mensual->sobre_exceso = $request->sobre_exceso;
         $renta_mensual->mas_fija = $request->mas_fija;
         $renta_mensual->save();
+
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($renta_mensual)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
@@ -85,6 +149,17 @@ class RentaMensualController extends Controller
     {
         $renta_mensual = RentasMensuale::find($request->id);
         $renta_mensual->delete();
+
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($renta_mensual)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /* METODOS INTERNOS con camelPascal */

@@ -80,7 +80,7 @@
             color="primary"
             label="Guardar"
             icon="add"
-            @click="guardar"
+            @click="guardar($page.props.auth.user.id)"
           ></q-btn>
           <q-btn
             outline
@@ -100,13 +100,13 @@
               color="warning"
               icon="edit"
               class="mr-2"
-              @click="editar(props.row)"
+              @click="editar(props.row, $page.props.auth.user.id)"
             ></q-btn>
             <q-btn
               round
               color="negative"
               icon="delete"
-              @click="confirmarEliminar(props.row.id, props.row.nombre)"
+              @click="confirmarEliminar(props.row.id, props.row.nombre, $page.props.auth.user.id)"
             ></q-btn>
             </div>
           </q-td>
@@ -226,11 +226,12 @@ const hayError = (valor) => {
   else return false;
 };
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
   submitted.value = true;
   errores.value = {};
 
   datos.value.centro_costos_id = centro_costos_id.value;
+  datos.value.user_id = user_id;
 
   if (datos.value.id) {
     await axios
@@ -278,21 +279,23 @@ const guardar = async () => {
   }
 };
 // Para mostrar los datos en el form
-const editar = (editardatos) => {
+const editar = (editardatos, user_id) => {
   datos.value = { ...editardatos };
+  datos.value.user_id = user_id;
   submitted.value = false;
   errores.value = {};
 };
 // Para desplegar el modal
-const confirmarEliminar = (id, nombre) => {
+const confirmarEliminar = (id, nombre, user_id) => {
   datos.value.id = id;
+  datos.value.user_id = user_id;
   nombreRegistroEliminar.value = nombre;
   confirmarEliminacion.value = true;
 };
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
 const eliminar = async () => {
   await axios
-    .post(`/api/${nombres.url}_eliminar/` + datos.value.id)
+    .post(`/api/${nombres.url}_eliminar/` + datos.value.id, datos.value)
     .then((response) => {
       reiniciarValores();
       $q.notify({

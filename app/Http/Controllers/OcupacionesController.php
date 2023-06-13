@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Ocupaciones;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class OcupacionesController extends Controller
 {
@@ -56,6 +58,16 @@ class OcupacionesController extends Controller
         $objeto = new Ocupaciones();
         $objeto->nombre = $request->nombre;
         $objeto->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($objeto)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /**
@@ -81,8 +93,53 @@ class OcupacionesController extends Controller
     {
         $this->validacion($request);
         $objeto = Ocupaciones::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'nombre',
+        ];
+
+        foreach ($atributos as $atributo) {
+            if ($objeto->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $objeto->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $objeto->nombre = $request->nombre;
         $objeto->save();
+
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($objeto)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -92,6 +149,16 @@ class OcupacionesController extends Controller
     {
         $objeto = Ocupaciones::find($request->id);
         $objeto->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($objeto)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function consultar_id_nombre()

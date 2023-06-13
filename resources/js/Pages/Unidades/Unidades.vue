@@ -58,7 +58,7 @@
                 </template>
                 <template v-slot:top-left>
                     <div class="q-gutter-sm">
-                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
                         <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                     </div>
                 </template>
@@ -84,7 +84,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -133,7 +133,7 @@ const pagination = ref({
 const columns = [
     { name: 'nombre', align: 'left', label: 'Nombre', field: 'nombre', sortable: true },
     { name: 'superior_nombre', align: 'left', label: 'Superior', field: 'superior_nombre' },
-    { name: 'nombre', align: 'left', label: 'Centro de costos', field: 'nombre' },
+    { name: 'centro_costos_nombre', align: 'left', label: 'Centro de costos', field: 'centro_costos_nombre' },
     { name: 'nivel_organizacional_nombre', align: 'left', label: 'Nivel organizacional', field: 'nivel_organizacional_nombre' },
     { name: 'operaciones', align: 'center', label: 'Operaciones' }
 
@@ -168,9 +168,10 @@ const hayError = (valor) => {
         return false
 }
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true
     errores.value = {}
+    datos.value.user_id = user_id;
 
     // Actualizar
     if (datosSelect.value.centro_de_costos) { datos.value.centro_de_costos = datosSelect.value.centro_de_costos.id }
@@ -247,8 +248,9 @@ const confirmarEliminar = (id, nombre) => {
     confirmarEliminacion.value = true
 }
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
-    await axios.post(`/api/${nombres.minu}es_eliminar/` + datos.value.id).then((response) => {
+const eliminar = async (user_id) => {
+    datos.value.user_id = user_id;
+    await axios.post(`/api/${nombres.minu}es_eliminar/` + datos.value.id, datos.value).then((response) => {
         reiniciarValores()
         $q.notify(
             {

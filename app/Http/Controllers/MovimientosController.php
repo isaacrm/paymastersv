@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CentroDeCostos;
 use App\Models\Movimientos;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class MovimientosController extends Controller
 {
@@ -75,6 +77,16 @@ class MovimientosController extends Controller
         // Guardamos
         $centro_de_costo_foraneo->save();
         $datos->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     /**
@@ -101,9 +113,31 @@ class MovimientosController extends Controller
 
         //Obtemos el centro de costo padre del movimiento
         $centro_de_costo_foraneo = CentroDeCostos::find($request->centro_costos_id);
-        
+
         $this->validacion($request);
         $datos = Movimientos::find($request->id);
+        $user = User::find($request->user_id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        // Verificar cada atributo y guardar el valor anterior si ha cambiado
+        if ($datos->monto != $request->monto) {
+            $atributosCambiados['monto'] = [
+                'anterior' => $datos->monto,
+                'actual' => $request->monto,
+            ];
+            $datos->monto = $request->monto;
+        }
+        // Verificar cada atributo y guardar el valor anterior si ha cambiado
+        if ($datos->descripcion != $request->descripcion) {
+            $atributosCambiados['descripcion'] = [
+                'anterior' => $datos->descripcion,
+                'actual' => $request->descripcion,
+            ];
+            $datos->descripcion = $request->descripcion;
+        }
+
 
         //Actualizamos el monto del centro de costo
         $centro_de_costo_foraneo->presupuesto_restante -= $datos->monto;
@@ -113,7 +147,7 @@ class MovimientosController extends Controller
         $datos->descripcion = $request->descripcion;
         $datos->centro_costos_id = $request->centro_costos_id;
         $datos->operacion = '+';
-        
+
         // Ajustamos el presupuesto
 
         // * Asignamos el nuevo monto de movimiento
@@ -127,6 +161,31 @@ class MovimientosController extends Controller
         // Guardamos
         $centro_de_costo_foraneo->save();
         $datos->save();
+
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($datos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -140,7 +199,19 @@ class MovimientosController extends Controller
         $centro_de_costo_foraneo = CentroDeCostos::find($datos->centro_costos_id);
         $centro_de_costo_foraneo->presupuesto_restante = $centro_de_costo_foraneo->presupuesto_restante - $datos->monto;
 
+        $centro_de_costo_foraneo->save();
         $datos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
+
     }
 
     private function validacion(Request $request)

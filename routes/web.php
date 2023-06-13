@@ -68,6 +68,10 @@ Route::middleware([
         Route::get('/bitacora', function(){
             return Inertia::render('Bitacora/Bitacora');
         })->name('bitacora')->middleware(RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador');
+
+        Route::get('/bitacora_general', function(){
+            return Inertia::render('Bitacora/BitacoraGeneral');
+        })->name('bitacora_general')->middleware(RoleMiddleware::class . ':' . 'Administrador|SuperAdministrador');
 });
 
 // Rutas de registro

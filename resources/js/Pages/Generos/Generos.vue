@@ -62,7 +62,7 @@
             color="primary"
             label="Guardar"
             icon="add"
-            @click="guardar"
+            @click="guardar($page.props.auth.user.id)"
           ></q-btn>
           <q-btn
             outline
@@ -112,7 +112,7 @@
               flat
               label="Sí"
               color="primary"
-              @click="eliminar"
+              @click="eliminar($page.props.auth.user.id)"
               v-close-popup
             />
           </q-card-actions>
@@ -187,9 +187,10 @@ const cancelar = () => {
 };
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
   submitted.value = true;
   errores.value = {};
+  datos.value.user_id = user_id;
   // Actualizar
   if (datos.value.id) {
     await axios
@@ -244,9 +245,10 @@ const confirmarEliminar = (id, nombre) => {
   confirmarEliminacion.value = true;
 };
 
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+  datos.value.user_id = user_id;
   await axios
-    .post(`/api/${nombres.link}_eliminar/` + datos.value.id)
+    .post(`/api/${nombres.link}_eliminar/` + datos.value.id, datos.value)
     .then((response) => {
       reiniciarValores();
       $q.notify({

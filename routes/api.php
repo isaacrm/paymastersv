@@ -24,6 +24,7 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\BitacoraController;
+use App\Http\Controllers\BitacoraGeneralController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /* BITACORA */
 // Ver
 Route::get('/bitacora/tabla', [BitacoraController::class, 'TablaBitacora']);
+Route::get('/bitacora_general/tabla', [BitacoraGeneralController::class, 'TablaBitacora']);
 
 //Administración
 /* USUARIOS */
