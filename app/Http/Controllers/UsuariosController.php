@@ -39,6 +39,7 @@ class UsuariosController extends Controller
             $usuarioID = $usuario->id;
             $usuarioName = $usuario->name;
             $usuarioCorreo = $usuario->email;
+            $email_verified = $usuario->email_verified_at;
             $usuarioBaneo = $usuario->banned_at;
             $roles = $usuario->roles->map(function ($rol) {
                 return [
@@ -47,10 +48,13 @@ class UsuariosController extends Controller
                 ];
             });
 
+            $verificacionEmail = $email_verified ? "Verificado" : "Pendiente";
+
             $detalle[] = [
                 'id' => $usuarioID,
                 'user_name' => $usuarioName,
                 'email' => $usuarioCorreo,
+                'email_verified' => $verificacionEmail,
                 'roles' => $roles,
                 'estado' => $usuarioBaneo
             ];
@@ -198,16 +202,6 @@ class UsuariosController extends Controller
         }
         $user->save();
     }
-
-    // La operación de Delete CR[U]D
-    public function EliminarUsuario(Request $request)
-    {
-        $user = User::find($request->id);
-        $user->tokens->each->delete(); // elimina todos los tokens relacionados al usuario mientras existía
-        $user->delete();
-    }
-
-
 
     /**
      * Update the given verified user's profile information.

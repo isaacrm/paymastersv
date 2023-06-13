@@ -65,9 +65,6 @@ Route::post('roles_estados/activar/{id}',[UsuariosController::class, 'ActivarUsu
 Route::post('/usuarios/agregar',[UsuariosController::class, 'CrearUsuario']);
 // Actualizar Usuarios
 Route::post('/usuarios/actualizar',[UsuariosController::class, 'ActualizarUsuario']);
-// Eliminar usuarios
-Route::post('/usuarios/eliminar/{id}',[UsuariosController::class, 'EliminarUsuario']);
-
 
 /* ROLES */
 //Ver

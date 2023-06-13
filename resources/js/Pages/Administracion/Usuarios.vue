@@ -64,31 +64,11 @@
                     <q-td :props="props">
                         <div class="q-gutter-sm">
                             <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row, $page.props.auth.user.id)"></q-btn>
-                            <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.user_name, $page.props.auth.user.id)"></q-btn>
                         </div>
                     </q-td>
                 </template>
             </q-table>
         </div>
-
-        <div class="q-pa-md q-gutter-sm">
-            <q-dialog v-model="confirmarEliminacion" persistent>
-                <q-card>
-                    <q-card-section class="row items-center">
-                        <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea eliminar al usuario {{ nombreRegistroEliminar }}?</span>
-                    </q-card-section>
-
-                    <q-card-actions align="right">
-                        <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
-        </div>
-
-
     </AppLayout>
 </template>
 
@@ -132,9 +112,11 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
+    { name: 'id', align: 'left', label: 'Identificador', field: 'id', sortable: true },
     { name: 'user_name', align: 'left', label: 'Nombre', field: 'user_name', sortable: true },
     { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: true },
-    { name: 'operaciones', align: 'center', label: 'Operaciones' }
+    { name: 'email_verified', align: 'left', label: 'Estado Correo', field: 'email_verified', sortable: true },
+    { name: 'operaciones', align: 'center', label: 'Edición' }
 ]
 
 /* METODOS */
@@ -217,17 +199,29 @@ const guardar = async () => {
 
             })
             .catch((e) => {
+                
                 // Si es un error de tipo 422, es decir, contenido inprocesable
                 if (e.response.status === 422) {
-                    errores.value = e.response.data.errors
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 422 - Datos improsesables
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el usuario.'
+                    });
+                } else if (e.response.status === 409) {
+                    errores.value = e.response.data.errors;
+                    // Mensaje de alerta para error 409 - Error de conflicto (por que ya existe el rol)
+                    $q.notify({
+                    type: 'negative',
+                    message: 'No puede actualizar los tres campos al mismo tiempo.'
+                    });
+                } else {
+                    // Mensaje de alerta genérico en caso de otros errores
+                    $q.notify({
+                    type: 'negative',
+                    message: 'Error al actualizar el usuario.'
+                    });
                 }
-                // Mensaje de alerta
-                $q.notify(
-                    {
-                        type: 'negative',
-                        message: 'Error al actualizar el usuario.'
-                    }
-                )
             })
     }
     // Guardar
@@ -274,49 +268,6 @@ const editar = (editarUsuarios, user_active_id) => {
     usuarios.value = { ...editarUsuarios }
     submitted.value = false;
     errores.value = {};
-}
-
-// Para desplegar el modal
-const confirmarEliminar = (id, user_name, user_active_id) => {
-    if(user_active_id == id){
-        $q.notify(
-            {
-                type: 'negative',
-                message: 'No te puedes eliminar a ti mismo.'
-            }
-        )
-        return;
-    }
-    usuarios.value.id = id
-    nombreRegistroEliminar.value = user_name
-    confirmarEliminacion.value = true
-}
-
-
-// Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
-    await axios
-        .post("/api/usuarios/eliminar/" + usuarios.value.id)
-        .then((response) => {
-            reiniciarValores()
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'positive',
-                    message: 'Usuario eliminado.'
-                }
-            )
-
-        })
-        .catch((e) => {
-            // Mensaje de alerta
-            $q.notify(
-                {
-                    type: 'negative',
-                    message: 'Error al eliminar el usuario.'
-                }
-            )
-        })
 }
 
 /* EXCLUSIVO DE TABLA */
