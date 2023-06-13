@@ -75,8 +75,6 @@ class IngresosController extends Controller
             'valor_porcentaje',
         ];
 
-        $atributosCambiados = [];
-
         foreach ($atributos as $atributo) {
             if ($ingresos->$atributo != $request->$atributo) {
                 $atributosCambiados[$atributo] = [

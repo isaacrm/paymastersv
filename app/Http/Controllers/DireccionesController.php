@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Departamento;
-use App\Models\Municipio;
 use App\Models\Direccion;
 use Illuminate\Support\Facades\DB;
-
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -19,19 +18,19 @@ class DireccionesController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        
-        $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio', 'departamentos.id AS departamento_id','departamentos.nombre AS departamento_nombre')
-                   ->join('municipios', 'direccions.municipio_id', '=', 'municipios.id')
-                   ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
-                   ->where(function ($query) use ($filtro) {
-                       $query->where('direccions.calle', 'like', '%' . $filtro . '%')
-                           ->orWhere('direccions.colonia', 'like', '%' . $filtro . '%')
-                           ->orWhere('identificador_casa', 'like', '%' . $filtro . '%')
-                           ->orWhere('apto_local', 'like', '%' . $filtro . '%')
-                           ->orWhere('municipios.nombre', 'like', '%' . $filtro . '%');
-                   })
-                   ->orderBy('direccions.id');
-               
+
+        $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio', 'departamentos.id AS departamento_id', 'departamentos.nombre AS departamento_nombre')
+            ->join('municipios', 'direccions.municipio_id', '=', 'municipios.id')
+            ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
+            ->where(function ($query) use ($filtro) {
+                $query->where('direccions.calle', 'like', '%' . $filtro . '%')
+                    ->orWhere('direccions.colonia', 'like', '%' . $filtro . '%')
+                    ->orWhere('identificador_casa', 'like', '%' . $filtro . '%')
+                    ->orWhere('apto_local', 'like', '%' . $filtro . '%')
+                    ->orWhere('municipios.nombre', 'like', '%' . $filtro . '%');
+            })
+            ->orderBy('direccions.id');
+
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual
@@ -51,7 +50,7 @@ class DireccionesController extends Controller
         return response()->json([
             'detalle' => $detalle,
             'paginacion' => $paginacion,
-            ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
+        ], 200)->setEncodingOptions(JSON_NUMERIC_CHECK);
     }
     // La operación de Create [C]RUD
     public function AgregarDirecciones(Request $request)
@@ -68,31 +67,101 @@ class DireccionesController extends Controller
         $direcciones->municipio_id = $request->municipio_id;
         // Guardando la informacion
         $direcciones->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($direcciones)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
     // La operación de Update CR[U]D
     public function ActualizarDirecciones(Request $request)
     {
         $this->validacion($request);
         $direcciones = Direccion::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'calle',
+            'colonia',
+            'identificador_casa',
+            'apto_local',
+            'municipio_id',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($direcciones->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $direcciones->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $direcciones->calle = $request->calle;
         $direcciones->colonia = $request->colonia;
         $direcciones->identificador_casa = $request->identificador_casa;
         $direcciones->apto_local = $request->apto_local;
         $direcciones->municipio_id = $request->municipio_id;
         $direcciones->save();
-    }
-     // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
-     public function EliminarDirecciones(Request $request)
-     {
-         $direcciones = Direccion::find($request->id);
-         $direcciones->delete();
-     }
 
-     public function consultar_id_nombre()
-     {
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($direcciones)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
+    }
+    // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
+    public function EliminarDirecciones(Request $request)
+    {
+        $direcciones = Direccion::find($request->id);
+        $direcciones->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($direcciones)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
+    }
+
+    public function consultar_id_nombre()
+    {
         $datos = Direccion::select(DB::raw('id, identificador_casa || \', \' || apto_local || \', \' || calle || \', \' || colonia as name'))->get();
-         return response()->json($datos, 200);
-     }
+        return response()->json($datos, 200);
+    }
 
     /* METODOS INTERNOS con camelPascal */
     // Validacion de campos con Laravel

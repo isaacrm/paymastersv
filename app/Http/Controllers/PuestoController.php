@@ -6,6 +6,8 @@ use App\Models\Puesto;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class PuestoController extends Controller
 {
@@ -72,6 +74,17 @@ class PuestoController extends Controller
         $puesto->superior_id = $request->superior_id;
         // Guardando la informacion
         $puesto->save();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($puesto)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
+        exit();
     }
 
     /**
@@ -97,12 +110,64 @@ class PuestoController extends Controller
     {
         $this->validacion($request);
         $puesto = Puesto::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'nombre',
+            'nro_plazas',
+            'salario_desde',
+            'salario_hasta',
+            'superior_id',
+        ];
+
+        $atributosCambiados = [];
+
+        foreach ($atributos as $atributo) {
+            if ($puesto->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $puesto->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $puesto->nombre = $request->nombre;
         $puesto->nro_plazas = $request->nro_plazas;
         $puesto->salario_desde = $request->salario_desde;
         $puesto->salario_hasta = $request->salario_hasta;
         $puesto->superior_id = $request->superior_id;
         $puesto->save();
+
+
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($puesto)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     /**
@@ -112,6 +177,16 @@ class PuestoController extends Controller
     {
         $puesto = Puesto::find($request->id);
         $puesto->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($puesto)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function consultarPuestos()

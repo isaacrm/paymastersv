@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
+use App\Models\User;
 
 class TipoDocumentoController extends Controller
 {
@@ -55,15 +57,71 @@ class TipoDocumentoController extends Controller
         $tipo_documentos->longitud = $request->longitud;
         // Guardando la informacion
         $tipo_documentos->save();
+
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($tipo_documentos)
+            ->log("Creación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
     // La operación de Update CR[U]D
     public function ActualizarTipoDocumentos(Request $request)
     {
         $this->validacion($request);
         $tipo_documentos = TipoDocumento::find($request->id);
+
+
+        $atributosCambiados = []; // Array para almacenar los atributos que han cambiado
+
+        $atributos = [
+            'nombre',
+            'longitud',
+        ];
+
+        foreach ($atributos as $atributo) {
+            if ($tipo_documentos->$atributo != $request->$atributo) {
+                $atributosCambiados[$atributo] = [
+                    'anterior' => $tipo_documentos->$atributo,
+                    'actual' => $request->$atributo,
+                ];
+            }
+        }
+
+
         $tipo_documentos->nombre = $request->nombre;
         $tipo_documentos->longitud = $request->longitud;
         $tipo_documentos->save();
+
+        $user = User::find($request->user_id);
+        if ($atributosCambiados != []) {
+            foreach ($atributosCambiados as $atributo => $valores) {
+                $valorAnterior = $valores['anterior'];
+                $valorActual = $valores['actual'];
+
+                activity()
+                    ->causedBy($user)
+                    ->performedOn($tipo_documentos)
+                    ->withProperties([
+                        'atributo' => $atributo,
+                        'valor_anterior' => $valorAnterior,
+                        'valor_actual' => $valorActual,
+                    ])
+                    ->log("Actualización");
+                //->log("Editado el atributo '$atributo'. Valor anterior: '$valorAnterior'. Valor actual: '$valorActual'");
+            }
+
+            $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+            $lastActivity->causer; // Retorna el modelo que causó la actividad
+
+            $atributoCambiado = $lastActivity->properties['atributo']; // Obtener el atributo cambiado
+            $valorAnterior = $lastActivity->properties['valor_anterior']; // Obtener el valor anterior del atributo
+            $valorActual = $lastActivity->properties['valor_actual']; // Obtener el valor actual del atributo
+        }
     }
 
     // La operación de Delete CRU[D]. En estas tablas pequeñas se eliminara todo, en las importantes sólo se cambiará de estado a false
@@ -71,6 +129,16 @@ class TipoDocumentoController extends Controller
     {
         $tipo_documentos = TipoDocumento::find($request->id);
         $tipo_documentos->delete();
+
+        //Bitacora
+        $user = User::find($request->user_id);
+        activity()
+            ->causedBy($user)
+            ->performedOn($tipo_documentos)
+            ->log("Eliminación");
+
+        $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
+        $lastActivity->causer; // Retorna el modelo que causó la actividad
     }
 
     public function consultar_id_nombre()

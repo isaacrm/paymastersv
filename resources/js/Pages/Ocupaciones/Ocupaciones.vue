@@ -4,9 +4,7 @@
       <q-card class="my-card">
         <q-card-section class="ml-6">
           <div class="text-h6">{{ nombres.mayus }}</div>
-          <div class="text-subtitle">
-            Registro de las {{ nombres.minus }}.
-          </div>
+          <div class="text-subtitle">Registro de las {{ nombres.minus }}.</div>
         </q-card-section>
         <q-card-section>
           <div class="row">
@@ -56,40 +54,40 @@
         </template>
         <template v-slot:top-left>
           <div class="q-gutter-sm">
-          <q-btn
-            outline
-            rounded
-            color="primary"
-            label="Guardar"
-            icon="add"
-            @click="guardar"
-          ></q-btn>
-          <q-btn
-            outline
-            rounded
-            color="danger"
-            label="Cancelar"
-            icon="cancel"
-            @click="cancelar"
-          ></q-btn>
+            <q-btn
+              outline
+              rounded
+              color="primary"
+              label="Guardar"
+              icon="add"
+              @click="guardar($page.props.auth.user.id)"
+            ></q-btn>
+            <q-btn
+              outline
+              rounded
+              color="danger"
+              label="Cancelar"
+              icon="cancel"
+              @click="cancelar"
+            ></q-btn>
           </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
             <div class="q-gutter-sm">
-            <q-btn
-              round
-              color="warning"
-              icon="edit"
-              class="mr-2"
-              @click="editar(props.row)"
-            ></q-btn>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="confirmarEliminar(props.row.id, props.row.nombre)"
-            ></q-btn>
+              <q-btn
+                round
+                color="warning"
+                icon="edit"
+                class="mr-2"
+                @click="editar(props.row)"
+              ></q-btn>
+              <q-btn
+                round
+                color="negative"
+                icon="delete"
+                @click="confirmarEliminar(props.row.id, props.row.nombre)"
+              ></q-btn>
             </div>
           </q-td>
         </template>
@@ -112,7 +110,7 @@
               flat
               label="Sí"
               color="primary"
-              @click="eliminar"
+              @click="eliminar($page.props.auth.user.id)"
               v-close-popup
             />
           </q-card-actions>
@@ -187,9 +185,10 @@ const cancelar = () => {
 };
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
   submitted.value = true;
   errores.value = {};
+  datos.value.user_id = user_id;
   // Actualizar
   if (datos.value.id) {
     await axios
@@ -244,9 +243,10 @@ const confirmarEliminar = (id, nombre) => {
   confirmarEliminacion.value = true;
 };
 
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+  datos.value.user_id = user_id;
   await axios
-    .post(`/api/${nombres.link}_eliminar/` + datos.value.id)
+    .post(`/api/${nombres.link}_eliminar/` + datos.value.id, datos.value)
     .then((response) => {
       reiniciarValores();
       $q.notify({
