@@ -588,7 +588,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos actualizado.",
+          message: "Empleado actualizado.",
         });
       })
       .catch((e) => {
@@ -597,7 +597,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos, favor revisar los datos.",
+          message: "Error al agregar el empleado, favor revisar los datos.",
         });
       });
   } else {
@@ -607,7 +607,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos guardado.",
+          message: "Empleado guardado.",
         });
       })
       .catch((e) => {
@@ -616,7 +616,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos, favor revisar los datos.",
+          message: "Error al agregar el empleado, favor revisar los datos.",
         });
       });
   }
@@ -682,13 +682,13 @@ const eliminar = async (user_id) => {
       reiniciarValores();
       $q.notify({
         type: "positive",
-        message: "datos eliminado.",
+        message: "Empleado eliminado.",
       });
     })
     .catch((e) => {
       $q.notify({
         type: "negative",
-        message: "Error al eliminar el datos.",
+        message: "Error al eliminar el empleado.",
       });
     });
 };

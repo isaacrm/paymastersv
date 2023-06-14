@@ -10,56 +10,45 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="direccion.calle" class="full-width"
-                                    label="Calle" :error-message="errores.calle && errores.calle[0]"
-                                    :error="hayError(errores.calle)" autofocus/>
+                                <q-input filled bottom-slots v-model="direccion.calle" class="full-width" label="Calle"
+                                    :error-message="errores.calle && errores.calle[0]" :error="hayError(errores.calle)"
+                                    autofocus />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="direccion.colonia"
-                                    class="full-width" label="Colonia"
+                                <q-input filled bottom-slots v-model="direccion.colonia" class="full-width" label="Colonia"
                                     :error-message="errores.colonia && errores.colonia[0]"
                                     :error="hayError(errores.colonia)" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="direccion.identificador_casa"
-                                    class="full-width" label="Identificador de casa"
+                                <q-input filled bottom-slots v-model="direccion.identificador_casa" class="full-width"
+                                    label="Identificador de casa"
                                     :error-message="errores.identificador_casa && errores.identificador_casa[0]"
                                     :error="hayError(errores.identificador_casa)" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="direccion.apto_local" type="number"
-                                    class="full-width" label="Número de Apartamento o Local"
+                                <q-input filled bottom-slots v-model="direccion.apto_local" type="number" class="full-width"
+                                    label="Número de Apartamento o Local"
                                     :error-message="errores.apto_local && errores.apto_local[0]"
                                     :error="hayError(errores.apto_local)" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="direccion.departamento_id" class="full-width"
-                                    :options="departamentos"
-                                    label="Departamento"
-                                    emit-value
-                                    map-options
-                                    option-label="nombre"
-                                    option-value="id" 
-                                    @update:model-value="cargarMunicipios"/>
+                                <q-select v-model="direccion.departamento_id" class="full-width" :options="departamentos"
+                                    label="Departamento" emit-value map-options option-label="nombre" option-value="id"
+                                    @update:model-value="cargarMunicipios" />
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-select v-model="direccion.municipio_id" class="full-width"
-                                    :options="municipios"
-                                    label="Municipios"
-                                    emit-value
-                                    map-options
-                                    option-label="nombre"
-                                    option-value="id"
+                                <q-select v-model="direccion.municipio_id" class="full-width" :options="municipios"
+                                    label="Municipios" emit-value map-options option-label="nombre" option-value="id"
                                     :error-message="errores.municipio_id && errores.municipio_id[0]"
                                     :error="hayError(errores.municipio_id)" />
                             </q-item>
@@ -81,7 +70,8 @@
                 </template>
                 <template v-slot:top-left>
                     <div class="q-gutter-sm">
-                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add"
+                            @click="guardar($page.props.auth.user.id)"></q-btn>
                         <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
                     </div>
                 </template>
@@ -90,7 +80,7 @@
                         <div class="q-gutter-sm">
                             <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                             <q-btn round color="negative" icon="delete"
-                            @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                                @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
                         </div>
                     </q-td>
                 </template>
@@ -145,6 +135,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
+    sortBy: 'calle', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -173,7 +165,7 @@ onMounted(async () => {
     await generarTabla({ pagination: pagination.value, filter: filter.value })
 })
 
-onMounted(async() =>{
+onMounted(async () => {
     try {
         const response = await axios.get('/api/data_departamentos')
         departamentos.value = response.data
@@ -185,9 +177,9 @@ onMounted(async() =>{
 
 const cargarMunicipios = async () => {
     //direccion.value.municipio_id = null
-    if (direccion.value.departamento_id){
+    if (direccion.value.departamento_id) {
         try {
-            const response = await axios.get('/api/data_municipios/'+ direccion.value.departamento_id)
+            const response = await axios.get('/api/data_municipios/' + direccion.value.departamento_id)
             municipios.value = response.data
         } catch (error) {
             console.log(error)
@@ -235,7 +227,7 @@ const guardar = async (user_id) => {
     // Actualizar
     if (direccion.value.id) {
         await axios
-            .post("/api/actualizar_direccion",direccion.value)
+            .post("/api/actualizar_direccion", direccion.value)
             .then((response) => {
                 reiniciarValores()
                 // Mensaje de alerta
@@ -337,7 +329,7 @@ const eliminar = async (user_id) => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca
-    const { page, rowsPerPage } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
     // Obteniendo la tabla de datos
@@ -346,7 +338,9 @@ const generarTabla = async (props) => {
             params: {
                 page,
                 rowsPerPage,
-                filter
+                filter,
+                sortBy,
+                descending: descending ? 0 : 1
             }
         })
         .then(response => {
@@ -355,6 +349,8 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+            pagination.value.sortBy = response.data.paginacion.ordenarPor
+            pagination.value.descending = descending
         })
         .catch(error => {
             errored.value = true

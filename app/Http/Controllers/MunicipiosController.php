@@ -15,6 +15,8 @@ class MunicipiosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending; //true es descendente (mayor a menor) false es ascendente (menor a mayor). False default
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
         $query = Municipio::select('municipios.*', 'departamentos.nombre AS nombre_departamento')
             ->join('departamentos', 'municipios.departamento_id', '=', 'departamentos.id')
@@ -22,8 +24,8 @@ class MunicipiosController extends Controller
                 $query->where('municipios.nombre', 'like', '%' . $filtro . '%')
                     ->orWhere('departamentos.nombre', 'like', '%' . $filtro . '%');
             })
-            ->orderBy('municipios.id');
-        $tuplas = $query->count();
+            ->orderBy('municipios.nombre', $descendente ? 'desc' : 'asc');
+            $tuplas = $query->count();
 
         // Obtener los datos de la página actual
         $detalle = $query->skip(($pagina - 1) * $filasPorPagina)
@@ -35,7 +37,9 @@ class MunicipiosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
+
         ];
 
         // El json que se manda a la vista para poder visualizar la información

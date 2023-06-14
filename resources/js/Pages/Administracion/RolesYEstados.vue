@@ -10,7 +10,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
+                                <q-input filled bottom-slots v-model="usuarios.name" class="full-width"
                                     readonly
                                     label="Usuario"/>
                             </q-item>
@@ -64,9 +64,9 @@
                     <q-td :props="props">
                         <div class="q-gutter-sm">
                             <q-btn round color="positive" icon="check_circle" v-if="($page.props.auth.user.loggedIn && !props.row.estado)"
-                            @click="confirmarBan(props.row.id, props.row.user_name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
+                            @click="confirmarBan(props.row.id, props.row.name, $page.props.auth.user.id)"><q-tooltip anchor="center left" self="center right" class="bg-positive">Activo</q-tooltip></q-btn>
                             <q-btn round color="negative" icon="block" v-if="(props.row.estado)"
-                            @click="confirmarUnban(props.row.id, props.row.user_name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
+                            @click="confirmarUnban(props.row.id, props.row.name)"><q-tooltip anchor="center left" self="center right" class="bg-negative">Baneado</q-tooltip></q-btn>
                         </div>
                     </q-td>
                 </template>
@@ -95,7 +95,7 @@
                 <q-card>
                     <q-card-section class="row items-center">
                         <q-avatar icon="warning" color="red" text-color="white" />
-                        <span class="q-ml-sm">¿Desea activar al usuario {{ nombreRegistroBan }}?</span>
+                        <span class="q-ml-sm">¿Desea activar al usuario {{ nombreRegistroDesban }}?</span>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -161,8 +161,8 @@ const pagination = ref({
 
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
-    { name: 'user_name', align: 'left', label: 'Usuario', field: 'user_name', sortable: false },
-    { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: false },
+    { name: 'name', align: 'left', label: 'Usuario', field: 'name', sortable: true },
+    { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: true },
     { 
         name: 'roles', 
         align: 'left', 
@@ -214,7 +214,7 @@ const cancelar = () => {
 
 }
 
-const confirmarBan = (id, user_name, user_active_id) => {
+const confirmarBan = (id, name, user_active_id) => {
     if(user_active_id == id){
         $q.notify(
             {
@@ -225,14 +225,14 @@ const confirmarBan = (id, user_name, user_active_id) => {
         return;
     }
     usuarios.value.id = id
-    nombreRegistroBan.value = user_name
+    nombreRegistroBan.value = name
     confirmarBaneo.value = true
 
 }
 
-const confirmarUnban = (id, user_name) => {
+const confirmarUnban = (id, name) => {
     usuarios.value.id = id
-    nombreRegistroDesban.value = user_name
+    nombreRegistroDesban.value = name
     confirmarDesbaneo.value = true
 
 }

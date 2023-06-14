@@ -47,7 +47,7 @@ class JetstreamServiceProvider extends ServiceProvider
                 $user->save();
                 return $user;
             } else {
-                if ($user->email != 'sadmin@admin.com' && $user->failed_login_attempts >= 2) {
+                if ($user && $user->email != 'sadmin@admin.com' && $user->failed_login_attempts >= 2) {
                     $user->ban();
                     throw new TooManyRequestsHttpException(429, 'Too many login attempts. Please try again later.');
                 }

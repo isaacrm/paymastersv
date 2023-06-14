@@ -223,7 +223,7 @@ const guardar = async () => {
                 // Mensaje de alerta
                 $q.notify({
                     type: "positive",
-                    message: "datos actualizado.",
+                    message: "Detalle de planilla actualizada.",
                 });
             })
             .catch((e) => {
@@ -234,7 +234,7 @@ const guardar = async () => {
                 // Mensaje de alerta
                 $q.notify({
                     type: "negative",
-                    message: "Error al agregar el datos.",
+                    message: "Error al agregar el detalle de planilla.",
                 });
             });
     }
@@ -246,7 +246,7 @@ const guardar = async () => {
                 reiniciarValores();
                 $q.notify({
                     type: "positive",
-                    message: "datos guardado.",
+                    message: "Detalle de planilla guardado.",
                 });
             })
             .catch((e) => {
@@ -255,7 +255,7 @@ const guardar = async () => {
                 }
                 $q.notify({
                     type: "negative",
-                    message: "Error al agregar el datos.",
+                    message: "Error al agregar el detalle de planilla.",
                 });
             });
     }
@@ -280,13 +280,13 @@ const eliminar = async () => {
             reiniciarValores();
             $q.notify({
                 type: "positive",
-                message: "datos eliminado.",
+                message: "Detalle de planilla eliminado.",
             });
         })
         .catch((e) => {
             $q.notify({
                 type: "negative",
-                message: "Error al eliminar el datos.",
+                message: "Error al eliminar el detalle de planilla.",
             });
         });
 };

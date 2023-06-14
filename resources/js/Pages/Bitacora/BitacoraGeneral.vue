@@ -38,7 +38,6 @@ const $q = useQuasar() // Para mensajes de exito o error
 const detalleTabla = ref()
 const submitted = ref(false) // Para comprobar si se ha dado click en los botones de operaciones
 const errored = ref(false)
-const departamento = ref({}) // El objeto que se enviara mediante el request
 const confirmarEliminacion = ref(false) // Para modal de eliminacion
 const nombreRegistroEliminar = ref('') // Para que se muestre el nombre en el modal de eliminacion
 
@@ -107,7 +106,7 @@ const columns = [
             return `${valor_actual}`;
         }
     },
-    { name: 'formatted_updated_at', align: 'left', label: 'Actualizado', field: 'formatted_updated_at', sortable: true },
+    { name: 'formatted_updated_at', align: 'center', label: 'Fecha', field: 'formatted_updated_at', sortable: true },
 ]
 
 /* METODOS */

@@ -10,9 +10,9 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <q-item>
-                                <q-input filled bottom-slots v-model="usuarios.user_name" class="full-width"
-                                    label="Nombre" :error-message="errores.user_name && errores.user_name[0]"
-                                    :error="hayError(errores.user_name)" autofocus/>
+                                <q-input filled bottom-slots v-model="usuarios.name" class="full-width"
+                                    label="Nombre" :error-message="errores.name && errores.name[0]"
+                                    :error="hayError(errores.name)" autofocus/>
                             </q-item>
                         </div>
                         <div class="col-12 col-md-6">
@@ -98,6 +98,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
+    sortBy: 'id', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -113,9 +115,18 @@ const pagination = ref({
 // Definiendo las columnas que contendra la tabla. Esto es customizable
 const columns = [
     { name: 'id', align: 'left', label: 'Identificador', field: 'id', sortable: true },
-    { name: 'user_name', align: 'left', label: 'Nombre', field: 'user_name', sortable: true },
+    { name: 'name', align: 'left', label: 'Nombre', field: 'name', sortable: true },
     { name: 'email', align: 'left', label: 'Correo', field: 'email', sortable: true },
-    { name: 'email_verified', align: 'left', label: 'Estado Correo', field: 'email_verified', sortable: true },
+    { name: 'email_verified_at', 
+      align: 'left', label: 'Estado Correo', field: 'email_verified_at', sortable: true, 
+      style: (row) => {
+            if (row.email_verified_at === 'Pendiente') {
+                return { color: 'red', fontStyle: 'italic', fontWeight: 'bold' };
+            } else {
+                return { color: 'green', fontWeight: 'bold' };
+            }
+        }  
+    },
     { name: 'operaciones', align: 'center', label: 'Edición' }
 ]
 
@@ -161,7 +172,7 @@ const guardar = async () => {
     if (usuarios.value.id) {
         const usuarioSeleccionado = detalleTabla.value.find(user => user.id === usuarios.value.id)
         if (usuarioSeleccionado) {
-            if (usuarioSeleccionado.user_name === usuarios.value.user_name &&
+            if (usuarioSeleccionado.name === usuarios.value.name &&
                 usuarioSeleccionado.email === usuarios.value.email &&
                 usuarioSeleccionado.password === usuarios.value.password &&
                 usuarioSeleccionado.confirmarContraseña === usuarios.value.confirmarContraseña) {
@@ -270,10 +281,12 @@ const editar = (editarUsuarios, user_active_id) => {
     errores.value = {};
 }
 
+
+
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca
-    const { page, rowsPerPage } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
     // Obteniendo la tabla de datos
@@ -282,7 +295,9 @@ const generarTabla = async (props) => {
             params: {
                 page,
                 rowsPerPage,
-                filter
+                filter,
+                sortBy,
+                descending: descending ? 0 : 1
             }
         })
         .then(response => {
@@ -291,6 +306,8 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+            pagination.value.sortBy = response.data.paginacion.ordenarPor
+            pagination.value.descending = descending
         })
         .catch(error => {
             errored.value = true

@@ -187,7 +187,7 @@ const guardar = async (user_id) => {
                 $q.notify(
                     {
                         type: 'positive',
-                        message: 'datos actualizado.'
+                        message: 'Unidad actualizada.'
                     }
                 )
             })
@@ -200,7 +200,7 @@ const guardar = async (user_id) => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el datos.'
+                        message: 'Error al agregar la unidad.'
                     }
                 )
             })
@@ -212,7 +212,7 @@ const guardar = async (user_id) => {
             $q.notify(
                 {
                     type: 'positive',
-                    message: 'datos guardado.'
+                    message: 'Unidad guardada.'
                 }
             )
         })
@@ -223,7 +223,7 @@ const guardar = async (user_id) => {
                 $q.notify(
                     {
                         type: 'negative',
-                        message: 'Error al agregar el datos.'
+                        message: 'Error al agregar la unidad.'
                     }
                 )
             })
@@ -255,7 +255,7 @@ const eliminar = async (user_id) => {
         $q.notify(
             {
                 type: 'positive',
-                message: 'datos eliminado.'
+                message: 'Unidad eliminada.'
             }
         )
     })
@@ -263,7 +263,7 @@ const eliminar = async (user_id) => {
             $q.notify(
                 {
                     type: 'negative',
-                    message: 'Error al eliminar el datos.'
+                    message: 'Error al eliminar la unidad.'
                 }
             )
         })

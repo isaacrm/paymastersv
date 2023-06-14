@@ -54,47 +54,50 @@ class RolController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
 
-        $roles = Role::with('permissions:id,name')->get();
-
-        $detalle = [];
-
-        foreach ($roles as $rol) {
-            $rolID = $rol->id;
-            $rolName = $rol->name;
-            $permisos = $rol->permissions->map(function ($permiso) {
-                return [
-                    'id' => $permiso->id,
-                    'name' => $permiso->name
-                ];
-            });
-
-            $detalle[] = [
-                'id' => $rolID,
-                'role_name' => $rolName,
-                'permissions' => $permisos
-            ];
-        }
+        $query = Role::with('permissions:id,name');
 
         // Filtrar por el filtro ingresado
         if ($filtro) {
-            $detalle = array_filter($detalle, function ($item) use ($filtro) {
-                return str_contains($item['role_name'], $filtro);
+            $query->where(function ($q) use ($filtro) {
+                $q->where('name', 'like', '%' . $filtro . '%')
+                ->orWhereHas('permissions', function ($q) use ($filtro) {
+                    $q->where('name', 'like', '%' . $filtro . '%');
+                });
             });
-          }
+        }
+        
+        if ($ordenarPor) {
+            $query->orderBy($ordenarPor, $descendente ? 'desc' : 'asc');
+        }
 
-        $tuplas = count($detalle);
+        $totalRoles = $query->count();
 
-        // Paginación
-        $inicio = ($pagina - 1) * $filasPorPagina;
-        $detallePaginado = array_slice($detalle, $inicio, $filasPorPagina);
+        $rolesPaginados = $query->paginate($filasPorPagina);
 
+        // Transformar los usuarios en el formato deseado
+        $detallePaginado = $rolesPaginados->map(function ($rol) {
+            return [
+                'id' => $rol->id,
+                'name' => $rol->name,
+                'permissions' => $rol->permissions->map(function ($permiso) {
+                    return [
+                        'id' => $permiso->id,
+                        'name' => $permiso->name,
+                    ];
+                }),
+            ];
+        });
+        
         // Información pertinente a la paginación para llamarlos en la vista
         $paginacion = [
-            'tuplas' => $tuplas,
-            'pagina' => $pagina,
+            'tuplas' => $totalRoles,
+            'pagina' => $rolesPaginados->currentPage(),
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información

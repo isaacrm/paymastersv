@@ -199,7 +199,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos actualizado.",
+          message: "Génedor actualizado.",
         });
       })
       .catch((e) => {
@@ -208,7 +208,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el género.",
         });
       });
   } else {
@@ -218,7 +218,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos guardado.",
+          message: "Género guardado.",
         });
       })
       .catch((e) => {
@@ -227,7 +227,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el género.",
         });
       });
   }
@@ -253,13 +253,13 @@ const eliminar = async (user_id) => {
       reiniciarValores();
       $q.notify({
         type: "positive",
-        message: "datos eliminado.",
+        message: "Género eliminado.",
       });
     })
     .catch((e) => {
       $q.notify({
         type: "negative",
-        message: "Error al eliminar el datos.",
+        message: "Error al eliminar el Género.",
       });
     });
 };

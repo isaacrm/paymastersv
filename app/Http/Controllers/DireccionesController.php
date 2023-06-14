@@ -17,6 +17,8 @@ class DireccionesController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
 
         $query = Direccion::select('direccions.*', 'municipios.nombre AS nombre_municipio', 'departamentos.id AS departamento_id', 'departamentos.nombre AS departamento_nombre')
@@ -29,7 +31,7 @@ class DireccionesController extends Controller
                     ->orWhere('apto_local', 'like', '%' . $filtro . '%')
                     ->orWhere('municipios.nombre', 'like', '%' . $filtro . '%');
             })
-            ->orderBy('direccions.id');
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
 
         $tuplas = $query->count();
 
@@ -43,7 +45,9 @@ class DireccionesController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
+
         ];
 
         // El json que se manda a la vista para poder visualizar la información

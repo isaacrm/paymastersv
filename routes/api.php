@@ -49,7 +49,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /* BITACORA */
 // Ver
-Route::get('/bitacora/tabla', [BitacoraController::class, 'TablaBitacora']);
 Route::get('/bitacora_general/tabla', [BitacoraGeneralController::class, 'TablaBitacora']);
 
 //Administración

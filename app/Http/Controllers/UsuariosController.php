@@ -30,62 +30,69 @@ class UsuariosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
 
-        $usuarios = User::with('roles:id,name')->get();
-
-        $detalle = [];
-
-        foreach ($usuarios as $usuario) {
-            $usuarioID = $usuario->id;
-            $usuarioName = $usuario->name;
-            $usuarioCorreo = $usuario->email;
-            $email_verified = $usuario->email_verified_at;
-            $usuarioBaneo = $usuario->banned_at;
-            $roles = $usuario->roles->map(function ($rol) {
-                return [
-                    'id' => $rol->id,
-                    'name' => $rol->name,
-                ];
-            });
-
-            $verificacionEmail = $email_verified ? "Verificado" : "Pendiente";
-
-            $detalle[] = [
-                'id' => $usuarioID,
-                'user_name' => $usuarioName,
-                'email' => $usuarioCorreo,
-                'email_verified' => $verificacionEmail,
-                'roles' => $roles,
-                'estado' => $usuarioBaneo
-            ];
-        }
+        $query = User::with('roles:id,name');
 
         // Filtrar por el filtro ingresado
         if ($filtro) {
-            $detalle = array_filter($detalle, function ($item) use ($filtro) {
-                $userMatches = str_contains($item['user_name'], $filtro);
-                $userMatches = str_contains($item['email'], $filtro);
-                $roleMatches = str_contains($item['roles'], $filtro); // Agregar esta línea para filtrar por el campo "role"
-
-                return $userMatches || $roleMatches; // Devolver true si alguna de las condiciones se cumple
+            $query->where(function ($q) use ($filtro) {
+                $q->where('name', 'like', '%' . $filtro . '%')
+                    ->orWhere('email', 'like', '%' . $filtro . '%')
+                    ->orWhere(function ($q) use ($filtro) {
+                        if ($filtro === 'Pendiente') {
+                            $q->whereNull('email_verified_at');
+                        } elseif ($filtro === 'Verificado') {
+                            $q->whereNotNull('email_verified_at');
+                        }
+                    })
+                    ->orWhereHas('roles', function ($q) use ($filtro) {
+                        $q->where('name', 'like', '%' . $filtro . '%');
+                    });
             });
-          }
+        }
 
-        $tuplas = count($detalle);
+        // Ordenar los usuarios si se especifica el ordenamiento
+        if ($ordenarPor) {
+            $query->orderBy($ordenarPor, $descendente ? 'desc' : 'asc');
+        }
 
-        // Paginación
-        $inicio = ($pagina - 1) * $filasPorPagina;
-        $detallePaginado = array_slice($detalle, $inicio, $filasPorPagina);
+        // Obtener el total de usuarios antes de la paginación
+        $totalUsuarios = $query->count();
 
-        // Información pertinente a la paginación para llamarlos en la vista
+        // Aplicar la paginación
+        $usuariosPaginados = $query->paginate($filasPorPagina);
+
+        // Transformar los usuarios en el formato deseado
+        $detallePaginado = $usuariosPaginados->map(function ($usuario) {
+            $verificacionEmail = $usuario->email_verified_at ? "Verificado" : "Pendiente";
+
+            return [
+                'id' => $usuario->id,
+                'name' => $usuario->name,
+                'email' => $usuario->email,
+                'email_verified_at' => $verificacionEmail,
+                'roles' => $usuario->roles->map(function ($rol) {
+                    return [
+                        'id' => $rol->id,
+                        'name' => $rol->name,
+                    ];
+                }),
+                'estado' => $usuario->banned_at
+            ];
+        });
+
+        // Información pertinente a la paginación para pasar a la vista
         $paginacion = [
-            'tuplas' => $tuplas,
-            'pagina' => $pagina,
+            'tuplas' => $totalUsuarios,
+            'pagina' => $usuariosPaginados->currentPage(),
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
-        // El json que se manda a la vista para poder visualizar la información
+        // El JSON que se envía a la vista para mostrar la información
         return response()->json([
             'detalle' => $detallePaginado,
             'paginacion' => $paginacion,
@@ -139,7 +146,7 @@ class UsuariosController extends Controller
         
         $input = $request->all();
         $user = User::create([
-            'name' => $input['user_name'],
+            'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);
@@ -162,7 +169,7 @@ class UsuariosController extends Controller
 
         // Validar los datos
         $this->validate($request, [
-            'user_name' => 'required|max:255',
+            'name' => 'required|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)], // el correo puede no ser único si es para ese usuario 
             'password' => 'same:confirmarContraseña|min:8', // Nueva regla para la contraseña, no pedimos que sea obligatoria mientras se edita
         ]);
@@ -183,7 +190,7 @@ class UsuariosController extends Controller
         } elseif ($input['email'] !== $user->email) {
             // Actualizar el correo y enviar la notificación de verificación de correo
             $user->forceFill([
-                'name' => $input['user_name'],
+                'name' => $input['name'],
                 'email' => $input['email'],
             ]);
     
@@ -197,7 +204,7 @@ class UsuariosController extends Controller
         } else {
             // Si no se cambia el correo ni la contraseña, simplemente actualizar el nombre
             $user->forceFill([
-                'name' => $input['user_name'],
+                'name' => $input['name'],
             ]);
         }
         $user->save();
@@ -211,7 +218,7 @@ class UsuariosController extends Controller
     protected function updateVerifiedUser(User $user, array $input): void
     {
         $user->forceFill([
-            'name' => $input['user_name'],
+            'name' => $input['name'],
             'email' => $input['email'],
             'email_verified_at' => null,
         ])->save();
@@ -224,7 +231,7 @@ class UsuariosController extends Controller
     {
         // La de anexos va en su propio método porque solamente es necesario verificarlo si se sube un archivo.
         $request->validate([
-            'user_name' => 'required|max:255',
+            'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users|same:password',// el adm pone de contra el correo del usuario
             'password' => 'required|same:confirmarContraseña', //lo coloque así porque necesito que sea requerido e igual al campo de confirmar contraseña
         ]);

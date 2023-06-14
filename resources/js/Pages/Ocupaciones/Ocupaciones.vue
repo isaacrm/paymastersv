@@ -197,7 +197,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos actualizado.",
+          message: "Ocupación actualizada.",
         });
       })
       .catch((e) => {
@@ -206,7 +206,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar la ocupación.",
         });
       });
   } else {
@@ -216,7 +216,7 @@ const guardar = async (user_id) => {
         reiniciarValores();
         $q.notify({
           type: "positive",
-          message: "datos guardado.",
+          message: "Ocupación guardada.",
         });
       })
       .catch((e) => {
@@ -225,7 +225,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar la ocupación.",
         });
       });
   }
@@ -251,13 +251,13 @@ const eliminar = async (user_id) => {
       reiniciarValores();
       $q.notify({
         type: "positive",
-        message: "datos eliminado.",
+        message: "Ocupación eliminada.",
       });
     })
     .catch((e) => {
       $q.notify({
         type: "negative",
-        message: "Error al eliminar el datos.",
+        message: "Error al eliminar la ocupación.",
       });
     });
 };

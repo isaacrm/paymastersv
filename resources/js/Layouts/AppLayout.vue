@@ -49,6 +49,22 @@
                             <q-item-label class="text-weight-bold text-black">{{ link.text }}</q-item-label>
                         </q-item-section>
                     </q-item>
+
+                    <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.usuarios')">
+                      <q-separator class="q-mt-md q-mb-xs" />
+                        <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
+                            Usuarios
+                        </q-item-label>
+                        <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
+                            <q-item-section avatar>
+                                <q-icon color="black" :name="link.icon" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{ link.text }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-item-section>
+
                     <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.permisos')">
                       <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
@@ -64,28 +80,14 @@
                             </q-item-section>
                         </q-item>
                     </q-item-section>
+
                     <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.permisos')">
                       <q-separator class="q-mt-md q-mb-xs" />
                         <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
-                            Bitácora
+                            Auditoria
                         </q-item-label>
 
                         <q-item v-for="link in bitacora" :key="link.text" v-ripple clickable :href="link.path">
-                            <q-item-section avatar>
-                                <q-icon color="black" :name="link.icon" />
-                            </q-item-section>
-                            <q-item-section>
-                                <q-item-label>{{ link.text }}</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                    </q-item-section>
-
-                    <q-item-section v-if="$page.props.auth.user.permissions.includes('roles.usuarios')">
-                      <q-separator class="q-mt-md q-mb-xs" />
-                        <q-item-label header class="text-weight-bold text-uppercase text-header-menu">
-                            Usuarios
-                        </q-item-label>
-                        <q-item v-for="link in usuarios_roles" :key="link.text" v-ripple clickable :href="link.path">
                             <q-item-section avatar>
                                 <q-icon color="black" :name="link.icon" />
                             </q-item-section>
@@ -238,12 +240,11 @@ const roles_permisos = [
 ]
 
 const usuarios_roles = [
-    { icon: 'manage_accounts', text: 'Administrar Usuarios', path: '/usuarios'},
+    { icon: 'manage_accounts', text: 'Usuarios', path: '/usuarios'},
     { icon: 'admin_panel_settings', text: 'Roles y Estados', path: '/roles_estados' }
 ]
 
 const bitacora = [
-    { icon: 'update', text: 'Bitácora Empleados', path: '/bitacora'},
     { icon: 'history', text: 'Bitácora General', path: '/bitacora_general'}
 ]
 

@@ -227,7 +227,7 @@ const guardar = async (user_id) => {
         }
         $q.notify({
           type: "negative",
-          message: "Error al agregar el datos.",
+          message: "Error al agregar el estado civil.",
         });
       });
   }

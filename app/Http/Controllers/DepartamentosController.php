@@ -15,12 +15,14 @@ class DepartamentosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
         $query = Departamento::where(function ($query) use ($filtro) {
             $query->where('nombre', 'like', '%' . $filtro . '%')
                 ->orWhere('codigo_iso', 'like', '%' . $filtro . '%');
         })
-            ->orderBy('id');
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual
@@ -33,7 +35,9 @@ class DepartamentosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
+
         ];
 
         // El json que se manda a la vista para poder visualizar la información
