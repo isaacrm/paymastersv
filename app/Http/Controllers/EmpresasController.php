@@ -14,7 +14,20 @@ class EmpresasController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
-        $query = Empresa::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
+        $query = Empresa::where(function($query) use ($filtro){
+            $query->where('nombre', 'like', '%' . $filtro . '%')
+            ->orWhere('nit', 'like', '%' . $filtro . '%')
+            ->orWhere('telefono', 'like', '%' . $filtro . '%')
+            ->orWhere('nrc', 'like', '%' . $filtro . '%')
+            ->orWhere('email', 'like', '%' . $filtro . '%')
+            ->orWhere('sitio_web', 'like', '%' . $filtro . '%')
+            ->orWhere('numero_patronal', 'like', '%' . $filtro . '%')
+            ->orWhere('representante_legal', 'like', '%' . $filtro . '%');
+        })
+        ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
+
         $tuplas = $query->count();
         $detalle = $query->skip(($pagina - 1) * $filasPorPagina)
             ->take($filasPorPagina)
@@ -23,7 +36,8 @@ class EmpresasController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
         return response()->json([
             'detalle' => $detalle,

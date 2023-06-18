@@ -173,6 +173,7 @@ const pagination = ref({
   page: 1,
   rowsPerPage: 5,
   rowsNumber: 0,
+  sortBy: "descripcion"
 });
 // Fin de fijos e imperativos
 // Definiendo las columnas que contendra la tabla. Esto es customizable
@@ -189,6 +190,7 @@ const columns = [
     align: "left",
     label: "Monto",
     field: "monto",
+    sortable: true,
   },
   { name: "operaciones", align: "center", label: "Operaciones" },
 ];
@@ -313,7 +315,7 @@ const eliminar = async () => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
   // No se toca
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
   const filter = props.filter;
   loading.value = true;
   // Obteniendo la tabla de datos
@@ -324,6 +326,8 @@ const generarTabla = async (props) => {
         rowsPerPage,
         filter,
         centro_costos_id: centro_costos_id.value,
+        sortBy,
+        descending: descending ? 0 : 1,
       },
     })
     .then((response) => {
@@ -332,6 +336,8 @@ const generarTabla = async (props) => {
       pagination.value.page = response.data.paginacion.pagina;
       pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina;
       pagination.value.rowsNumber = response.data.paginacion.tuplas;
+      pagination.value.sortBy = response.data.paginacion.ordenarPor;
+      pagination.value.descending = descending;
     })
     .catch((error) => {
       errored.value = true;

@@ -20,7 +20,8 @@
                   class="full-width"
                   label="Nombre del centro de costo:"
                   :error-message="errores.nombre && errores.nombre[0]"
-                  :error="hayError(errores.nombre)" autofocus
+                  :error="hayError(errores.nombre)"
+                  autofocus
                 />
               </q-item>
             </div>
@@ -136,46 +137,46 @@
         </template>
         <template v-slot:top-left>
           <div class="q-gutter-sm">
-          <q-btn
-            outline
-            rounded
-            color="primary"
-            label="Guardar"
-            icon="add"
-            @click="guardar($page.props.auth.user.id)"
-          ></q-btn>
-          <q-btn
-            outline
-            rounded
-            color="danger"
-            label="Cancelar"
-            icon="cancel"
-            @click="cancelar"
-          ></q-btn>
+            <q-btn
+              outline
+              rounded
+              color="primary"
+              label="Guardar"
+              icon="add"
+              @click="guardar($page.props.auth.user.id)"
+            ></q-btn>
+            <q-btn
+              outline
+              rounded
+              color="danger"
+              label="Cancelar"
+              icon="cancel"
+              @click="cancelar"
+            ></q-btn>
           </div>
         </template>
         <template v-slot:body-cell-operaciones="props">
           <q-td :props="props">
             <div class="q-gutter-sm">
-            <q-btn
-              round
-              color="warning"
-              icon="edit"
-              class="mr-2"
-              @click="editar(props.row)"
-            ></q-btn>
-            <q-btn
-              round
-              color="negative"
-              icon="delete"
-              @click="confirmarEliminar(props.row.id, props.row.nombre)"
-            ></q-btn>
-            <q-btn
-              round
-              color="secondary"
-              icon="list"
-              @click="confirmarMovimiento(props.row.id)"
-            ></q-btn>
+              <q-btn
+                round
+                color="warning"
+                icon="edit"
+                class="mr-2"
+                @click="editar(props.row)"
+              ></q-btn>
+              <q-btn
+                round
+                color="negative"
+                icon="delete"
+                @click="confirmarEliminar(props.row.id, props.row.nombre)"
+              ></q-btn>
+              <q-btn
+                round
+                color="secondary"
+                icon="list"
+                @click="confirmarMovimiento(props.row.id)"
+              ></q-btn>
             </div>
           </q-td>
         </template>
@@ -205,7 +206,6 @@
         </q-card>
       </q-dialog>
     </div>
-
   </AppLayout>
 </template>
 
@@ -243,12 +243,8 @@ const loading = ref(false);
 const pagination = ref({
   page: 1,
   rowsPerPage: 5,
-  /* Cuando se usa server side pagination, QTable necesita
-    conocer el "rowsNumber" (Numero total de filas).
-    Por qué?
-    Porque Quasar no tiene forma de saber cuál será
-    la última página sin esta información!
-    Por lo tanto, ahora debemos proporcionarle un "número de filas" nosotros mismos.. */
+  descending:false,
+  sortBy:'nombre',
   rowsNumber: 0,
 });
 // Fin de fijos e imperativos
@@ -428,7 +424,7 @@ const eliminar = async (user_id) => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
   // No se toca
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
   const filter = props.filter;
   loading.value = true;
   // Obteniendo la tabla de datos
@@ -438,6 +434,8 @@ const generarTabla = async (props) => {
         page,
         rowsPerPage,
         filter,
+        sortBy,
+        descending: descending ? 0 : 1,
       },
     })
     .then((response) => {
@@ -446,6 +444,8 @@ const generarTabla = async (props) => {
       pagination.value.page = response.data.paginacion.pagina;
       pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina;
       pagination.value.rowsNumber = response.data.paginacion.tuplas;
+      pagination.value.sortBy = response.data.paginacion.ordenarPor;
+      pagination.value.descending = descending;
     })
     .catch((error) => {
       errored.value = true;

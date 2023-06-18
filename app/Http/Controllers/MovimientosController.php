@@ -20,10 +20,12 @@ class MovimientosController extends Controller
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
         $centro_costos_id = $request->centro_costos_id;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
 
         $query = Movimientos::where('descripcion', 'like', '%' . $filtro . '%')
             ->where('centro_costos_id', '=', $centro_costos_id)
-            ->orderBy('id');
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
 
         $tuplas = $query->count();
 
@@ -37,7 +39,8 @@ class MovimientosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información

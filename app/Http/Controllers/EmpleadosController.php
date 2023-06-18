@@ -21,7 +21,8 @@ class EmpleadosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
-
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
         /*         $query = Empleados::where(function ($query) use ($filtro) {
             $query->where('primer_nombre', 'like', '%' . $filtro . '%');
         })
@@ -56,7 +57,8 @@ class EmpleadosController extends Controller
                     ->orWhere('e.email_personal', 'like', '%' . $filtro . '%')
                     ->orWhere('e.email_profesional', 'like', '%' . $filtro . '%');
             })
-            ->orderBy('e.id');
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
+            //->orderBy('e.id');
 
         $result = $query->get();
 
@@ -71,7 +73,8 @@ class EmpleadosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         return response()->json([

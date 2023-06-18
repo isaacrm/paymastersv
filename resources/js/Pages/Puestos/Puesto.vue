@@ -221,6 +221,7 @@ const pagination = ref({
     la última página sin esta información!
     Por lo tanto, ahora debemos proporcionarle un "número de filas" nosotros mismos.. */
   rowsNumber: 0,
+  sortBy: "nombre",
 });
 // Fin de fijos e imperativos
 // Definiendo las columnas que contendra la tabla. Esto es customizable
@@ -391,7 +392,7 @@ const eliminar = async (user_id) => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
   // No se toca
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
   const filter = props.filter;
   loading.value = true;
   // Obteniendo la tabla de datos
@@ -401,6 +402,8 @@ const generarTabla = async (props) => {
         page,
         rowsPerPage,
         filter,
+        sortBy,
+        descending: descending ? 0 : 1,
       },
     })
     .then((response) => {
@@ -409,6 +412,8 @@ const generarTabla = async (props) => {
       pagination.value.page = response.data.paginacion.pagina;
       pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina;
       pagination.value.rowsNumber = response.data.paginacion.tuplas;
+      pagination.value.sortBy = response.data.paginacion.ordenarPor;
+      pagination.value.descending = descending;
     })
     .catch((error) => {
       errored.value = true;

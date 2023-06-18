@@ -150,6 +150,7 @@ const pagination = ref({
   page: 1,
   rowsPerPage: 5,
   rowsNumber: 0,
+  sortBy:"nombre"
 });
 const columns = [
   {
@@ -265,7 +266,7 @@ const eliminar = async (user_id) => {
 };
 
 const generarTabla = async (props) => {
-  const { page, rowsPerPage } = props.pagination;
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
   const filter = props.filter;
   loading.value = true;
   await axios
@@ -274,6 +275,8 @@ const generarTabla = async (props) => {
         page,
         rowsPerPage,
         filter,
+        sortBy,
+        descending: descending ? 0 : 1,
       },
     })
     .then((response) => {
@@ -281,6 +284,8 @@ const generarTabla = async (props) => {
       pagination.value.page = response.data.paginacion.pagina;
       pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina;
       pagination.value.rowsNumber = response.data.paginacion.tuplas;
+      pagination.value.sortBy = response.data.paginacion.ordenarPor;
+      pagination.value.descending = descending;
     })
     .catch((error) => {
       errored.value = true;

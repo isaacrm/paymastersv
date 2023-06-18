@@ -19,8 +19,21 @@ class CentroDeCostosController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
+        
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = CentroDeCostos::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = CentroDeCostos::where(function ($query) use ($filtro) {
+                $query->where('nombre', 'like', '%' . $filtro . '%')
+                    ->orWhere('mes_del', 'like', '%' . $filtro . '%')
+                    ->orWhere('mes_al', 'like', '%' . $filtro . '%')
+                    ->orWhere('anyo', 'like', '%' . $filtro . '%')
+                    ->orWhere('nombre', 'like', '%' . $filtro . '%')
+                    ->orWhere('presupuesto_inicial', 'like', '%' . $filtro . '%')
+                    ->orWhere('presupuesto_restante', 'like', '%' . $filtro . '%');
+            })
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
+            //->orderBy('id');
         // $query = CentroDeCostos::all()->orderBy('id');
         $tuplas = $query->count();
 
@@ -41,7 +54,8 @@ class CentroDeCostosController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información

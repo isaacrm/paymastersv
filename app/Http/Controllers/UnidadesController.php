@@ -21,6 +21,8 @@ class UnidadesController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
         // $query = Unidades::where('nombre', 'like', '%' . $filtro . '%')->orderBy('id');
         $query = DB::table('unidades as u1')
@@ -28,8 +30,13 @@ class UnidadesController extends Controller
             ->leftJoin('puestos as p', 'u1.superior_id', '=', 'p.id')
             ->leftJoin('centro_de_costos as c', 'u1.centro_costos_id', '=', 'c.id')
             ->select('u1.id', 'u1.nombre', 'u1.superior_id', 'u1.centro_costos_id', 'u1.nivel_organizacional', 'u2.nombre as nivel_organizacional_nombre', 'p.nombre as superior_nombre', 'c.anyo as centro_costos_año', 'c.nombre as centro_costos_nombre')
-            ->where('u1.nombre', 'like', '%' . $filtro . '%')
-            ->orderBy('u1.id');
+            ->where(function ($query) use ($filtro){
+                $query->where('u1.nombre', '%'. $filtro. '%')
+                ->orWhere('u2.nombre', 'like', '%' . $filtro . '%')
+                ->orWhere('c.anyo', 'like', '%' . $filtro . '%')
+                ->orWhere('c.nombre', 'like', '%' . $filtro . '%');
+            })
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
         $tuplas = $query->count();
 
         // Obtener los datos de la página actual
@@ -42,7 +49,8 @@ class UnidadesController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información

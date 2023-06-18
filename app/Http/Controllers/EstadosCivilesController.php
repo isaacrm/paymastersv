@@ -17,11 +17,14 @@ class EstadosCivilesController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
 
         $query = Estados_Civiles::where(function ($query) use ($filtro) {
             $query->where('nombre', 'like', '%' . $filtro . '%');
         })
-            ->orderBy('id');
+            ->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
+
         $tuplas = $query->count();
 
         $detalle = $query->skip(($pagina - 1) * $filasPorPagina)

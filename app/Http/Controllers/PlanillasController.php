@@ -24,8 +24,17 @@ class PlanillasController extends Controller
         $pagina = $request->page;
         $filasPorPagina = $request->rowsPerPage;
         $filtro = $request->filter;
+        $ordenarPor = $request->sortBy;
+        $descendente = $request->descending;
         // Almacenando la consulta en una variable. Se almacena mas o menos algo asi $detalle = [ [], [], [] ]
-        $query = Planillas::where('id', 'like', '%' . $filtro . '%')->orderBy('id');
+        $query = Planillas::where(function ($query) use ($filtro) {
+            $query->where('fecha_generacion', 'like', '%' . $filtro . '%')
+                ->orWhere('mes_periodo', 'like', '%' . $filtro . '%')
+                ->orWhere('anyo_periodo', 'like', '%' . $filtro . '%')
+                ->orWhere('dias_laborales', 'like', '%' . $filtro . '%')
+                ->orWhere('horas_laborales', 'like', '%' . $filtro . '%');
+        })->orderBy($ordenarPor, $descendente ? 'asc' : 'desc');
+
         // $query = CentroDeCostos::all()->orderBy('id');
         $tuplas = $query->count();
 
@@ -45,7 +54,8 @@ class PlanillasController extends Controller
             'tuplas' => $tuplas,
             'pagina' => $pagina,
             'filasPorPagina' => $filasPorPagina,
-            'filtro' => $filtro
+            'filtro' => $filtro,
+            'ordenarPor' => $ordenarPor
         ];
 
         // El json que se manda a la vista para poder visualizar la información
@@ -81,17 +91,17 @@ class PlanillasController extends Controller
         $datos->horas_laborales = $request->horas_laborales;
         $datos->save();
 
-        
+
         //Bitacora
         $user = User::find($request->user_id);
         activity()
-        ->causedBy($user)
-        ->performedOn($datos)
-        ->log("Creación");
-        
+            ->causedBy($user)
+            ->performedOn($datos)
+            ->log("Creación");
+
         $lastActivity = Activity::all()->last(); // Retorna la última actividad registrada
         $lastActivity->causer; // Retorna el modelo que causó la actividad
-        
+
         // Para ejecutar el procedimiento almacenado
         DB::statement('BEGIN pa_detalle_planillas(:p_planilla_id); END;', ['p_planilla_id' => $datos->id]);
     }
