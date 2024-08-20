@@ -16,7 +16,7 @@ Este proyecto consiste en el desarrollo de un sistema de planillas para empresas
   - Gestión de centros de costos
 
 ## Documento base del proyecto
-Dentro del documento se pueden encontrar los alcances, diagramas de procesos de negocio (BPMNs), modelo físico de la base de datos y diagramas de la arquitectura del sistema, puede leer la información en el siguiente **[documento PDF]()**.
+Dentro del documento se pueden encontrar los alcances, diagramas de procesos de negocio (BPMNs), modelo físico de la base de datos y diagramas de la arquitectura del sistema, puede leer la información en el siguiente **[documento PDF](https://drive.google.com/file/d/1xdZkutWmarbF_hyHHxVrdeBDkmnzs30Z/view?usp=sharing)**.
 
 ## Paquetes y Tecnologias utilizadas
 
