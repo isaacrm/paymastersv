@@ -18,6 +18,8 @@
 
 <style>
 .fondo {
-    background-image: linear-gradient(135deg, #0416d7 0%, #ffffff 100%);
+    background-image: linear-gradient(135deg, #4d5f98 0%, #9f3669 100%);
+        /*background: linear-gradient(to right, #4d5f98, #9f3669) !important;*/
+
 }
 </style>

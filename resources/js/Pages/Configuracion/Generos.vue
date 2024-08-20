@@ -10,9 +10,15 @@
                     <div class="row">
                         <div class="col-12 col-md-8">
                             <q-item>
+<<<<<<< HEAD:resources/js/Pages/Configuracion/Generos.vue
                                 <q-input filled bottom-slots v-model="generos.nombre" class="full-width"
                                     label="Género" :error-message="errores.nombre && errores.nombre[0]"
                                     :error="hayError(errores.nombre)" />
+=======
+                                <q-input filled bottom-slots v-model="departamento.nombre" class="full-width"
+                                    label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
+                                    :error="hayError(errores.nombre)" autofocus/>
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8:resources/js/Pages/Direccion/Departamentos.vue
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
@@ -33,13 +39,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -55,7 +66,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -91,6 +102,8 @@ const errores = ref({}) // Para almacenar el array de errores que viene desde La
 const filter = ref('')
 const loading = ref(false)
 const pagination = ref({
+    sortBy: 'nombre', // Se actualiza segun columna de ordenamiento por defecto
+    descending: false, // true para descendente (mayor a menor) false para ascendente (menor a mayor)
     page: 1,
     rowsPerPage: 5,
     /* Cuando se usa server side pagination, QTable necesita
@@ -128,6 +141,11 @@ const reiniciarValores = () => {
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
+const cancelar = () => {
+    departamento.value = {}
+
+}
+
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {
     if (submitted && valor)
@@ -137,9 +155,10 @@ const hayError = (valor) => {
 }
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true
     errores.value = {}
+    departamento.value.user_id = user_id;
 
     // Actualizar
     if (generos.value.id) {
@@ -216,9 +235,14 @@ const confirmarEliminar = (id, nombre) => {
 
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    departamento.value.user_id = user_id;
     await axios
+<<<<<<< HEAD:resources/js/Pages/Configuracion/Generos.vue
         .post("/api/eliminarGeneros/" + generos.value.id)
+=======
+        .post("/api/eliminar_departamento/" + departamento.value.id, departamento.value)
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8:resources/js/Pages/Direccion/Departamentos.vue
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta
@@ -244,7 +268,7 @@ const eliminar = async () => {
 /* EXCLUSIVO DE TABLA */
 const generarTabla = async (props) => {
     // No se toca
-    const { page, rowsPerPage } = props.pagination
+    const { page, rowsPerPage, sortBy, descending } = props.pagination
     const filter = props.filter
     loading.value = true
     // Obteniendo la tabla de datos
@@ -253,7 +277,9 @@ const generarTabla = async (props) => {
             params: {
                 page,
                 rowsPerPage,
-                filter
+                filter,
+                sortBy,
+                descending: descending ? 0 : 1
             }
         })
         .then(response => {
@@ -262,6 +288,8 @@ const generarTabla = async (props) => {
             pagination.value.page = response.data.paginacion.pagina
             pagination.value.rowsPerPage = response.data.paginacion.filasPorPagina
             pagination.value.rowsNumber = response.data.paginacion.tuplas
+            pagination.value.sortBy = response.data.paginacion.ordenarPor
+            pagination.value.descending = descending
         })
         .catch(error => {
             errored.value = true

@@ -12,7 +12,11 @@
                             <q-item>
                                 <q-input filled bottom-slots v-model="tipoDocumento.nombre" class="full-width"
                                     label="Nombre" :error-message="errores.nombre && errores.nombre[0]"
+<<<<<<< HEAD
                                     :error="hayError(errores.nombre)" />
+=======
+                                    :error="errores.hasOwnProperty('nombre')" autofocus/>
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
@@ -39,13 +43,18 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
-                        <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
-                        <q-btn round color="negative" icon="delete"
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+                        </div>
                     </q-td>
                 </template>
             </q-table>
@@ -61,7 +70,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -135,18 +144,25 @@ const reiniciarValores = () => {
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
+<<<<<<< HEAD
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {
     if (submitted && valor)
         return true
     else
         return false
+=======
+const cancelar = () => {
+    tipoDocumento.value = {}
+
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8
 }
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true
     errores.value = {}
+    tipoDocumento.value.user_id = user_id;
 
     // Actualizar
     if (tipoDocumento.value.id) {
@@ -223,9 +239,14 @@ const confirmarEliminar = (id, nombre) => {
 
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    tipoDocumento.value.user_id = user_id;
     await axios
+<<<<<<< HEAD
         .post("/api/eliminar/" + tipoDocumento.value.id)
+=======
+        .post("/api/tipo_documentos/eliminar/" + tipoDocumento.value.id, tipoDocumento.value)
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta

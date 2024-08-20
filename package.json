@@ -5,7 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@inertiajs/vue3": "^1.0.0",
+        "@inertiajs/vue3": "^1.0.7",
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/typography": "^0.5.2",
         "@vitejs/plugin-vue": "^4.0.0",
@@ -18,6 +18,7 @@
         "vue": "^3.3.2"
     },
     "dependencies": {
+        "@casl/ability": "^6.5.0",
         "@quasar/extras": "^1.16.3",
         "quasar": "^2.11.10"
     }

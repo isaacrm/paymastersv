@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Aguinaldos">
         <div class="q-pa-md">
             <q-card class="my-card">
                 <q-card-section class="ml-6">
@@ -16,6 +16,22 @@
                             </q-item>
                         </div>
                         <div class="col-12 col-md-4">
+<<<<<<< HEAD:resources/js/Pages/Configuracion/Ocupaciones.vue
+=======
+                            <q-item>
+                                <q-input filled bottom-slots v-model="aguinaldo.hasta" type="number" suffix="año(s)"
+                                    class="full-width" label="Hasta" :error-message="errores.hasta && errores.hasta[0]"
+                                    :error="errores.hasOwnProperty('hasta')" />
+                            </q-item>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <q-item>
+                                <q-input filled bottom-slots v-model="aguinaldo.cantidad_dias" suffix="día(s)" type="number"
+                                    class="full-width" label="Cantidad de días de salario"
+                                    :error-message="errores.cantidad_dias && errores.cantidad_dias[0]"
+                                    :error="errores.hasOwnProperty('cantidad_dias')" />
+                            </q-item>
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8:resources/js/Pages/Configuracion/Aguinaldo.vue
                         </div>
                     </div>
                 </q-card-section>
@@ -33,13 +49,24 @@
                     </q-input>
                 </template>
                 <template v-slot:top-left>
-                    <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar"></q-btn>
+                    <div class="q-gutter-sm">
+                        <q-btn outline rounded color="primary" label="Guardar" icon="add" @click="guardar($page.props.auth.user.id)"></q-btn>
+                        <q-btn outline rounded color="danger" label="Cancelar" icon="cancel" @click="cancelar"></q-btn>
+                    </div>
                 </template>
                 <template v-slot:body-cell-operaciones="props">
                     <q-td :props="props">
+<<<<<<< HEAD:resources/js/Pages/Configuracion/Ocupaciones.vue
                         <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
                         <q-btn round color="negative" icon="delete"
                             @click="confirmarEliminar(props.row.id, props.row.nombre)"></q-btn>
+=======
+                        <div class="q-gutter-sm">
+                            <q-btn round color="warning" icon="edit" class="mr-2" @click="editar(props.row)"></q-btn>
+                            <q-btn round color="negative" icon="delete"
+                            @click="confirmarEliminar(props.row.id, props.row.desde, props.row.hasta)"></q-btn>
+                        </div>
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8:resources/js/Pages/Configuracion/Aguinaldo.vue
                     </q-td>
                 </template>
             </q-table>
@@ -55,7 +82,7 @@
 
                     <q-card-actions alignt="right">
                         <q-btn flat label="No" color="primary" v-close-popup />
-                        <q-btn flat label="Sí" color="primary" @click="eliminar" v-close-popup />
+                        <q-btn flat label="Sí" color="primary" @click="eliminar($page.props.auth.user.id)" v-close-popup />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -128,6 +155,10 @@ const reiniciarValores = () => {
     generarTabla({ pagination: pagination.value, filter: filter.value })
 }
 
+const cancelar = () => {
+    aguinaldo.value = {}
+}
+
 // Para mandar comprobar el estado del input y al mismo tiempo determinarlo y mostrar mensaje de error
 const hayError = (valor) => {
     if (submitted && valor)
@@ -137,9 +168,10 @@ const hayError = (valor) => {
 }
 
 // Operacion de guardar
-const guardar = async () => {
+const guardar = async (user_id) => {
     submitted.value = true
     errores.value = {}
+    aguinaldo.value.user_id = user_id;
 
     // Actualizar
     if (ocupaciones.value.id) {
@@ -216,9 +248,14 @@ const confirmarEliminar = (id, nombre) => {
 
 
 // Elimina definitivamente. En las tablas importantes lo que se hara es modificar un boolean
-const eliminar = async () => {
+const eliminar = async (user_id) => {
+    aguinaldo.value.user_id = user_id;
     await axios
+<<<<<<< HEAD:resources/js/Pages/Configuracion/Ocupaciones.vue
         .post("/api/eliminarOcupaciones/" + ocupaciones.value.id)
+=======
+        .post("/api/aguinaldo/eliminar/" + aguinaldo.value.id, aguinaldo.value)
+>>>>>>> 67f9b0ba06f01cdfb3b337336af388d03c3085b8:resources/js/Pages/Configuracion/Aguinaldo.vue
         .then((response) => {
             reiniciarValores()
             // Mensaje de alerta

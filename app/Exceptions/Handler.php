@@ -4,6 +4,15 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Spatie\Permission\Exceptions\UnauthorizedException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+
+
 
 class Handler extends ExceptionHandler
 {
@@ -26,5 +35,49 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+
+    // Error 403 y 404
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof UnauthorizedException) {
+            return Inertia::render('Errores/403')->toResponse($request)->setStatusCode(403);
+
+        }
+        if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {
+            return Inertia::render('Errores/404')->toResponse($request)->setStatusCode(404);
+        }
+
+        if ($exception instanceof TooManyRequestsHttpException) {
+            $retryAfter = $exception->getHeaders()['Retry-After'];
+            //$minutes = floor($retryAfter / 60); // Obtener los minutos
+            //$seconds = $retryAfter % 60; // Obtener los segundos
+
+            
+            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso. 
+            Por favor, comunícate con la administración.';
+
+            // Renderizar la vista con Inertia.js y pasar los datos a la vista
+            return Inertia::render('Errores/429', [
+                'message' => $message,
+                //'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
+                ])->toResponse($request)->setStatusCode(429);
+        }
+        if ($exception instanceof ThrottleRequestsException) {
+            $retryAfter = $exception->getHeaders()['Retry-After'];
+            $minutes = floor($retryAfter / 60); // Obtener los minutos
+            $seconds = $retryAfter % 60; // Obtener los segundos
+
+            
+            $message = 'Por razones de seguridad, se ha bloqueado temporalmente tu acceso.';
+
+            // Renderizar la vista con Inertia.js y pasar los datos a la vista
+            return Inertia::render('Errores/429b', [
+                'message' => $message,
+                //'retry_after' => "$minutes minutos $seconds segundos", // Combinar minutos y segundos en un solo string
+                ])->toResponse($request)->setStatusCode(429);
+        }
+        return parent::render($request, $exception);
     }
 }
