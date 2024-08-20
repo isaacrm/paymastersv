@@ -15,9 +15,8 @@ Este proyecto consiste en el desarrollo de un sistema de planillas para empresas
   - Administración de bonos y descuentos salariales
   - Gestión de centros de costos
 
-## Documento del proyecto
-
-- **PAYMASTER:** Contribuí al diseño y estructuración de la base de datos, adaptándola a los requisitos de las empresas.
+## Documento base del proyecto
+Dentro del documento se pueden encontrar los alcances, diagramas de procesos de negocio (BPMNs), modelo físico de la base de datos y diagramas de la arquitectura del sistema, puede leer la información en el siguiente **[documento PDF]()**.
 
 ## Paquetes y Tecnologias utilizadas
 
